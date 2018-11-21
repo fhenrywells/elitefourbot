@@ -96,6 +96,8 @@ def performActions(p1_pokemon, p2_pokemon, p1action, p2action):
     ret = []
 
     # switch first
+    if p1action[0] == "switch" and p2action[0] == "switch":
+        return (1.0, (copy.copy(p1action[1]), copy.copy(p2action[1])))
     if p1action[0] == "switch" and p2action[0] == "move":
         p1_pokemon = p1action[1]
         # Switch results, because returned states are from pokemon2's perspective

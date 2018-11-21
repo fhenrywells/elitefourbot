@@ -209,19 +209,19 @@ class Move:
 
     def bide(self, ourPokemon, theirPokemon):
         print("bide")
-        pass
+        return [(1.0, (copy.copy(ourPokemon), copy.copy(theirPokemon)))]
 
     def counter(self, ourPokemon, theirPokemon):
         print("counter")
-        pass
+        return [(1.0, (copy.copy(ourPokemon), copy.copy(theirPokemon)))]
 
     def reflect(self, ourPokemon, theirPokemon):
         print("reflect")
-        pass
+        return [(1.0, (copy.copy(ourPokemon), copy.copy(theirPokemon)))]
 
     def substitute(self, ourPokemon, theirPokemon):
         print("substitute")
-        pass
+        return [(1.0, (copy.copy(ourPokemon), copy.copy(theirPokemon)))]
 
 
 with open('viablemovesdata.json') as f:
@@ -245,7 +245,7 @@ def main():
                     1, ['blizzard'], ['fire', 'water'])
 
     nextStates = performActions(
-        poke1, poke2, ("move", "blizzard"), ("move", "psychic"))
+        poke1, poke2, ("move", "blizzard"), ("move", "bide"))
     print(json.dumps(json.loads(jsonpickle.encode(nextStates)), indent=2))
 
 

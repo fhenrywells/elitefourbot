@@ -542,11 +542,11 @@ const spec = {
 };
 const p1spec = {
     name: "Baseline Bot",
-    team: Dex.packTeam(Dex.generateTeam('gen7randombattle')),
+    team: Dex.packTeam(Dex.generateTeam('gen1randombattle')),
 };
 const p2spec = {
     name: "Minimax Bot",
-    team: Dex.packTeam(Dex.generateTeam('gen7randombattle')),
+    team: Dex.packTeam(Dex.generateTeam('gen1randombattle')),
 };
  
 // eslint-disable-next-line no-unused-vars

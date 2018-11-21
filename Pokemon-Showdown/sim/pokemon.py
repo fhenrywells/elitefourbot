@@ -22,6 +22,7 @@ class Pokemon:
     self.ourHP = data['ourHp']
     self.theirHP = data['theirHp']
     self.ourStatus = data['ourStatus']
+    print("data given is ", self.ourStatus)
     self.theirStatus = data['theirStatus']
     self.ourDmg = data['ourDmg']
     self.theirDmg = data['theirDmg']
@@ -43,7 +44,7 @@ class Pokemon:
     teamScore = 0
     #if agentIndex == 0:
     for key, value in self.ourHP.items():  # need to define this
-      print(self.ourStatus)
+      #print(self.ourStatus)
       #print(self.ourHP)
       if self.ourStatus[str(key)]:
         status_effect = 0.5
@@ -108,16 +109,14 @@ class Pokemon:
   def applyAction(self, pokemon, agentIndex, action):
     if agentIndex == 0:
       if self.ourDmg[str(action)] == -1:
-        if self.theirStatus == False:
-          self.theirStatus == True
+        self.theirStatus = True
         return 
       health = self.theirHP
       health -= self.ourDmg[str(action)]
       self.theirHP = health
     else:
       if self.theirDmg[str(action)] == -1:
-        if self.ourStatus[str(self.currPokemon)] == False:
-          self.ourStatus[str(self.currPokemon)] == True
+        self.ourStatus[str(self.currPokemon)] = True
       return
       health = self.ourHP[str(self.currPokemon)]
       health -= self.theirDmg[str(action)]

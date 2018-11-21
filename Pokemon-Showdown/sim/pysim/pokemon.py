@@ -39,15 +39,17 @@ def calcDamage(attackingPokemon, defendingPokemon, move):
     if attackingPokemon.gen == 1:
         critchance = attackingPokemon.speed / 512 * 8 ** (move.critratio - 1)
         level = attackingPokemon.level * (1 * (
-                1 - critchance) + 2 * critchance)  # Expected value for level, taking into account crit chance
+            1 - critchance) + 2 * critchance)  # Expected value for level, taking into account crit chance
         if move.category.lower() == "physical":
             a = attackingPokemon.attack
             d = defendingPokemon.defense
         else:
             a = attackingPokemon.sp_att
             d = defendingPokemon.sp_att
-        basedmg = int(int(int(2 * level / 5 + 2) * move.basePower * a / d) / 50 + 2)
-        effectivenesses = [move_effectiveness[(move.type, def_type)] for def_type in defendingPokemon.types]
+        basedmg = int(int(int(2 * level / 5 + 2) *
+                          move.basePower * a / d) / 50 + 2)
+        effectivenesses = [move_effectiveness[(
+            move.type, def_type)] for def_type in defendingPokemon.types]
         effectiveness = 1
         for e in effectivenesses:
             effectiveness = effectiveness * e
@@ -57,7 +59,9 @@ def calcDamage(attackingPokemon, defendingPokemon, move):
         damage_values = [int(basedmg * modifier * r / 255.0) for r in random]
         return sum(damage_values) / len(random)
     else:
-        raise (NotImplementedError("Generation {} not implemented yet".format(attackingPokemon.gen)))
+        raise (NotImplementedError(
+            "Generation {} not implemented yet".format(attackingPokemon.gen)))
+
 
 def performActions(p1_pokemon, p2_pokemon, p1action, p2action):
     ret = []
@@ -80,12 +84,14 @@ def performActions(p1_pokemon, p2_pokemon, p1action, p2action):
                 p1_move_results = p1move.effect(p1_pokemon, p2_pokemon)
                 for prob, (p1_poke, p2_poke) in p1_move_results:
                     p2_move_results = p2move.effect(p2_poke, p1_poke)
-                    ret = ret + [(prob * newprob, (p1_poke_final, p2_poke_final)) for newprob, (p2_poke_final, p1_poke_final) in p2_move_results]
+                    ret = ret + [(prob * newprob, (p1_poke_final, p2_poke_final))
+                                 for newprob, (p2_poke_final, p1_poke_final) in p2_move_results]
             else:
                 p2_move_results = p2move.effect(p2_pokemon, p1_pokemon)
                 for prob, (p2_poke, p1_poke) in p2_move_results:
                     p1_move_results = p1move.effect(p1_poke, p2_poke)
-                    ret = ret + [(prob * newprob, (p1_poke_final, p2_poke_final)) for newprob, (p1_poke_final, p2_poke_final) in p1_move_results]
+                    ret = ret + [(prob * newprob, (p1_poke_final, p2_poke_final))
+                                 for newprob, (p1_poke_final, p2_poke_final) in p1_move_results]
 
         # Then, compare speeds
         else:
@@ -93,12 +99,14 @@ def performActions(p1_pokemon, p2_pokemon, p1action, p2action):
                 p1_move_results = p1move.effect(p1_pokemon, p2_pokemon)
                 for prob, (p1_poke, p2_poke) in p1_move_results:
                     p2_move_results = p2move.effect(p2_poke, p1_poke)
-                    ret = ret + [(prob * newprob, (p1_poke_final, p2_poke_final)) for newprob, (p2_poke_final, p1_poke_final) in p2_move_results]
+                    ret = ret + [(prob * newprob, (p1_poke_final, p2_poke_final))
+                                 for newprob, (p2_poke_final, p1_poke_final) in p2_move_results]
             else:
                 p2_move_results = p2move.effect(p2_pokemon, p1_pokemon)
                 for prob, (p2_poke, p1_poke) in p2_move_results:
                     p1_move_results = p1move.effect(p1_poke, p2_poke)
-                    ret = ret + [(prob * newprob, (p1_poke_final, p2_poke_final)) for newprob, (p1_poke_final, p2_poke_final) in p1_move_results]
+                    ret = ret + [(prob * newprob, (p1_poke_final, p2_poke_final))
+                                 for newprob, (p1_poke_final, p2_poke_final) in p1_move_results]
     return ret
 
 
@@ -144,9 +152,13 @@ class Move:
 
         states = []
         # Add missed state first, if accuracy is <100
-        acc = self.accuracy / 100.0
-        if not self.accuracy or self.accuracy != 100:
-            states.append((1.0 - acc, (copy.copy(ourPokemon), copy.copy(theirPokemon))))
+        if self.accuracy is True:
+            acc = 1.0
+        else:
+            acc = self.accuracy / 100.0
+        if acc != 1.0:
+            states.append(
+                (1.0 - acc, (copy.copy(ourPokemon), copy.copy(theirPokemon))))
 
         # Do damage calc first
         if self.basePower != 0:
@@ -157,18 +169,18 @@ class Move:
         if self.boosts is not None:
             # Apply boost to self
             if self.accuracy is True:
-                ourPokemon_hit.attack += self.boosts.get("atk",0)
-                ourPokemon_hit.defense += self.boosts.get("def",0)
-                ourPokemon_hit.sp_att += self.boosts.get("spa",0)
+                ourPokemon_hit.attack += self.boosts.get("atk", 0)
+                ourPokemon_hit.defense += self.boosts.get("def", 0)
+                ourPokemon_hit.sp_att += self.boosts.get("spa", 0)
                 #ourPokemon_hit.sp_def += self.boosts.get("spd",0)
-                ourPokemon_hit.speed += self.boosts.get("spe",0)
+                ourPokemon_hit.speed += self.boosts.get("spe", 0)
             # Otherwise, apply boosts to opponent
             else:
-                theirPokemon_hit.attack += self.boosts.get("atk",0)
-                theirPokemon_hit.defense += self.boosts.get("def",0)
-                theirPokemon_hit.sp_att += self.boosts.get("spa",0)
+                theirPokemon_hit.attack += self.boosts.get("atk", 0)
+                theirPokemon_hit.defense += self.boosts.get("def", 0)
+                theirPokemon_hit.sp_att += self.boosts.get("spa", 0)
                 #theirPokemon_hit.sp_def += self.boosts.get("spd",0)
-                theirPokemon_hit.speed += self.boosts.get("spe",0)
+                theirPokemon_hit.speed += self.boosts.get("spe", 0)
 
         # Then, apply secondary effects if they exist
         if self.secondary is not None:
@@ -178,13 +190,19 @@ class Move:
             if "status" in self.secondary.keys() and theirPokemon_secondary.status is None:
                 theirPokemon_secondary.status = self.secondary['status']
             if "boosts" in self.secondary.keys():
-                theirPokemon_secondary.attack += self.secondary['boosts'].get("atk",0)
-                theirPokemon_secondary.defense += self.secondary['boosts'].get("def",0)
-                theirPokemon_secondary.sp_att += self.secondary['boosts'].get("spa",0)
+                theirPokemon_secondary.attack += self.secondary['boosts'].get(
+                    "atk", 0)
+                theirPokemon_secondary.defense += self.secondary['boosts'].get(
+                    "def", 0)
+                theirPokemon_secondary.sp_att += self.secondary['boosts'].get(
+                    "spa", 0)
                 #theirPokemon_secondary.sp_def += self.secondary['boosts'].get("spd",0)
-                theirPokemon_secondary.speed += self.secondary['boosts'].get("spe",0)
-            states.append((acc * secondary_acc, (ourPokemon_secondary, theirPokemon_secondary)))
-            states.append((acc * (1 - secondary_acc), (ourPokemon_hit, theirPokemon_hit)))
+                theirPokemon_secondary.speed += self.secondary['boosts'].get(
+                    "spe", 0)
+            states.append(
+                (acc * secondary_acc, (ourPokemon_secondary, theirPokemon_secondary)))
+            states.append((acc * (1 - secondary_acc),
+                           (ourPokemon_hit, theirPokemon_hit)))
         else:
             states.append((acc, (ourPokemon_hit, theirPokemon_hit)))
         return states
@@ -219,11 +237,15 @@ with open('effectiveness.csv', 'rt') as csvfile:
 
 def main():
     # (attack, defense, sp_att, sp_def, speed, maxhp, level, currhp, gen, moveids, types)
-    poke1 = Pokemon(90, 90, 100, 1, 100, 353, 100, 1.0, 1, ['blizzard'], ['fire', 'water'])
-    poke1_2 = Pokemon(90, 90, 100, 3, 100, 353, 100, 1.0, 1, ['blizzard'], ['grass', 'ground'])
-    poke2 = Pokemon(90, 90, 100, 2, 100, 353, 100, 1.0, 1, ['blizzard'], ['fire', 'water'])
+    poke1 = Pokemon(90, 90, 100, 1, 100, 353, 100, 1.0,
+                    1, ['blizzard'], ['fire', 'water'])
+    poke1_2 = Pokemon(90, 90, 100, 3, 100, 353, 100, 1.0,
+                      1, ['blizzard'], ['grass', 'ground'])
+    poke2 = Pokemon(90, 90, 100, 2, 100, 353, 100, 1.0,
+                    1, ['blizzard'], ['fire', 'water'])
 
-    nextStates = performActions(poke1, poke2, ("move", "blizzard"), ("move", "psychic"))
+    nextStates = performActions(
+        poke1, poke2, ("move", "blizzard"), ("move", "psychic"))
     print(json.dumps(json.loads(jsonpickle.encode(nextStates)), indent=2))
 
 

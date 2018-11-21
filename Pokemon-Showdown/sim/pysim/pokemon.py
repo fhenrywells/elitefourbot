@@ -8,31 +8,60 @@ viable_moves = {}
 
 
 class Pokemon:
-    attack = None
-    defense = None
-    sp_att = None  # sp_att is used as special for gen1 pokemon
-    sp_def = None
-    speed = None
+    _attack = None
+    _defense = None
+    _sp_att = None  # sp_att is used as special for gen1 pokemon
+    _sp_def = None
+    _speed = None
     maxhp = None
     level = None
     currhp = 1.0
     gen = None
     moveids = []
     types = []
+
     status = None
+    atk_stage = 0
+    def_stage = 0
+    spa_stage = 0
+    spd_stage = 0
+    spe_stage = 0
 
     def __init__(self, attack, defense, sp_att, sp_def, speed, maxhp, level, currhp, gen, moveids, types):
-        self.attack = attack
-        self.defense = defense
-        self.sp_att = sp_att
-        self.sp_def = sp_def
-        self.speed = speed
+        self._attack = attack
+        self._defense = defense
+        self._sp_att = sp_att
+        self._sp_def = sp_def
+        self._speed = speed
         self.maxhp = maxhp
         self.level = level
         self.currhp = currhp
         self.gen = gen
         self.moveids = moveids
         self.types = types
+
+    def stage_to_multiplier(self, stage):
+        return max(2, 2 + stage) / max(2, 2 - stage)
+
+    @property
+    def attack(self):
+        return int(self._attack * self.stage_to_multiplier(self.atk_stage))
+
+    @property
+    def defense(self):
+        return int(self._defense * self.stage_to_multiplier(self.def_stage))
+
+    @property
+    def sp_att(self):
+        return int(self._sp_att * self.stage_to_multiplier(self.spa_stage))
+
+    @property
+    def sp_def(self):
+        return int(self._sp_def * self.stage_to_multiplier(self.spd_stage))
+
+    @property
+    def speed(self):
+        return int(self._speed * self.stage_to_multiplier(self.spe_stage))
 
 
 def calcDamage(attackingPokemon, defendingPokemon, move):
@@ -169,18 +198,18 @@ class Move:
         if self.boosts is not None:
             # Apply boost to self
             if self.accuracy is True:
-                ourPokemon_hit.attack += self.boosts.get("atk", 0)
-                ourPokemon_hit.defense += self.boosts.get("def", 0)
-                ourPokemon_hit.sp_att += self.boosts.get("spa", 0)
+                ourPokemon_hit.atk_stage += self.boosts.get("atk", 0)
+                ourPokemon_hit.def_stage += self.boosts.get("def", 0)
+                ourPokemon_hit.spa_stage += self.boosts.get("spa", 0)
                 #ourPokemon_hit.sp_def += self.boosts.get("spd",0)
-                ourPokemon_hit.speed += self.boosts.get("spe", 0)
+                ourPokemon_hit.spe_stage += self.boosts.get("spe", 0)
             # Otherwise, apply boosts to opponent
             else:
-                theirPokemon_hit.attack += self.boosts.get("atk", 0)
-                theirPokemon_hit.defense += self.boosts.get("def", 0)
-                theirPokemon_hit.sp_att += self.boosts.get("spa", 0)
+                theirPokemon_hit.atk_stage += self.boosts.get("atk", 0)
+                theirPokemon_hit.def_stage += self.boosts.get("def", 0)
+                theirPokemon_hit.spa_stage += self.boosts.get("spa", 0)
                 #theirPokemon_hit.sp_def += self.boosts.get("spd",0)
-                theirPokemon_hit.speed += self.boosts.get("spe", 0)
+                theirPokemon_hit.spe_stage += self.boosts.get("spe", 0)
 
         # Then, apply secondary effects if they exist
         if self.secondary is not None:
@@ -245,7 +274,7 @@ def main():
                     1, ['blizzard'], ['fire', 'water'])
 
     nextStates = performActions(
-        poke1, poke2, ("move", "blizzard"), ("move", "bide"))
+        poke1, poke2, ("move", "blizzard"), ("move", "agility"))
     print(json.dumps(json.loads(jsonpickle.encode(nextStates)), indent=2))
 
 

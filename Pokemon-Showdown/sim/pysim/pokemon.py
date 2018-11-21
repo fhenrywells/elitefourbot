@@ -98,8 +98,10 @@ def performActions(p1_pokemon, p2_pokemon, p1action, p2action):
     # switch first
     if p1action[0] == "switch" and p2action[0] == "move":
         p1_pokemon = p1action[1]
-        ret = viable_moves[p2action[1]].effect(p2_pokemon, p1_pokemon)
-    if p2action[0] == "switch" and p2action[0] == "move":
+        # Switch results, because returned states are from pokemon2's perspective
+        p2_move_results = viable_moves[p2action[1]].effect(p2_pokemon, p1_pokemon)
+        ret = [(prob, (poke_1, poke_2)) for prob, (poke_2, poke_1) in p2_move_results]
+    if p2action[0] == "switch" and p1action[0] == "move":
         p2_pokemon = p2action[1]
         ret = viable_moves[p1action[1]].effect(p1_pokemon, p2_pokemon)
 

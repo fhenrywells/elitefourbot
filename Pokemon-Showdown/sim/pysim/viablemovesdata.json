@@ -1,0 +1,1821 @@
+{
+    "agility": {
+        "accuracy": true,
+        "basePower": 0,
+        "boosts": {
+            "spe": 2
+        },
+        "category": "Status",
+        "contestType": "Cool",
+        "desc": "Raises the user's Speed by 2 stages.",
+        "flags": {
+            "snatch": 1
+        },
+        "id": "agility",
+        "isViable": true,
+        "name": "Agility",
+        "num": 97,
+        "pp": 30,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Raises the user's Speed by 2.",
+        "target": "self",
+        "type": "Psychic",
+        "zMoveEffect": "clearnegativeboost"
+    },
+    "amnesia": {
+        "accuracy": true,
+        "basePower": 0,
+        "boosts": {
+            "spa": 2,
+            "spd": 2
+        },
+        "category": "Status",
+        "contestType": "Cute",
+        "desc": "Raises the user's Special by 2 stages.",
+        "flags": {
+            "snatch": 1
+        },
+        "id": "amnesia",
+        "inherit": true,
+        "name": "Amnesia",
+        "num": 133,
+        "pp": 20,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Raises the user's Special by 2.",
+        "target": "self",
+        "type": "Psychic",
+        "zMoveEffect": "clearnegativeboost"
+    },
+    "barrier": {
+        "accuracy": true,
+        "basePower": 0,
+        "boosts": {
+            "def": 2
+        },
+        "category": "Status",
+        "contestType": "Cool",
+        "desc": "Raises the user's Defense by 2 stages.",
+        "flags": {
+            "snatch": 1
+        },
+        "id": "barrier",
+        "name": "Barrier",
+        "num": 112,
+        "pp": 20,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Raises the user's Defense by 2.",
+        "target": "self",
+        "type": "Psychic",
+        "zMoveEffect": "clearnegativeboost"
+    },
+    "bide": {
+        "accuracy": true,
+        "basePower": 0,
+        "category": "Physical",
+        "contestType": "Tough",
+        "desc": "The user spends two or three turns locked into this move and then, on the second or third turn after using this move, the user attacks the opponent, inflicting double the damage in HP it lost during those turns. This move ignores type immunity and cannot be avoided even if the target is using Dig or Fly. The user can choose to switch out during the effect. If the user switches out or is prevented from moving during this move's use, the effect ends. During the effect, if the opposing Pokemon switches out or uses Confuse Ray, Conversion, Focus Energy, Glare, Haze, Leech Seed, Light Screen, Mimic, Mist, Poison Gas, Poison Powder, Recover, Reflect, Rest, Soft-Boiled, Splash, Stun Spore, Substitute, Supersonic, Teleport, Thunder Wave, Toxic, or Transform, the previous damage dealt to the user will be added to the total.",
+        "effect": {
+            "duration": 2
+        },
+        "flags": {
+            "contact": 1,
+            "protect": 1
+        },
+        "id": "bide",
+        "ignoreEvasion": true,
+        "ignoreImmunity": true,
+        "inherit": true,
+        "name": "Bide",
+        "num": 117,
+        "pp": 10,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Waits 2 turns; deals double the damage taken.",
+        "target": "self",
+        "type": "???",
+        "volatileStatus": "bide",
+        "zMovePower": 100
+    },
+    "blizzard": {
+        "accuracy": 90,
+        "basePower": 110,
+        "category": "Special",
+        "contestType": "Beautiful",
+        "desc": "Has a 10% chance to freeze the target. If the weather is Hail, this move does not check accuracy.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "blizzard",
+        "inherit": true,
+        "isViable": true,
+        "name": "Blizzard",
+        "num": 59,
+        "pp": 5,
+        "priority": 0,
+        "secondary": {
+            "chance": 10,
+            "status": "frz"
+        },
+        "shortDesc": "10% chance to freeze foe(s). Can't miss in hail.",
+        "target": "normal",
+        "type": "Ice",
+        "zMovePower": 185
+    },
+    "bodyslam": {
+        "accuracy": 100,
+        "basePower": 85,
+        "category": "Physical",
+        "contestType": "Tough",
+        "desc": "Has a 30% chance to paralyze the target. Damage doubles and no accuracy check is done if the target has used Minimize while active.",
+        "flags": {
+            "contact": 1,
+            "mirror": 1,
+            "nonsky": 1,
+            "protect": 1
+        },
+        "id": "bodyslam",
+        "isViable": true,
+        "name": "Body Slam",
+        "num": 34,
+        "pp": 15,
+        "priority": 0,
+        "secondary": {
+            "chance": 30,
+            "status": "par"
+        },
+        "shortDesc": "30% chance to paralyze the target.",
+        "target": "normal",
+        "type": "Normal",
+        "zMovePower": 160
+    },
+    "bubblebeam": {
+        "accuracy": 100,
+        "basePower": 65,
+        "category": "Special",
+        "contestType": "Beautiful",
+        "desc": "Has a 33% chance to lower the target's Speed by 1 stage.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "bubblebeam",
+        "inherit": true,
+        "name": "Bubble Beam",
+        "num": 61,
+        "pp": 20,
+        "priority": 0,
+        "secondary": {
+            "boosts": {
+                "spe": -1
+            },
+            "chance": 33
+        },
+        "shortDesc": "33% chance to lower the target's Speed by 1.",
+        "target": "normal",
+        "type": "Water",
+        "zMovePower": 120
+    },
+    "confuseray": {
+        "accuracy": 100,
+        "basePower": 0,
+        "category": "Status",
+        "contestType": "Clever",
+        "desc": "Causes the target to become confused.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1,
+            "reflectable": 1
+        },
+        "id": "confuseray",
+        "name": "Confuse Ray",
+        "num": 109,
+        "pp": 10,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Confuses the target.",
+        "target": "normal",
+        "type": "Ghost",
+        "volatileStatus": "confusion",
+        "zMoveBoost": {
+            "spa": 1
+        }
+    },
+    "counter": {
+        "accuracy": 100,
+        "basePower": 0,
+        "category": "Physical",
+        "contestType": "Tough",
+        "desc": "Deals damage to the opposing Pokemon equal to twice the damage dealt by the last move used in the battle. This move ignores type immunity. Fails if the user moves first, or if the opposing side's last move was Counter, had 0 power, or was not Normal or Fighting type. Fails if the last move used by either side did 0 damage and was not Confuse Ray, Conversion, Focus Energy, Glare, Haze, Leech Seed, Light Screen, Mimic, Mist, Poison Gas, Poison Powder, Recover, Reflect, Rest, Soft-Boiled, Splash, Stun Spore, Substitute, Supersonic, Teleport, Thunder Wave, Toxic, or Transform.",
+        "effect": {
+            "duration": 1,
+            "noCopy": true,
+            "onRedirectTargetPriority": -1
+        },
+        "flags": {
+            "contact": 1,
+            "protect": 1
+        },
+        "id": "counter",
+        "ignoreImmunity": true,
+        "inherit": true,
+        "name": "Counter",
+        "num": 68,
+        "pp": 20,
+        "priority": -5,
+        "secondary": null,
+        "shortDesc": "If hit by physical attack, returns double damage.",
+        "target": "scripted",
+        "type": "Fighting",
+        "willCrit": false,
+        "zMovePower": 100
+    },
+    "crabhammer": {
+        "accuracy": 90,
+        "basePower": 100,
+        "category": "Physical",
+        "contestType": "Tough",
+        "critRatio": 2,
+        "desc": "Has a higher chance for a critical hit.",
+        "flags": {
+            "contact": 1,
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "crabhammer",
+        "inherit": true,
+        "isViable": true,
+        "name": "Crabhammer",
+        "num": 152,
+        "pp": 10,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "High critical hit ratio.",
+        "target": "normal",
+        "type": "Water",
+        "zMovePower": 180
+    },
+    "doubleedge": {
+        "accuracy": 100,
+        "basePower": 100,
+        "category": "Physical",
+        "contestType": "Tough",
+        "desc": "If the target lost HP, the user takes recoil damage equal to 1/4 the HP lost by the target, rounded down, but not less than 1 HP. If this move breaks the target's substitute, the user does not take any recoil damage.",
+        "flags": {
+            "contact": 1,
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "doubleedge",
+        "inherit": true,
+        "isViable": true,
+        "name": "Double-Edge",
+        "num": 38,
+        "pp": 15,
+        "priority": 0,
+        "recoil": [
+            33,
+            100
+        ],
+        "secondary": null,
+        "shortDesc": "Has 33% recoil.",
+        "target": "normal",
+        "type": "Normal",
+        "zMovePower": 190
+    },
+    "doublekick": {
+        "accuracy": 100,
+        "basePower": 30,
+        "category": "Physical",
+        "contestType": "Cool",
+        "desc": "Hits twice. Damage is calculated once for the first hit and used for both hits. If the first hit breaks the target's substitute, the move ends.",
+        "flags": {
+            "contact": 1,
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "doublekick",
+        "inherit": true,
+        "multihit": 2,
+        "name": "Double Kick",
+        "num": 24,
+        "pp": 30,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Hits 2 times in one turn.",
+        "target": "normal",
+        "type": "Fighting",
+        "zMovePower": 100
+    },
+    "dragonrage": {
+        "accuracy": 100,
+        "basePower": 1,
+        "category": "Special",
+        "contestType": "Cool",
+        "damage": 40,
+        "flags": {
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "dragonrage",
+        "inherit": true,
+        "name": "Dragon Rage",
+        "num": 82,
+        "pp": 10,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Deals 40 HP of damage to the target.",
+        "target": "normal",
+        "type": "Dragon",
+        "zMovePower": 100
+    },
+    "drillpeck": {
+        "accuracy": 100,
+        "basePower": 80,
+        "category": "Physical",
+        "contestType": "Cool",
+        "flags": {
+            "contact": 1,
+            "distance": 1,
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "drillpeck",
+        "isViable": true,
+        "name": "Drill Peck",
+        "num": 65,
+        "pp": 20,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "No additional effect.",
+        "target": "any",
+        "type": "Flying",
+        "zMovePower": 160
+    },
+    "earthquake": {
+        "accuracy": 100,
+        "basePower": 100,
+        "category": "Physical",
+        "contestType": "Tough",
+        "desc": "No additional effect.",
+        "flags": {
+            "mirror": 1,
+            "nonsky": 1,
+            "protect": 1
+        },
+        "id": "earthquake",
+        "inherit": true,
+        "isViable": true,
+        "name": "Earthquake",
+        "num": 89,
+        "pp": 10,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "No additional effect.",
+        "target": "allAdjacent",
+        "type": "Ground",
+        "zMovePower": 180
+    },
+    "eggbomb": {
+        "accuracy": 75,
+        "basePower": 100,
+        "category": "Physical",
+        "contestType": "Cute",
+        "flags": {
+            "bullet": 1,
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "eggbomb",
+        "name": "Egg Bomb",
+        "num": 121,
+        "pp": 10,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "No additional effect.",
+        "target": "normal",
+        "type": "Normal",
+        "zMovePower": 180
+    },
+    "explosion": {
+        "accuracy": 100,
+        "basePower": 170,
+        "category": "Physical",
+        "contestType": "Beautiful",
+        "desc": "The user faints after using this move, unless this move broke the target's substitute. The target's Defense is halved during damage calculation.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "explosion",
+        "inherit": true,
+        "isViable": true,
+        "name": "Explosion",
+        "num": 153,
+        "pp": 5,
+        "priority": 0,
+        "secondary": null,
+        "selfdestruct": "always",
+        "shortDesc": "Hits adjacent Pokemon. The user faints.",
+        "target": "normal",
+        "type": "Normal",
+        "zMovePower": 200
+    },
+    "fireblast": {
+        "accuracy": 85,
+        "basePower": 110,
+        "category": "Special",
+        "contestType": "Beautiful",
+        "desc": "Has a 30% chance to burn the target.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "fireblast",
+        "inherit": true,
+        "isViable": true,
+        "name": "Fire Blast",
+        "num": 126,
+        "pp": 5,
+        "priority": 0,
+        "secondary": {
+            "chance": 30,
+            "status": "brn"
+        },
+        "shortDesc": "30% chance to burn the target.",
+        "target": "normal",
+        "type": "Fire",
+        "zMovePower": 185
+    },
+    "flamethrower": {
+        "accuracy": 100,
+        "basePower": 90,
+        "category": "Special",
+        "contestType": "Beautiful",
+        "desc": "Has a 10% chance to burn the target.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "flamethrower",
+        "isViable": true,
+        "name": "Flamethrower",
+        "num": 53,
+        "pp": 15,
+        "priority": 0,
+        "secondary": {
+            "chance": 10,
+            "status": "brn"
+        },
+        "shortDesc": "10% chance to burn the target.",
+        "target": "normal",
+        "type": "Fire",
+        "zMovePower": 175
+    },
+    "glare": {
+        "accuracy": 100,
+        "basePower": 0,
+        "category": "Status",
+        "contestType": "Tough",
+        "desc": "Paralyzes the target.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1,
+            "reflectable": 1
+        },
+        "id": "glare",
+        "ignoreImmunity": true,
+        "inherit": true,
+        "isViable": true,
+        "name": "Glare",
+        "num": 137,
+        "pp": 30,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Paralyzes the target.",
+        "status": "par",
+        "target": "normal",
+        "type": "Normal",
+        "zMoveBoost": {
+            "spd": 1
+        }
+    },
+    "growth": {
+        "accuracy": true,
+        "basePower": 0,
+        "boosts": {
+            "spa": 1,
+            "spd": 1
+        },
+        "category": "Status",
+        "contestType": "Beautiful",
+        "desc": "Raises the user's Special by 1 stage.",
+        "flags": {
+            "snatch": 1
+        },
+        "id": "growth",
+        "inherit": true,
+        "name": "Growth",
+        "num": 74,
+        "pp": 20,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Raises the user's Special by 1.",
+        "target": "self",
+        "type": "Normal",
+        "zMoveBoost": {
+            "spa": 1
+        }
+    },
+    "harden": {
+        "accuracy": true,
+        "basePower": 0,
+        "boosts": {
+            "def": 1
+        },
+        "category": "Status",
+        "contestType": "Tough",
+        "desc": "Raises the user's Defense by 1 stage.",
+        "flags": {
+            "snatch": 1
+        },
+        "id": "harden",
+        "name": "Harden",
+        "num": 106,
+        "pp": 30,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Raises the user's Defense by 1.",
+        "target": "self",
+        "type": "Normal",
+        "zMoveBoost": {
+            "def": 1
+        }
+    },
+    "highjumpkick": {
+        "accuracy": 90,
+        "basePower": 130,
+        "category": "Physical",
+        "contestType": "Cool",
+        "desc": "If this attack misses the target, the user takes 1 HP of crash damage. If the user has a substitute, the crash damage is dealt to the target's substitute if it has one, otherwise no crash damage is dealt.",
+        "flags": {
+            "contact": 1,
+            "gravity": 1,
+            "mirror": 1,
+            "protect": 1
+        },
+        "hasCustomRecoil": true,
+        "id": "highjumpkick",
+        "inherit": true,
+        "isViable": true,
+        "name": "High Jump Kick",
+        "num": 136,
+        "pp": 10,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "User takes 1 HP of damage if it misses.",
+        "target": "normal",
+        "type": "Fighting",
+        "zMovePower": 195
+    },
+    "hydropump": {
+        "accuracy": 80,
+        "basePower": 110,
+        "category": "Special",
+        "contestType": "Beautiful",
+        "flags": {
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "hydropump",
+        "isViable": true,
+        "name": "Hydro Pump",
+        "num": 56,
+        "pp": 5,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "No additional effect.",
+        "target": "normal",
+        "type": "Water",
+        "zMovePower": 185
+    },
+    "hyperbeam": {
+        "accuracy": 90,
+        "basePower": 150,
+        "category": "Special",
+        "contestType": "Cool",
+        "desc": "If this move is successful, the user must recharge on the following turn and cannot select a move, unless the target or its substitute was knocked out by this move.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1,
+            "recharge": 1
+        },
+        "id": "hyperbeam",
+        "inherit": true,
+        "name": "Hyper Beam",
+        "num": 63,
+        "pp": 5,
+        "priority": 0,
+        "secondary": null,
+        "self": {
+            "volatileStatus": "mustrecharge"
+        },
+        "shortDesc": "Can't move next turn if target or sub is not KOed.",
+        "target": "normal",
+        "type": "Normal",
+        "zMovePower": 200
+    },
+    "hypnosis": {
+        "accuracy": 60,
+        "basePower": 0,
+        "category": "Status",
+        "contestType": "Clever",
+        "flags": {
+            "mirror": 1,
+            "protect": 1,
+            "reflectable": 1
+        },
+        "id": "hypnosis",
+        "name": "Hypnosis",
+        "num": 95,
+        "pp": 20,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Causes the target to fall asleep.",
+        "status": "slp",
+        "target": "normal",
+        "type": "Psychic",
+        "zMoveBoost": {
+            "spe": 1
+        }
+    },
+    "icebeam": {
+        "accuracy": 100,
+        "basePower": 90,
+        "category": "Special",
+        "contestType": "Beautiful",
+        "desc": "Has a 10% chance to freeze the target.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "icebeam",
+        "isViable": true,
+        "name": "Ice Beam",
+        "num": 58,
+        "pp": 10,
+        "priority": 0,
+        "secondary": {
+            "chance": 10,
+            "status": "frz"
+        },
+        "shortDesc": "10% chance to freeze the target.",
+        "target": "normal",
+        "type": "Ice",
+        "zMovePower": 175
+    },
+    "leer": {
+        "accuracy": 100,
+        "basePower": 0,
+        "boosts": {
+            "def": -1
+        },
+        "category": "Status",
+        "contestType": "Cool",
+        "desc": "Lowers the target's Defense by 1 stage.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1,
+            "reflectable": 1
+        },
+        "id": "leer",
+        "name": "Leer",
+        "num": 43,
+        "pp": 30,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Lowers the foe(s) Defense by 1.",
+        "target": "allAdjacentFoes",
+        "type": "Normal",
+        "zMoveBoost": {
+            "atk": 1
+        }
+    },
+    "lovelykiss": {
+        "accuracy": 75,
+        "basePower": 0,
+        "category": "Status",
+        "contestType": "Beautiful",
+        "flags": {
+            "mirror": 1,
+            "protect": 1,
+            "reflectable": 1
+        },
+        "id": "lovelykiss",
+        "isViable": true,
+        "name": "Lovely Kiss",
+        "num": 142,
+        "pp": 10,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Causes the target to fall asleep.",
+        "status": "slp",
+        "target": "normal",
+        "type": "Normal",
+        "zMoveBoost": {
+            "spe": 1
+        }
+    },
+    "meditate": {
+        "accuracy": true,
+        "basePower": 0,
+        "boosts": {
+            "atk": 1
+        },
+        "category": "Status",
+        "contestType": "Beautiful",
+        "desc": "Raises the user's Attack by 1 stage.",
+        "flags": {
+            "snatch": 1
+        },
+        "id": "meditate",
+        "name": "Meditate",
+        "num": 96,
+        "pp": 40,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Raises the user's Attack by 1.",
+        "target": "self",
+        "type": "Psychic",
+        "zMoveBoost": {
+            "atk": 1
+        }
+    },
+    "megadrain": {
+        "accuracy": 100,
+        "basePower": 40,
+        "category": "Special",
+        "contestType": "Clever",
+        "desc": "The user recovers 1/2 the HP lost by the target, rounded half up. If Big Root is held by the user, the HP recovered is 1.3x normal, rounded half down.",
+        "drain": [
+            1,
+            2
+        ],
+        "flags": {
+            "heal": 1,
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "megadrain",
+        "name": "Mega Drain",
+        "num": 72,
+        "pp": 15,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "User recovers 50% of the damage dealt.",
+        "target": "normal",
+        "type": "Grass",
+        "zMovePower": 120
+    },
+    "megakick": {
+        "accuracy": 75,
+        "basePower": 120,
+        "category": "Physical",
+        "contestType": "Cool",
+        "flags": {
+            "contact": 1,
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "megakick",
+        "name": "Mega Kick",
+        "num": 25,
+        "pp": 5,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "No additional effect.",
+        "target": "normal",
+        "type": "Normal",
+        "zMovePower": 190
+    },
+    "mimic": {
+        "accuracy": true,
+        "basePower": 0,
+        "category": "Status",
+        "contestType": "Cute",
+        "desc": "While the user remains active, this move is replaced by a random move known by the target, even if the user already knows that move. The copied move keeps the remaining PP for this move, regardless of the copied move's maximum PP. Whenever one PP is used for a copied move, one PP is used for this move.",
+        "flags": {
+            "authentic": 1,
+            "mystery": 1,
+            "protect": 1
+        },
+        "id": "mimic",
+        "inherit": true,
+        "name": "Mimic",
+        "num": 102,
+        "pp": 10,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Random move known by the target replaces this.",
+        "target": "normal",
+        "type": "Normal",
+        "zMoveBoost": {
+            "accuracy": 1
+        }
+    },
+    "mirrormove": {
+        "accuracy": true,
+        "basePower": 0,
+        "category": "Status",
+        "contestType": "Clever",
+        "desc": "The user uses the last move used by the target. Fails if the target has not made a move, or if the last move used was Mirror Move.",
+        "flags": {},
+        "id": "mirrormove",
+        "inherit": true,
+        "name": "Mirror Move",
+        "num": 119,
+        "pp": 20,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "User uses the target's last used move against it.",
+        "target": "normal",
+        "type": "Flying",
+        "zMoveBoost": {
+            "atk": 2
+        }
+    },
+    "nightshade": {
+        "accuracy": 100,
+        "basePower": 1,
+        "category": "Special",
+        "contestType": "Clever",
+        "damage": "level",
+        "desc": "Deals damage to the target equal to the user's level. This move ignores type immunity.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "nightshade",
+        "ignoreImmunity": true,
+        "inherit": true,
+        "isViable": true,
+        "name": "Night Shade",
+        "num": 101,
+        "pp": 15,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Damage = user's level. Can hit Normal types.",
+        "target": "normal",
+        "type": "Ghost",
+        "zMovePower": 100
+    },
+    "pinmissile": {
+        "accuracy": 95,
+        "basePower": 25,
+        "category": "Physical",
+        "contestType": "Cool",
+        "desc": "Hits two to five times. Has a 3/8 chance to hit two or three times, and a 1/8 chance to hit four or five times. Damage is calculated once for the first hit and used for every hit. If one of the hits breaks the target's substitute, the move ends.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "pinmissile",
+        "inherit": true,
+        "multihit": [
+            2,
+            5
+        ],
+        "name": "Pin Missile",
+        "num": 42,
+        "pp": 20,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Hits 2-5 times in one turn.",
+        "target": "normal",
+        "type": "Bug",
+        "zMovePower": 140
+    },
+    "poisonsting": {
+        "accuracy": 100,
+        "basePower": 15,
+        "category": "Physical",
+        "contestType": "Clever",
+        "desc": "Has a 20% chance to poison the target.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "poisonsting",
+        "inherit": true,
+        "name": "Poison Sting",
+        "num": 40,
+        "pp": 35,
+        "priority": 0,
+        "secondary": {
+            "chance": 20,
+            "status": "psn"
+        },
+        "shortDesc": "20% chance to poison the target.",
+        "target": "normal",
+        "type": "Poison",
+        "zMovePower": 100
+    },
+    "psychic": {
+        "accuracy": 100,
+        "basePower": 90,
+        "category": "Special",
+        "contestType": "Clever",
+        "desc": "Has a 33% chance to lower the target's Special by 1 stage.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "psychic",
+        "inherit": true,
+        "isViable": true,
+        "name": "Psychic",
+        "num": 94,
+        "pp": 10,
+        "priority": 0,
+        "secondary": {
+            "boosts": {
+                "spa": -1,
+                "spd": -1
+            },
+            "chance": 33
+        },
+        "shortDesc": "33% chance to lower the target's Special by 1.",
+        "target": "normal",
+        "type": "Psychic",
+        "zMovePower": 175
+    },
+    "psywave": {
+        "accuracy": 100,
+        "basePower": 1,
+        "category": "Special",
+        "contestType": "Clever",
+        "desc": "Deals damage to the target equal to (user's level) * (X + 50) / 100, where X is a random number from 0 to 100, rounded down, but not less than 1 HP.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "psywave",
+        "inherit": true,
+        "name": "Psywave",
+        "num": 149,
+        "pp": 15,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Random damage equal to 0.5x-1.5x user's level.",
+        "target": "normal",
+        "type": "Psychic",
+        "zMovePower": 100
+    },
+    "quickattack": {
+        "accuracy": 100,
+        "basePower": 40,
+        "category": "Physical",
+        "contestType": "Cool",
+        "desc": "No additional effect.",
+        "flags": {
+            "contact": 1,
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "quickattack",
+        "isViable": true,
+        "name": "Quick Attack",
+        "num": 98,
+        "pp": 30,
+        "priority": 1,
+        "secondary": null,
+        "shortDesc": "Usually goes first.",
+        "target": "normal",
+        "type": "Normal",
+        "zMovePower": 100
+    },
+    "razorleaf": {
+        "accuracy": 95,
+        "basePower": 55,
+        "category": "Physical",
+        "contestType": "Cool",
+        "critRatio": 2,
+        "desc": "Has a higher chance for a critical hit.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "razorleaf",
+        "inherit": true,
+        "name": "Razor Leaf",
+        "num": 75,
+        "pp": 25,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "High critical hit ratio. Hits adjacent foes.",
+        "target": "normal",
+        "type": "Grass",
+        "zMovePower": 100
+    },
+    "recover": {
+        "accuracy": true,
+        "basePower": 0,
+        "category": "Status",
+        "contestType": "Clever",
+        "desc": "The user restores 1/2 of its maximum HP, rounded down. Fails if (user's maximum HP - user's current HP + 1) is divisible by 256.",
+        "flags": {
+            "heal": 1,
+            "snatch": 1
+        },
+        "heal": null,
+        "id": "recover",
+        "inherit": true,
+        "isViable": true,
+        "name": "Recover",
+        "num": 105,
+        "pp": 10,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Heals the user by 50% of its max HP.",
+        "target": "self",
+        "type": "Normal",
+        "zMoveEffect": "clearnegativeboost"
+    },
+    "reflect": {
+        "accuracy": true,
+        "basePower": 0,
+        "category": "Status",
+        "desc": "While the user remains active, its Defense is doubled when taking damage. Critical hits ignore this protection. This effect can be removed by Haze.",
+        "effect": {},
+        "flags": {},
+        "id": "reflect",
+        "isViable": true,
+        "name": "Reflect",
+        "num": 115,
+        "pp": 20,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "While active, the user's Defense is doubled.",
+        "target": "self",
+        "type": "Psychic",
+        "volatileStatus": "reflect"
+    },
+    "rest": {
+        "accuracy": true,
+        "basePower": 0,
+        "category": "Status",
+        "contestType": "Cute",
+        "desc": "The user falls asleep for the next two turns and restores all of its HP, curing itself of any major status condition in the process. This does not remove the user's stat penalty for burn or paralysis. Fails if the user has full HP.",
+        "flags": {
+            "heal": 1,
+            "snatch": 1
+        },
+        "id": "rest",
+        "inherit": true,
+        "isViable": true,
+        "name": "Rest",
+        "num": 156,
+        "pp": 10,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "User sleeps 2 turns and restores HP and status.",
+        "target": "self",
+        "type": "Psychic",
+        "zMoveEffect": "clearnegativeboost"
+    },
+    "rockslide": {
+        "accuracy": 90,
+        "basePower": 75,
+        "category": "Physical",
+        "contestType": "Tough",
+        "desc": "No additional effect.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "rockslide",
+        "inherit": true,
+        "isViable": true,
+        "name": "Rock Slide",
+        "num": 157,
+        "pp": 10,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "No additional effect.",
+        "target": "normal",
+        "type": "Rock",
+        "zMovePower": 140
+    },
+    "sandattack": {
+        "accuracy": 100,
+        "basePower": 0,
+        "boosts": {
+            "accuracy": -1
+        },
+        "category": "Status",
+        "contestType": "Cute",
+        "desc": "Lowers the target's accuracy by 1 stage.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1,
+            "reflectable": 1
+        },
+        "id": "sandattack",
+        "ignoreImmunity": true,
+        "inherit": true,
+        "name": "Sand Attack",
+        "num": 28,
+        "pp": 15,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Lowers the target's accuracy by 1.",
+        "target": "normal",
+        "type": "Normal",
+        "zMoveBoost": {
+            "evasion": 1
+        }
+    },
+    "screech": {
+        "accuracy": 85,
+        "basePower": 0,
+        "boosts": {
+            "def": -2
+        },
+        "category": "Status",
+        "contestType": "Clever",
+        "desc": "Lowers the target's Defense by 2 stages.",
+        "flags": {
+            "authentic": 1,
+            "mirror": 1,
+            "mystery": 1,
+            "protect": 1,
+            "reflectable": 1,
+            "sound": 1
+        },
+        "id": "screech",
+        "name": "Screech",
+        "num": 103,
+        "pp": 40,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Lowers the target's Defense by 2.",
+        "target": "normal",
+        "type": "Normal",
+        "zMoveBoost": {
+            "atk": 1
+        }
+    },
+    "seismictoss": {
+        "accuracy": 100,
+        "basePower": 1,
+        "category": "Physical",
+        "contestType": "Tough",
+        "damage": "level",
+        "desc": "Deals damage to the target equal to the user's level. This move ignores type immunity.",
+        "flags": {
+            "contact": 1,
+            "mirror": 1,
+            "nonsky": 1,
+            "protect": 1
+        },
+        "id": "seismictoss",
+        "ignoreImmunity": true,
+        "inherit": true,
+        "isViable": true,
+        "name": "Seismic Toss",
+        "num": 69,
+        "pp": 20,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Damage = user's level. Can hit Ghost types.",
+        "target": "normal",
+        "type": "Fighting",
+        "zMovePower": 100
+    },
+    "selfdestruct": {
+        "accuracy": 100,
+        "basePower": 130,
+        "category": "Physical",
+        "contestType": "Beautiful",
+        "desc": "The user faints after using this move, unless the target's substitute was broken by the damage. The target's Defense is halved during damage calculation.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "selfdestruct",
+        "inherit": true,
+        "name": "Self-Destruct",
+        "num": 120,
+        "pp": 5,
+        "priority": 0,
+        "secondary": null,
+        "selfdestruct": "always",
+        "shortDesc": "Hits adjacent Pokemon. The user faints.",
+        "target": "normal",
+        "type": "Normal",
+        "zMovePower": 200
+    },
+    "sing": {
+        "accuracy": 55,
+        "basePower": 0,
+        "category": "Status",
+        "contestType": "Cute",
+        "flags": {
+            "authentic": 1,
+            "mirror": 1,
+            "protect": 1,
+            "reflectable": 1,
+            "sound": 1
+        },
+        "id": "sing",
+        "name": "Sing",
+        "num": 47,
+        "pp": 15,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Causes the target to fall asleep.",
+        "status": "slp",
+        "target": "normal",
+        "type": "Normal",
+        "zMoveBoost": {
+            "spe": 1
+        }
+    },
+    "skyattack": {
+        "accuracy": 90,
+        "basePower": 140,
+        "category": "Physical",
+        "contestType": "Cool",
+        "critRatio": 2,
+        "desc": "Has a 30% chance to flinch the target and a higher chance for a critical hit. This attack charges on the first turn and executes on the second. If the user is holding a Power Herb, the move completes in one turn.",
+        "flags": {
+            "charge": 1,
+            "distance": 1,
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "skyattack",
+        "name": "Sky Attack",
+        "num": 143,
+        "pp": 5,
+        "priority": 0,
+        "secondary": {
+            "chance": 30,
+            "volatileStatus": "flinch"
+        },
+        "shortDesc": "Charges, then hits turn 2. 30% flinch. High crit.",
+        "target": "any",
+        "type": "Flying",
+        "zMovePower": 200
+    },
+    "slash": {
+        "accuracy": 100,
+        "basePower": 70,
+        "category": "Physical",
+        "contestType": "Cool",
+        "critRatio": 2,
+        "desc": "Has a higher chance for a critical hit.",
+        "flags": {
+            "contact": 1,
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "slash",
+        "inherit": true,
+        "name": "Slash",
+        "num": 163,
+        "pp": 20,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "High critical hit ratio.",
+        "target": "normal",
+        "type": "Normal",
+        "zMovePower": 140
+    },
+    "sleeppowder": {
+        "accuracy": 75,
+        "basePower": 0,
+        "category": "Status",
+        "contestType": "Clever",
+        "flags": {
+            "mirror": 1,
+            "powder": 1,
+            "protect": 1,
+            "reflectable": 1
+        },
+        "id": "sleeppowder",
+        "isViable": true,
+        "name": "Sleep Powder",
+        "num": 79,
+        "pp": 15,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Causes the target to fall asleep.",
+        "status": "slp",
+        "target": "normal",
+        "type": "Grass",
+        "zMoveBoost": {
+            "spe": 1
+        }
+    },
+    "sludge": {
+        "accuracy": 100,
+        "basePower": 65,
+        "category": "Special",
+        "contestType": "Tough",
+        "desc": "Has a 40% chance to poison the target.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "sludge",
+        "inherit": true,
+        "name": "Sludge",
+        "num": 124,
+        "pp": 20,
+        "priority": 0,
+        "secondary": {
+            "chance": 30,
+            "status": "psn"
+        },
+        "shortDesc": "40% chance to poison the target.",
+        "target": "normal",
+        "type": "Poison",
+        "zMovePower": 120
+    },
+    "smokescreen": {
+        "accuracy": 100,
+        "basePower": 0,
+        "boosts": {
+            "accuracy": -1
+        },
+        "category": "Status",
+        "contestType": "Clever",
+        "desc": "Lowers the target's accuracy by 1 stage.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1,
+            "reflectable": 1
+        },
+        "id": "smokescreen",
+        "name": "Smokescreen",
+        "num": 108,
+        "pp": 20,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Lowers the target's accuracy by 1.",
+        "target": "normal",
+        "type": "Normal",
+        "zMoveBoost": {
+            "evasion": 1
+        }
+    },
+    "softboiled": {
+        "accuracy": true,
+        "basePower": 0,
+        "category": "Status",
+        "contestType": "Cute",
+        "desc": "The user restores 1/2 of its maximum HP, rounded down. Fails if (user's maximum HP - user's current HP + 1) is divisible by 256.",
+        "flags": {
+            "heal": 1,
+            "snatch": 1
+        },
+        "heal": null,
+        "id": "softboiled",
+        "inherit": true,
+        "isViable": true,
+        "name": "Soft-Boiled",
+        "num": 135,
+        "pp": 10,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Heals the user by 50% of its max HP.",
+        "target": "self",
+        "type": "Normal",
+        "zMoveEffect": "clearnegativeboost"
+    },
+    "spore": {
+        "accuracy": 100,
+        "basePower": 0,
+        "category": "Status",
+        "contestType": "Beautiful",
+        "flags": {
+            "mirror": 1,
+            "powder": 1,
+            "protect": 1,
+            "reflectable": 1
+        },
+        "id": "spore",
+        "isViable": true,
+        "name": "Spore",
+        "num": 147,
+        "pp": 15,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Causes the target to fall asleep.",
+        "status": "slp",
+        "target": "normal",
+        "type": "Grass",
+        "zMoveEffect": "clearnegativeboost"
+    },
+    "stringshot": {
+        "accuracy": 95,
+        "basePower": 0,
+        "boosts": {
+            "spe": -2
+        },
+        "category": "Status",
+        "contestType": "Clever",
+        "desc": "Lowers the target's Speed by 2 stages.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1,
+            "reflectable": 1
+        },
+        "id": "stringshot",
+        "name": "String Shot",
+        "num": 81,
+        "pp": 40,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Lowers the foe(s) Speed by 2.",
+        "target": "allAdjacentFoes",
+        "type": "Bug",
+        "zMoveBoost": {
+            "spe": 1
+        }
+    },
+    "stunspore": {
+        "accuracy": 75,
+        "basePower": 0,
+        "category": "Status",
+        "contestType": "Clever",
+        "desc": "Paralyzes the target.",
+        "flags": {
+            "mirror": 1,
+            "powder": 1,
+            "protect": 1,
+            "reflectable": 1
+        },
+        "id": "stunspore",
+        "inherit": true,
+        "name": "Stun Spore",
+        "num": 78,
+        "pp": 30,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Paralyzes the target.",
+        "status": "par",
+        "target": "normal",
+        "type": "Grass",
+        "zMoveBoost": {
+            "spd": 1
+        }
+    },
+    "submission": {
+        "accuracy": 80,
+        "basePower": 80,
+        "category": "Physical",
+        "contestType": "Cool",
+        "desc": "If the target lost HP, the user takes recoil damage equal to 1/4 the HP lost by the target, rounded down, but not less than 1 HP. If this move breaks the target's substitute, the user does not take any recoil damage.",
+        "flags": {
+            "contact": 1,
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "submission",
+        "inherit": true,
+        "name": "Submission",
+        "num": 66,
+        "pp": 20,
+        "priority": 0,
+        "recoil": [
+            1,
+            4
+        ],
+        "secondary": null,
+        "shortDesc": "Has 1/4 recoil.",
+        "target": "normal",
+        "type": "Fighting",
+        "zMovePower": 160
+    },
+    "substitute": {
+        "accuracy": true,
+        "basePower": 0,
+        "category": "Status",
+        "desc": "The user takes 1/4 of its maximum HP, rounded down, and puts it into a substitute to take its place in battle. The substitute has 1 HP plus the HP used to create it, and is removed once enough damage is inflicted on it or 255 damage is inflicted at once, or if the user switches out or faints. Until the substitute is broken, it receives damage from all attacks made by the opposing Pokemon and shields the user from status effects and stat stage changes caused by the opponent, unless the effect is Disable, Leech Seed, sleep, primary paralysis, or secondary confusion and the user's substitute did not break. The user still takes normal damage from status effects while behind its substitute, unless the effect is confusion damage, which is applied to the opposing Pokemon's substitute instead. If the substitute breaks during a multi-hit attack, the attack ends. Fails if the user does not have enough HP remaining to create a substitute, or if it already has a substitute. The user will create a substitute and then faint if its current HP is exactly 1/4 of its maximum HP.",
+        "effect": {
+            "onTryHitPriority": -1
+        },
+        "id": "substitute",
+        "isViable": true,
+        "name": "Substitute",
+        "num": 164,
+        "pp": 10,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "User takes 1/4 its max HP to put in a Substitute.",
+        "target": "self",
+        "type": "Normal",
+        "volatileStatus": "Substitute"
+    },
+    "superfang": {
+        "accuracy": 90,
+        "basePower": 1,
+        "category": "Physical",
+        "contestType": "Tough",
+        "desc": "Deals damage to the target equal to half of its current HP, rounded down, but not less than 1 HP. This move ignores type immunity.",
+        "flags": {
+            "contact": 1,
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "superfang",
+        "ignoreImmunity": true,
+        "inherit": true,
+        "isViable": true,
+        "name": "Super Fang",
+        "num": 162,
+        "pp": 10,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Damage = 1/2 target's current HP. Hits Ghosts.",
+        "target": "normal",
+        "type": "Normal",
+        "zMovePower": 100
+    },
+    "surf": {
+        "accuracy": 100,
+        "basePower": 90,
+        "category": "Special",
+        "contestType": "Beautiful",
+        "desc": "Damage doubles if the target is using Dive.",
+        "flags": {
+            "mirror": 1,
+            "nonsky": 1,
+            "protect": 1
+        },
+        "id": "surf",
+        "isViable": true,
+        "name": "Surf",
+        "num": 57,
+        "pp": 15,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Hits adjacent Pokemon. Double damage on Dive.",
+        "target": "allAdjacent",
+        "type": "Water",
+        "zMovePower": 175
+    },
+    "swordsdance": {
+        "accuracy": true,
+        "basePower": 0,
+        "boosts": {
+            "atk": 2
+        },
+        "category": "Status",
+        "contestType": "Beautiful",
+        "desc": "Raises the user's Attack by 2 stages.",
+        "flags": {
+            "dance": 1,
+            "snatch": 1
+        },
+        "id": "swordsdance",
+        "isViable": true,
+        "name": "Swords Dance",
+        "num": 14,
+        "pp": 20,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Raises the user's Attack by 2.",
+        "target": "self",
+        "type": "Normal",
+        "zMoveEffect": "clearnegativeboost"
+    },
+    "tackle": {
+        "accuracy": 100,
+        "basePower": 40,
+        "category": "Physical",
+        "contestType": "Tough",
+        "flags": {
+            "contact": 1,
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "tackle",
+        "name": "Tackle",
+        "num": 33,
+        "pp": 35,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "No additional effect.",
+        "target": "normal",
+        "type": "Normal",
+        "zMovePower": 100
+    },
+    "tailwhip": {
+        "accuracy": 100,
+        "basePower": 0,
+        "boosts": {
+            "def": -1
+        },
+        "category": "Status",
+        "contestType": "Cute",
+        "desc": "Lowers the target's Defense by 1 stage.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1,
+            "reflectable": 1
+        },
+        "id": "tailwhip",
+        "name": "Tail Whip",
+        "num": 39,
+        "pp": 30,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Lowers the foe(s) Defense by 1.",
+        "target": "allAdjacentFoes",
+        "type": "Normal",
+        "zMoveBoost": {
+            "atk": 1
+        }
+    },
+    "thunder": {
+        "accuracy": 70,
+        "basePower": 110,
+        "category": "Special",
+        "contestType": "Cool",
+        "desc": "Has a 10% chance to paralyze the target.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "thunder",
+        "inherit": true,
+        "isViable": true,
+        "name": "Thunder",
+        "num": 87,
+        "pp": 10,
+        "priority": 0,
+        "secondary": {
+            "chance": 10,
+            "status": "par"
+        },
+        "shortDesc": "10% chance to paralyze the target.",
+        "target": "normal",
+        "type": "Electric",
+        "zMovePower": 185
+    },
+    "thunderbolt": {
+        "accuracy": 100,
+        "basePower": 90,
+        "category": "Special",
+        "contestType": "Cool",
+        "desc": "Has a 10% chance to paralyze the target.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "thunderbolt",
+        "isViable": true,
+        "name": "Thunderbolt",
+        "num": 85,
+        "pp": 15,
+        "priority": 0,
+        "secondary": {
+            "chance": 10,
+            "status": "par"
+        },
+        "shortDesc": "10% chance to paralyze the target.",
+        "target": "normal",
+        "type": "Electric",
+        "zMovePower": 175
+    },
+    "thunderwave": {
+        "accuracy": 100,
+        "basePower": 0,
+        "category": "Status",
+        "contestType": "Cool",
+        "desc": "Paralyzes the target. This move does not ignore type immunity.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1,
+            "reflectable": 1
+        },
+        "id": "thunderwave",
+        "ignoreImmunity": false,
+        "inherit": true,
+        "isViable": true,
+        "name": "Thunder Wave",
+        "num": 86,
+        "pp": 20,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Paralyzes the target.",
+        "status": "par",
+        "target": "normal",
+        "type": "Electric",
+        "zMoveBoost": {
+            "spd": 1
+        }
+    },
+    "toxic": {
+        "accuracy": 90,
+        "basePower": 0,
+        "category": "Status",
+        "contestType": "Clever",
+        "desc": "Badly poisons the target. If a Poison-type Pokemon uses this move, the target cannot avoid the attack, even if the target is in the middle of a two-turn move.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1,
+            "reflectable": 1
+        },
+        "id": "toxic",
+        "isViable": true,
+        "name": "Toxic",
+        "num": 92,
+        "pp": 10,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Badly poisons the target. Poison types can't miss.",
+        "status": "tox",
+        "target": "normal",
+        "type": "Poison",
+        "zMoveBoost": {
+            "def": 1
+        }
+    },
+    "transform": {
+        "accuracy": true,
+        "basePower": 0,
+        "category": "Status",
+        "contestType": "Clever",
+        "desc": "The user transforms into the target. The target's current stats, stat stages, types, moves, DVs, species, and sprite are copied. The user's level and HP remain the same and each copied move receives only 5 PP. This move can hit a target using Dig or Fly.",
+        "flags": {
+            "mystery": 1
+        },
+        "id": "transform",
+        "inherit": true,
+        "name": "Transform",
+        "num": 144,
+        "pp": 10,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "Copies target's stats, moves, types, and Ability.",
+        "target": "normal",
+        "type": "Normal",
+        "zMoveEffect": "heal"
+    },
+    "triattack": {
+        "accuracy": 100,
+        "basePower": 80,
+        "category": "Special",
+        "contestType": "Beautiful",
+        "desc": "No additional effect.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "triattack",
+        "inherit": true,
+        "isViable": true,
+        "name": "Tri Attack",
+        "num": 161,
+        "pp": 10,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "No additional effect.",
+        "target": "normal",
+        "type": "Normal",
+        "zMovePower": 160
+    },
+    "twineedle": {
+        "accuracy": 100,
+        "basePower": 25,
+        "category": "Physical",
+        "contestType": "Cool",
+        "desc": "Hits twice, with the second hit having a 20% chance to poison the target. If the first hit breaks the target's substitute, the move ends.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "twineedle",
+        "inherit": true,
+        "multihit": 2,
+        "name": "Twineedle",
+        "num": 41,
+        "pp": 20,
+        "priority": 0,
+        "secondary": {
+            "chance": 20,
+            "status": "psn"
+        },
+        "shortDesc": "Hits 2 times. Each hit has 20% chance to poison.",
+        "target": "normal",
+        "type": "Bug",
+        "zMovePower": 100
+    }
+}

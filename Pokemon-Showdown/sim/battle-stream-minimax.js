@@ -1,4 +1,4 @@
-/**
+/*
  * Battle Stream Example
  * Pokemon Showdown - http://pokemonshowdown.com/
  *
@@ -9,19 +9,14 @@
  */
  
 'use strict';
- var requestapi = require('sync-request');
+var requestapi = require('sync-request');
 
 const BattleStreams = require('./battle-stream');
-const DAMAGE_URI = "https://calc-api.herokuapp.com/calc-api"
 const Dex = require('./dex');
 const TypeChart = require('../data/typechart')
 const TYPES = TypeChart.BattleTypeChart
 const Pokedex = require('../data/pokedex')
 const POKEDEX = Pokedex.BattlePokedex
-const Moves = require('../data/moves')
-const MOVES = Moves.BattleMovedex
-const FormatsData = require('../data/formats-data.js')
-const FORMATSDATA = FormatsData.BattleFormatsData
 const SPECIAL_CHARS = /[%\s\.'-]/g
  
 var randomBotPokemon = ''
@@ -84,7 +79,7 @@ function calculateDamage(attacker, defender, moves) {
         } else {
             damage = ((((2 * level / 5 + 2) * attack / defense) / 50) + 2) * (sameType * attackType * randomNum)
         }
-        console.log("damage is ", damage)
+        //console.log("damage is ", damage)
         moveDamage.push([damage, move])
     }
  
@@ -484,34 +479,48 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
                     damageArray[damageCalculator[i][1]['id']] = damageCalculator[i][0]
                 }
 
+
                 let theirMoveNames = FORMATSDATA[getPokemonName(baselineBotPokemon)]['randomBattleMoves']
                 var theirMoves = new Array(theirMoveNames.length)
                 for (i = 0; i < theirMoveNames.length; i++) {
                     theirMoves[i] = MOVES[theirMoveNames[i]]
                     theirMoves[i].move = theirMoves[i].name
                 }
+                /*
                 let theirDamageCalculator = calculateDamage(baselineBotPokemon, minimaxBotPokemon, theirMoves)
 
                 var theirDamageArray = new Object()
                 for (i = 0; i < theirDamageCalculator.length; i++) {
                     theirDamageArray[theirDamageCalculator[i][1]['id']] = theirDamageCalculator[i][0]
                 }
+                */
                 
-                var ourHp = new Object()
+                var ourCondition= new Object()
+                var ourStats = new Object()
+                var ourMoves = new Object()
                 for (i = 0; i < request.side.pokemon.length; i++) {
                     var pokedexNum = POKEDEX[getPokemonName(request.side.pokemon[i])].num
-                    ourHp[pokedexNum] = request.side.pokemon[i].condition
+                    ourCondition[pokedexNum] = request.side.pokemon[i].condition
+                    ourStats[pokedexNum] = request.side.pokemon[i].stats
+                    ourMoves[pokedexNum] = request.side.pokemon[i].moves
                 }
+
+                var theirMoves = getPokemonName(baselineBotPokemon)
+
+
+                const choices = request.active.map((/** @type {AnyObject} */ pokemon, /** @type {number} */ i) => {
+
 
                 var ret = requestapi('POST', 'http://127.0.0.1:5000/getaction', {
                     json: {
                         currPokemon: POKEDEX[getPokemonName(minimaxBotPokemon)].num,
                         theirPokemon: POKEDEX[getPokemonName(baselineBotPokemon)].num,
-                        ourHp: ourHp,
+                        ourHp: ourCondition,
                         theirHp: baselineBotPokemon.condition,
-                        ourDmg: damageArray,
-                        theirDmg: theirDamageArray,
-                        fainted: fainted
+                        ourMoves: ourMoves,
+                        theirMoves: theirMoves,
+                        ourStats: ourStats,
+                        theirStats : baselineBotPokemon.stats
                     }
                 }); 
                 console.log("RET is", ret)
@@ -519,9 +528,9 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
 
                 //return `move ${move}${target}`;
             });
-
-            console.log("Choices are", choices)
-            this.choose(choices.join(`, `));
+                this.choose(choices.join(`, `));
+            })
+            console.log('\n')
         } else {
             // team preview?
             this.choose(`default`);
@@ -537,22 +546,39 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
 // for (var i = 0; i < 10; i++) {
 const streams = BattleStreams.getPlayerStreams(new BattleStreams.BattleStream());
  
+const gen = "gen1"
+const formid = gen + 'customgame'
+
 const spec = {
-    formatid: "gen7customgame",
+    formatid: formid,
 };
+
+
+const formatdatafile = '../mods/' + gen + "/formats-data.js"
+const FormatsData = require(formatdatafile)
+const FORMATSDATA = FormatsData.BattleFormatsData
+const movesdatafile = '../mods/' + gen + "/moves.js"
+const Moves = require(movesdatafile)
+const MOVES = Moves.BattleMovedex
+
+const battleType = gen + "randombattle"
+
 const p1spec = {
     name: "Baseline Bot",
-    team: Dex.packTeam(Dex.generateTeam('gen7randombattle')),
+    team: Dex.packTeam(Dex.generateTeam(battleType)),
 };
 const p2spec = {
     name: "Minimax Bot",
-    team: Dex.packTeam(Dex.generateTeam('gen7randombattle')),
+    team: Dex.packTeam(Dex.generateTeam(battleType)),
 };
- 
+
 // eslint-disable-next-line no-unused-vars
 const p1 = new BaselinePlayerAI(streams.p1);
 // eslint-disable-next-line no-unused-vars
 const p2 = new MinimaxPlayerAI(streams.p2);
+
+//console.log(Dex.fastUnpackTeam(p2spec.team))
+
  
 (async () => {
     let chunk;

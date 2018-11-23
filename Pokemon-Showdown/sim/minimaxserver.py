@@ -1,6 +1,6 @@
 from flask import Flask
 from flask import request
-#import sim_pokemon
+import pysim.sim_pokemon as sim
 import pokemon_minimax
 import json
 
@@ -64,6 +64,7 @@ def get_action():
           dataDict["theirStats"]
           )
   print("Enemy: ", enemy)
+
 
   #gameState = pokemon.GameState()
   agent = pokemon_minimax.MinimaxAgent()

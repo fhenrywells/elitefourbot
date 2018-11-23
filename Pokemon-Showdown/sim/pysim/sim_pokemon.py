@@ -8,6 +8,7 @@ viable_moves = {}
 
 
 class Pokemon:
+    poke_id = None
     attack = None
     defense = None
     sp_att = None  # sp_att is used as special for gen1 pokemon
@@ -21,7 +22,8 @@ class Pokemon:
     types = []
     status = None
 
-    def __init__(self, attack, defense, sp_att, sp_def, speed, maxhp, level, currhp, gen, moveids, types, status, ourTeam):
+    def __init__(self, poke_id, attack, defense, sp_att, sp_def, speed, maxhp, level, currhp, gen, moveids, types, status):
+        self.poke_id = poke_id
         self.attack = attack
         self.defense = defense
         self.sp_att = sp_att
@@ -33,6 +35,7 @@ class Pokemon:
         self.gen = gen
         self.moveids = moveids
         self.types = types
+        self.status = status
 
 
 def calcDamage(attackingPokemon, defendingPokemon, move):
@@ -224,12 +227,12 @@ class Move:
         return [(1.0, (copy.copy(ourPokemon), copy.copy(theirPokemon)))]
 
 
-with open('viablemovesdata.json') as f:
+with open('pysim/viablemovesdata.json') as f:
     move_data = json.loads(f.read())
     for id, data in move_data.items():
         viable_moves[id] = Move(data)
 
-with open('effectiveness.csv', 'rt') as csvfile:
+with open('pysim/effectiveness.csv', 'rt') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     for row in reader:
         move_effectiveness[(row[0], row[1])] = float(row[2])

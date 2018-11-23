@@ -173,6 +173,7 @@ class Move:
     secondary = None
     type = None
     boosts = None
+    status = None
     effect = None
     critratio = None
 
@@ -186,6 +187,7 @@ class Move:
         self.secondary = movedata['secondary']
         self.type = movedata['type'].lower()
         self.boosts = movedata.get('boosts', None)
+        self.status = movedata.get('status', None)
         if 'effect' in movedata.keys():
             self.effect = getattr(self, movedata['id'])
         else:
@@ -234,6 +236,10 @@ class Move:
                 theirPokemon_hit.spa_stage += self.boosts.get("spa", 0)
                 #theirPokemon_hit.sp_def += self.boosts.get("spd",0)
                 theirPokemon_hit.spe_stage += self.boosts.get("spe", 0)
+
+        # Apply status effect if there is one
+        if self.status is not None and theirPokemon_hit.status is None:
+            theirPokemon_hit.status = self.status
 
         # Then, apply secondary effects if they exist
         if self.secondary is not None:

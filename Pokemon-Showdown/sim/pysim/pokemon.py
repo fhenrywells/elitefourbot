@@ -27,6 +27,8 @@ class Pokemon:
     spd_stage = 0
     spe_stage = 0
 
+    _tox_stage = 1
+
     def __init__(self, attack, defense, sp_att, sp_def, speed, maxhp, level, currhp, gen, moveids, types):
         self._attack = attack
         self._defense = defense
@@ -49,19 +51,22 @@ class Pokemon:
         :return:
         '''
         if self.status == "brn":
-            pass
+            self.currhp -= 1.0/16.0
         elif self.status == "frz":
             pass
         elif self.status == "par":
             pass
         elif self.status == "psn":
-            pass
+            self.currhp -= 1.0/16.0
         elif self.status == "slp":
             pass
+        elif self.status == "tox":
+            self.currhp -= self._tox_stage/16.0
+            self._tox_stage += 1
 
     @property
     def attack(self):
-        return int(self._attack * self.stage_to_multiplier(self.atk_stage))
+        return int(self._attack * self.stage_to_multiplier(self.atk_stage) * (0.5 if self.status == "brn" else 1))
 
     @property
     def defense(self):
@@ -77,7 +82,7 @@ class Pokemon:
 
     @property
     def speed(self):
-        return int(self._speed * self.stage_to_multiplier(self.spe_stage))
+        return int(self._speed * self.stage_to_multiplier(self.spe_stage) * (0.25 if self.status == "par" else 1))
 
 
 def calcDamage(attackingPokemon, defendingPokemon, move):
@@ -85,22 +90,25 @@ def calcDamage(attackingPokemon, defendingPokemon, move):
         critchance = attackingPokemon.speed / 512 * 8 ** (move.critratio - 1)
         level = attackingPokemon.level * (1 * (
             1 - critchance) + 2 * critchance)  # Expected value for level, taking into account crit chance
+
+        effectivenesses = [move_effectiveness[(
+            move.type, def_type)] for def_type in defendingPokemon.types]
+        effectiveness = 1
+        for e in effectivenesses:
+            effectiveness = effectiveness * e
+        stab = 1.5 if move.type in attackingPokemon.types else 1
+        modifier = stab * effectiveness
+
         if move.category.lower() == "physical":
             a = attackingPokemon.attack
             d = defendingPokemon.defense
         else:
             a = attackingPokemon.sp_att
             d = defendingPokemon.sp_att
+
         basedmg = int(int(int(2 * level / 5 + 2) *
                           move.basePower * a / d) / 50 + 2)
-        effectivenesses = [move_effectiveness[(
-            move.type, def_type)] for def_type in defendingPokemon.types]
-        effectiveness = 1
-        for e in effectivenesses:
-            effectiveness = effectiveness * e
         random = list(range(217, 256))  # all random values
-        stab = 1.5 if move.type in attackingPokemon.types else 1
-        modifier = stab * effectiveness
         damage_values = [int(basedmg * modifier * r / 255.0) for r in random]
         return sum(damage_values) / len(damage_values)
     else:
@@ -180,7 +188,7 @@ class Move:
     def __init__(self, movedata):
         self.accuracy = movedata['accuracy']
         self.basePower = movedata['basePower']
-        self.category = movedata['category']
+        self.category = movedata['category'].lower()
         self.multihit = movedata.get('multihit', 1)
         self.pp = movedata['pp']
         self.priority = movedata['priority']
@@ -206,11 +214,19 @@ class Move:
         theirPokemon_hit = copy.copy(theirPokemon)
 
         states = []
+        # First, check for freeze/sleep and do nothing if we're frozen/sleeped
+        if ourPokemon_hit.status == "frz" or ourPokemon_hit.status == "slp":
+            return [(1.0, (ourPokemon_hit, theirPokemon_hit))]
         # Add missed state first, if accuracy is <100
         if self.accuracy is True:
             acc = 1.0
         else:
             acc = self.accuracy / 100.0
+
+        # Handle paralysis
+        if ourPokemon_hit.status == "par":
+            acc *= 0.25
+
         if acc != 1.0:
             states.append(
                 (1.0 - acc, (copy.copy(ourPokemon), copy.copy(theirPokemon))))
@@ -239,7 +255,14 @@ class Move:
 
         # Apply status effect if there is one
         if self.status is not None and theirPokemon_hit.status is None:
-            theirPokemon_hit.status = self.status
+            # Except fire-type moves can't burn fire-type pokemon
+            if not (self.status == "brn" and self.type == "fire" and "fire" in theirPokemon.types):
+                theirPokemon_hit.status = self.status
+                theirPokemon_hit._tox_stage = 1
+
+        # If their Pokemon is frozen and this is a physical fire-type move that can burn, unfreeze them
+        if theirPokemon_hit.status == "frz" and self.type == "fire" and self.status == "brn" and self.category == "physical":
+            theirPokemon_hit.status = None
 
         # Then, apply secondary effects if they exist
         if self.secondary is not None:
@@ -304,7 +327,9 @@ def main():
                     1, ['blizzard'], ['fire', 'water'])
 
     nextStates = performActions(
-        poke1, poke2, ("move", "blizzard"), ("move", "agility"))
+        poke1, poke2, ("move", "spore"), ("move", "agility"))
+    nextStates = performActions(
+        nextStates[0][1][0], nextStates[0][1][1], ("move", "blizzard"), ("move", "blizzard"))
     print(json.dumps(json.loads(jsonpickle.encode(nextStates)), indent=2))
 
 

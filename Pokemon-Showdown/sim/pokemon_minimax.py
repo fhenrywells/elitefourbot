@@ -1,4 +1,4 @@
-import pokemon
+#import pokemon
 
 class Agent:
 	"""

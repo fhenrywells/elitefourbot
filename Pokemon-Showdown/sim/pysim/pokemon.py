@@ -43,6 +43,22 @@ class Pokemon:
     def stage_to_multiplier(self, stage):
         return max(2, 2 + stage) / max(2, 2 - stage)
 
+    def handle_status(self):
+        '''
+        Handles status effects in place. Run on the Pokemon instance after performing actions.
+        :return:
+        '''
+        if self.status == "brn":
+            pass
+        elif self.status == "frz":
+            pass
+        elif self.status == "par":
+            pass
+        elif self.status == "psn":
+            pass
+        elif self.status == "slp":
+            pass
+
     @property
     def attack(self):
         return int(self._attack * self.stage_to_multiplier(self.atk_stage))
@@ -140,6 +156,10 @@ def performActions(p1_pokemon, p2_pokemon, p1action, p2action):
                     p1_move_results = p1move.effect(p1_poke, p2_poke)
                     ret = ret + [(prob * newprob, (p1_poke_final, p2_poke_final))
                                  for newprob, (p1_poke_final, p2_poke_final) in p1_move_results]
+
+    for prob, (poke_1, poke_2) in ret:
+        poke_1.handle_status()
+        poke_2.handle_status()
     return ret
 
 

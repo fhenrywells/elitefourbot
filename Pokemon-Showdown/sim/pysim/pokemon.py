@@ -86,7 +86,7 @@ def calcDamage(attackingPokemon, defendingPokemon, move):
         stab = 1.5 if move.type in attackingPokemon.types else 1
         modifier = stab * effectiveness
         damage_values = [int(basedmg * modifier * r / 255.0) for r in random]
-        return sum(damage_values) / len(random)
+        return sum(damage_values) / len(damage_values)
     else:
         raise (NotImplementedError(
             "Generation {} not implemented yet".format(attackingPokemon.gen)))

@@ -272,14 +272,14 @@ class Move:
             if "status" in self.secondary.keys() and theirPokemon_secondary.status is None:
                 theirPokemon_secondary.status = self.secondary['status']
             if "boosts" in self.secondary.keys():
-                theirPokemon_secondary.attack += self.secondary['boosts'].get(
+                theirPokemon_secondary.atk_stage += self.secondary['boosts'].get(
                     "atk", 0)
-                theirPokemon_secondary.defense += self.secondary['boosts'].get(
+                theirPokemon_secondary.def_stage += self.secondary['boosts'].get(
                     "def", 0)
-                theirPokemon_secondary.sp_att += self.secondary['boosts'].get(
+                theirPokemon_secondary.spa_stage += self.secondary['boosts'].get(
                     "spa", 0)
                 #theirPokemon_secondary.sp_def += self.secondary['boosts'].get("spd",0)
-                theirPokemon_secondary.speed += self.secondary['boosts'].get(
+                theirPokemon_secondary.spe_stage += self.secondary['boosts'].get(
                     "spe", 0)
             states.append(
                 (acc * secondary_acc, (ourPokemon_secondary, theirPokemon_secondary)))

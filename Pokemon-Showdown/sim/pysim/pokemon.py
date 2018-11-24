@@ -228,7 +228,7 @@ class Move:
         # Copy pokemon for the new state
         ourPokemon_hit = copy.copy(ourPokemon)
         theirPokemon_hit = copy.copy(theirPokemon)
-        '''print("orig Stats are ",
+        print("orig Stats are ",
                 "att: {}",
                 "def: {}",
                 "spa: {}",
@@ -238,7 +238,7 @@ class Move:
                     theirPokemon.defense,
                     theirPokemon.sp_att,
                     theirPokemon.sp_def,
-                    theirPokemon.speed))'''
+                    theirPokemon.speed))
         states = []
         #print("our pokemon hit is ", ourPokemon_hit)
         # First, check for freeze/sleep and do nothing if we're frozen/sleeped

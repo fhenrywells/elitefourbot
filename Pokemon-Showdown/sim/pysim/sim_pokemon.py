@@ -21,6 +21,7 @@ class Pokemon:
     moveids = []
     types = []
     status = None
+    stat_multipliers = None
 
     def __init__(self, poke_id, attack, defense, sp_att, sp_def, speed, maxhp, level, currhp, gen, moveids, types, status, stat_multipliers):
         self.poke_id = poke_id
@@ -70,16 +71,16 @@ def calcDamage(attackingPokemon, defendingPokemon, move):
 def getLegalTeamActions(curr_poke, team_poke):
     actions = []
     for move in team_poke[curr_poke].moveids:
-        actions.append("move " + move)
-    for poke in team_poke:
-        if poke is not curr_poke and poke.currhp > 0:
-            actions.append("switch " + poke.poke_id)
+        actions.append(("move", move))
+    for poke_id, pokemon in team_poke.items():
+        if poke_id != curr_poke and pokemon.currhp > 0:
+            actions.append(("switch", poke_id))
     return actions
 
 def getLegalEnemyActions(enemy_poke):
     actions = []
     for move in enemy_poke.moveids:
-        actions.append("move " move)
+        actions.append(("move", move))
     return actions
 
 def performActions(p1_pokemon, p2_pokemon, p1action, p2action, team):
@@ -279,10 +280,10 @@ def getScore(ourPokemon, enemyPokemon):
     score = teamScore - enemyScore
     return score
 
-def isWin(ourPokemon, enemyPokemon):
-    return enemyPokemon <= 0 
+def isWin(enemyPokemon):
+    return enemyPokemon.currhp <= 0 
 
-def isLose(ourPokemon, enemyPokemon):
+def isLose(ourPokemon):
     allFainted = True 
     for pokemon in ourPokemon.values():
         if pokemon.currhp > 0:

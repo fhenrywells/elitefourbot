@@ -1,8 +1,10 @@
+import json
+
 from flask import Flask
 from flask import request
-import pysim.sim_pokemon as sim
+
+import pysim.pokemon as sim
 import pokemon_minimax
-import json
 
 app = Flask(__name__)
 
@@ -17,13 +19,15 @@ def get_action():
   if len(theirHpStatus) == 2:
     theirHp = theirHpStatus[0].split("/")
     dataDict['theirHp'] = float(theirHp[0]) / float(theirHp[1])
-    dataDict['theirMaxHp'] = theirHp[1]
+    dataDict['theirMaxHp'] = int(theirHp[1])
     dataDict['theirStatus'] = theirHpStatus[1]
   else:
     theirHp = theirHpStatus[0].split("/")
     dataDict['theirHp'] = float(theirHp[0]) / float(theirHp[1])
-    dataDict['theirMaxHp'] = theirHp[1]
+    dataDict['theirMaxHp'] = int(theirHp[1])
     dataDict['theirStatus'] = "None"
+  if "Mime" in dataDict["theirDetails"]:
+    dataDict["theirDetails"].replace(" Mime", "Mime")
   theirLevelInfo = dataDict['theirDetails'].split(" ")
   dataDict["theirLevel"] = theirLevelInfo[1]
 
@@ -39,12 +43,12 @@ def get_action():
     if len(theirHpStatus) == 2:
       ourHp = ourHpStatus[0].split("/")
       dataDict['ourHp'][key] = float(ourHp[0]) / float(ourHp[1])
-      dataDict['ourMaxHp'][key] = ourHp[1]
+      dataDict['ourMaxHp'][key] = int(ourHp[1])
       dataDict['ourStatus'][key] = ourHpStatus[1]   
     else:
       ourHp = ourHpStatus[0].split("/")
       dataDict['ourHp'][key] = float(ourHp[0]) / float(ourHp[1])
-      dataDict['ourMaxHp'][key] = ourHp[1]
+      dataDict['ourMaxHp'][key] = int(ourHp[1])
       dataDict['ourStatus'][key] = "None"
     ourLevelInfo = dataDict['ourDetails'][key].split(" ")
     dataDict["ourLevel"][key] = ourLevelInfo[1]
@@ -64,6 +68,8 @@ def get_action():
     #print(dataDict['ourStatus'])
     ourBaseStats = list(dataDict['ourBaseStats'][p].values())
     ourStatMultiplier = {}
+    for i in range(len(dataDict["ourTypes"][p])):
+      dataDict["ourTypes"][p][i] = dataDict["ourTypes"][p][i].lower()
     for i in range(len(ourCurrStats)):
       ourStatMultiplier[i] = float(ourCurrStats[i])/float(ourBaseStats[i])
     pokemonTeam[p] = (
@@ -82,10 +88,12 @@ def get_action():
   theirCurrStats = list(dataDict["theirStats"].values())
   theirBaseStats = list(dataDict["theirBaseStats"][str(dataDict['theirPokemon'])].values())
   theirStatMultiplier = {}
+  for i in range(len(dataDict["theirTypes"])):
+      dataDict["theirTypes"][i] = dataDict["theirTypes"][i].lower()
   for i in range(len(theirCurrStats)):
     theirStatMultiplier[i] = float(theirCurrStats[i])/float(theirBaseStats[i])
 
-  print(pokemonTeam)
+  #print("Team: ",pokemonTeam)
   enemy = (
           dataDict['theirPokemon'],
           theirCurrStats,
@@ -93,11 +101,11 @@ def get_action():
           dataDict["theirLevel"],
           dataDict['theirHp'],
           list(dataDict['theirMoves']),
-          dataDict['ourTypes'],
+          dataDict['theirTypes'],
           dataDict["theirStatus"],
           theirStatMultiplier
           )
-  print(enemy)
+  #print("Enemy: ",enemy)
   team_poke = {} #dictionary containing our team's pokemon objects
   for p in pokemonTeam.keys():
     ally = pokemonTeam[p]
@@ -117,7 +125,7 @@ def get_action():
       ally[7], # status
       ally[8] # stat multiplier
     )
-
+    print("Ally: ", ally)
   enemy_poke = sim.Pokemon( #enemy pokemon object
     enemy[0],
     enemy[1][0], #att
@@ -134,7 +142,8 @@ def get_action():
     enemy[7], # status
     enemy[8] # stat multiplier
     )
-  curr_poke = dataDict["currPokemon"] #current pokemon 
+  print("Enemy: ", enemy)
+  curr_poke = str(dataDict["currPokemon"]) #current pokemon 
 
   agent = pokemon_minimax.MinimaxAgent() #can specify search depth here 
   action = agent.getAction(curr_poke=curr_poke, team_poke = team_poke, enemy_poke = enemy_poke)

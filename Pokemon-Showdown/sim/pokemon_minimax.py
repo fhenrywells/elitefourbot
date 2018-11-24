@@ -1,4 +1,7 @@
-import pysim.sim_pokemon as sim
+import itertools 
+
+
+import pysim.pokemon as sim
 
 class Agent:
 	"""
@@ -30,54 +33,82 @@ class MultiAgentSearchAgent(Agent):
 class MinimaxAgent(MultiAgentSearchAgent):
 	def getAction(self, curr_poke, team_poke, enemy_poke,):
 		def recurse(curr_poke, team_poke, enemy_poke, depth, player):
-			if sim.isWin():
-				return [], sim.getScore(self.index)
-			if sim.isLose():
-				return [], sim.getScore(self.index)
-			if len(legalMoves) == 0:
-				return [], sim.getScore(self.index)
-
+			if sim.isWin(enemy_poke):
+				return [], sim.getScore(team_poke, enemy_poke)
+			if sim.isLose(team_poke):
+				return [], sim.getScore(team_poke, enemy_poke)
 			legalPlayerMoves = sim.getLegalTeamActions(curr_poke, team_poke)
 			legalEnemyMoves = sim.getLegalEnemyActions(enemy_poke)
+			if len(legalPlayerMoves) == 0 or len(legalEnemyMoves) == 0:
+				return [], sim.getScore(team_poke, enemy_poke)
 			if depth == 0:
-				return [], sim.getScore(self.index)
+				return [], sim.getScore(team_poke, enemy_poke)
+			
 			if player:
 				nextPlayer = 0
 			else:
 				depth -=1
 				nextPlayer = 1
 			candidates = []
-			for p1action in legalPlayerMoves:
-				for p2action in legalEnemyMoves:
-					candidates.append((action, recurse(sim.performActions(
-						team_poke[curr_poke],
-						enemy_poke,
-						p1action,
-						p2action,
-						team_poke
-						),
-					depth,
-					nextPlayer
-					)))
+
+			action_pairs = list(
+				itertools.product(legalPlayerMoves, legalEnemyMoves)) \
+			+ list(itertools.product(legalEnemyMoves, legalPlayerMoves))
+
+			'''action_pairs = list(list(zip(r, p)) for (r, p) in zip(
+				repeat(legalPlayerMoves),
+				permutations(legalEnemyMoves)))
+			'''
+			print("enemy attack is ", enemy_poke.attack)
+			print("enemy defense is ", enemy_poke.defense)
+			print("our attack is ", team_poke[curr_poke].attack)
+			print("our defense is ", team_poke[curr_poke].defense)
+
+			for pair in action_pairs:
+				p1action = pair[0]
+				p2action = pair[1]
+				#print("p1action is {}, p2 action is {}".format(p1action, p2action))
+				results = sim.performActions(
+					team_poke[curr_poke],
+					enemy_poke,
+					p1action,
+					p2action,
+					team_poke
+					)
+
+				#print(results)
+				#for result in results:
+				#	score = result[0]*recurse(result[1][0],result[1][1])
+				'''candidates.append((pair, recurse(sim.performActions(
+					team_poke[curr_poke],
+					enemy_poke,
+					p1action,
+					p2action,
+					team_poke
+					),
+				depth,
+				nextPlayer
+				)))
+				'''
 				if player == 0:
 					threshold = float('-inf')
 					for candidate in candidates:
 						if candidate[1] > threshold:
 							threshold = candidate[1] #score
-							action = candidate[0] #
+							action_pair = candidate[0] 
 				else: #enemy
 					threshold = float('+inf')
 					for candidate in candidates:
 						if candidate[1] < threshold:
 							threshold = candidate[1]
-							action = candidate[0]
-			return (action, threshold)
+							action_pair = candidate[0]
+			return (action_pair, threshold)
 		depth = self.depth
 		player = self.index
 		action, value = recurse(curr_poke, team_poke, enemy_poke, depth, player)
 		index = 1
 		print("action produced")
-		#for key in pokemon.ourDmg.keys():
+		for key in pokemon.ourDmg.keys():
 			#print(action)
 			print("key is {}, action is {}".format(key,action))
 			if str(key) == str(action):

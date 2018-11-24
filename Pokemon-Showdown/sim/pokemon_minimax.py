@@ -1,5 +1,5 @@
 import itertools 
-
+import copy
 
 import pysim.pokemon as sim
 
@@ -68,6 +68,9 @@ class MinimaxAgent(MultiAgentSearchAgent):
 				print(results)
 
 				for result in results:
+					new_team_poke = copy.deepcopy(team_poke)
+					new_team_poke[pair[0][1].poke_id if pair[0][0] == "switch" else curr_poke] = result[1][0]
+					print(new_team_poke)
 					score = result[0] * recurse(result[1][0], result[1][1], depth, nextPlayer)
 
 					if player == 0:

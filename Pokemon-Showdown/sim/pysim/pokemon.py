@@ -31,7 +31,7 @@ class Pokemon:
     #_tox_stage = 1
 
     def __init__(self, poke_id, attack, defense, sp_att, sp_def, speed, maxhp, level, currhp, gen, moveids, types, status, stat_multipliers):
-        self.poke_id = poke_id 
+        self.poke_id = str(poke_id)
         self._attack = attack
         self._defense = defense
         self._sp_att = sp_att

@@ -26,6 +26,7 @@ def get_action():
     dataDict['theirHp'] = float(theirHp[0]) / float(theirHp[1])
     dataDict['theirMaxHp'] = int(theirHp[1])
     dataDict['theirStatus'] = "None"
+  print(dataDict["theirDetails"])
   if "Mime" in dataDict["theirDetails"]:
     dataDict["theirDetails"].replace(" Mime", "Mime")
   theirLevelInfo = dataDict['theirDetails'].split(" ")
@@ -35,53 +36,55 @@ def get_action():
   dataDict['ourMaxHp'] = {}
   dataDict['ourStatus'] = {}
   dataDict['ourLevel'] = {}
-  for key in dataDict['ourHp'].keys():
-    ourHpStatus = dataDict['ourHp'][key].split(" ")
-    if dataDict['ourHp'][key] == "0 fnt":
-      dataDict['ourHp'][key] = 0.0
-      continue
-    if len(theirHpStatus) == 2:
-      ourHp = ourHpStatus[0].split("/")
-      dataDict['ourHp'][key] = float(ourHp[0]) / float(ourHp[1])
-      dataDict['ourMaxHp'][key] = int(ourHp[1])
-      dataDict['ourStatus'][key] = ourHpStatus[1]   
-    else:
-      ourHp = ourHpStatus[0].split("/")
-      dataDict['ourHp'][key] = float(ourHp[0]) / float(ourHp[1])
-      dataDict['ourMaxHp'][key] = int(ourHp[1])
-      dataDict['ourStatus'][key] = "None"
-    ourLevelInfo = dataDict['ourDetails'][key].split(" ")
-    dataDict["ourLevel"][key] = ourLevelInfo[1]
-    generation = dataDict['generation'][-1:]
+  print("our hp is ", dataDict['ourHp'])
+  for key, value in dataDict['ourHp'].items():
+    if value != "0 fnt":
+      ourHpStatus = dataDict['ourHp'][key].split(" ")
+      if dataDict['ourHp'][key] == "0 fnt":
+        dataDict['ourHp'][key] = 0.0
+        continue
+      if len(ourHpStatus) == 2:
+        ourHp = ourHpStatus[0].split("/")
+        dataDict['ourHp'][key] = float(ourHp[0]) / float(ourHp[1])
+        dataDict['ourMaxHp'][key] = int(ourHp[1])
+        dataDict['ourStatus'][key] = ourHpStatus[1]   
+      else:
+        ourHp = ourHpStatus[0].split("/")
+        dataDict['ourHp'][key] = float(ourHp[0]) / float(ourHp[1])
+        dataDict['ourMaxHp'][key] = int(ourHp[1])
+        dataDict['ourStatus'][key] = "None"
+      if "Mime" in dataDict["ourDetails"][key]:
+        dataDict["ourDetails"][key].replace(" Mime", "Mime")
+      ourLevelInfo = dataDict['ourDetails'][key].split(" ")
+      dataDict["ourLevel"][key] = ourLevelInfo[1]
+      generation = dataDict['generation'][-1:]
 
   #Temporary data containers for packing dataDict info
 
-
-
-
   pokemonTeam = {}
   print("max hp values: ",dataDict['ourMaxHp'])    
-  for p in dataDict['ourHp'].keys():
-    p = str(p)
-    ourCurrStats = list(dataDict['ourStats'][p].values())                      
-    #print(dataDict['ourStatus'])
-    ourBaseStats = list(dataDict['ourBaseStats'][p].values())
-    ourStatMultiplier = {}
-    for i in range(len(dataDict["ourTypes"][p])):
-      dataDict["ourTypes"][p][i] = dataDict["ourTypes"][p][i].lower()
-    for i in range(len(ourCurrStats)):
-      ourStatMultiplier[i] = float(ourCurrStats[i])/float(ourBaseStats[i])
-    pokemonTeam[p] = (
-                      dataDict["ourPokemon"][p],
-                      ourCurrStats,
-                      dataDict['ourMaxHp'][p],                      
-                      dataDict['ourLevel'][p],
-                      dataDict['ourHp'][p],
-                      dataDict['ourMoves'][p],
-                      dataDict['ourTypes'][p],
-                      dataDict['ourStatus'][p],
-                      ourStatMultiplier
-                      )
+  for key, value in dataDict['ourHp'].items():
+    if value != "0 fnt":
+      key = str(key)
+      ourCurrStats = list(dataDict['ourStats'][key].values())                      
+      #keyrint(dataDict['ourStatus'])
+      ourBaseStats = list(dataDict['ourBaseStats'][key].values())
+      ourStatMultiplier = {}
+      for i in range(len(dataDict["ourTypes"][key])):
+        dataDict["ourTypes"][key][i] = dataDict["ourTypes"][key][i].lower()
+      for i in range(len(ourCurrStats)):
+        ourStatMultiplier[i] = float(ourCurrStats[i])/float(ourBaseStats[i])
+      pokemonTeam[key] = (
+                        dataDict["ourPokemon"][key],
+                        ourCurrStats,
+                        dataDict['ourMaxHp'][key],                      
+                        dataDict['ourLevel'][key],
+                        dataDict['ourHp'][key],
+                        dataDict['ourMoves'][key],
+                        dataDict['ourTypes'][key],
+                        dataDict['ourStatus'][key],
+                        ourStatMultiplier
+                        )
   #print("Team: ", pokemonTeam)
 
   theirCurrStats = list(dataDict["theirStats"].values())

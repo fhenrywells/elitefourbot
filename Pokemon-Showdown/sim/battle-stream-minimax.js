@@ -171,7 +171,7 @@ class RandomPlayerAI extends BattleStreams.BattlePlayer {
                 chosen.push(target);
                 return `switch ${target}`;
             });
-            console.log("Choices are ", choices)
+            //console.log("Choices are ", choices)
             this.choose(choices.join(`, `));
         } else if (request.active) {
             randomBotPokemon = request.side.pokemon.filter((pokemon) => {
@@ -190,7 +190,7 @@ class RandomPlayerAI extends BattleStreams.BattlePlayer {
                 const target = targetable ? ` ${1 + Math.floor(Math.random() * 2)}` : ``;
                 return `move ${move}${target}`;
             });
-            console.log("Choices are ", choices)
+            //console.log("Choices are ", choices)
             this.choose(choices.join(`, `));
         } else {
             // team preview?
@@ -467,7 +467,7 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
                 })
                 // Damage calculated for each move
                 let damageCalculator = calculateDamage(minimaxBotPokemon, baselineBotPokemon, moves)
-                console.log("DAMAGE", damageCalculator)
+                //console.log("DAMAGE", damageCalculator)
 
                 let move = moves[moves.length > 1? Math.round(Math.random()): 0].index
                 const targetable = request.active.length > 1 && ['normal', 'any'].includes(pokemon.moves[move - 1].target);

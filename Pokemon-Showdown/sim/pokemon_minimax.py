@@ -50,19 +50,9 @@ class MinimaxAgent(MultiAgentSearchAgent):
 				depth -=1
 				nextPlayer = 1
 			candidates = []
-
 			action_pairs = list(
 				itertools.product(legalPlayerMoves, legalEnemyMoves)) \
 			+ list(itertools.product(legalEnemyMoves, legalPlayerMoves))
-
-			'''action_pairs = list(list(zip(r, p)) for (r, p) in zip(
-				repeat(legalPlayerMoves),
-				permutations(legalEnemyMoves)))
-			'''
-			print("enemy attack is ", enemy_poke.attack)
-			print("enemy defense is ", enemy_poke.defense)
-			print("our attack is ", team_poke[curr_poke].attack)
-			print("our defense is ", team_poke[curr_poke].defense)
 
 			for pair in action_pairs:
 				p1action = pair[0]
@@ -75,34 +65,24 @@ class MinimaxAgent(MultiAgentSearchAgent):
 					p2action,
 					team_poke
 					)
+				print(results)
 
-				#print(results)
-				#for result in results:
-				#	score = result[0]*recurse(result[1][0],result[1][1])
-				'''candidates.append((pair, recurse(sim.performActions(
-					team_poke[curr_poke],
-					enemy_poke,
-					p1action,
-					p2action,
-					team_poke
-					),
-				depth,
-				nextPlayer
-				)))
-				'''
-				if player == 0:
-					threshold = float('-inf')
-					for candidate in candidates:
-						if candidate[1] > threshold:
-							threshold = candidate[1] #score
-							action_pair = candidate[0] 
-				else: #enemy
-					threshold = float('+inf')
-					for candidate in candidates:
-						if candidate[1] < threshold:
-							threshold = candidate[1]
-							action_pair = candidate[0]
-			return (action_pair, threshold)
+				for result in results:
+					score = result[0] * recurse(result[1][0], result[1][1], depth, nextPlayer)
+
+					if player == 0:
+						threshold = float('-inf')
+						for candidate in candidates:
+							if candidate[1] > threshold:
+								threshold = candidate[1] #score
+								action_pair = pair
+					else: #enemy
+						threshold = float('+inf')
+						for candidate in candidates:
+							if candidate[1] < threshold:
+								threshold = candidate[1]
+								action_pair = pair
+					return (action_pair, threshold)
 		depth = self.depth
 		player = self.index
 		action, value = recurse(curr_poke, team_poke, enemy_poke, depth, player)

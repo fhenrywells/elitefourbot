@@ -149,8 +149,6 @@ def performActions(p1_pokemon, p2_pokemon, p1action, p2action, team_poke):
     if p1action[0] == "move" and p2action[0] == "move":
         p1move = viable_moves[p1action[1]]
         p2move = viable_moves[p2action[1]]
-        #print("p1move is ", p1move)
-        #print("p2move is ", p2move)
         # First, compare priorities
         if p1move.priority != p2move.priority:
             if p1move.priority > p2move.priority:

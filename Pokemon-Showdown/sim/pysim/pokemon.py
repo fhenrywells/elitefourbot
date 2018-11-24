@@ -5,7 +5,7 @@ import jsonpickle
 
 move_effectiveness = {}
 viable_moves = {}
-
+NUM_TEAM_MEMBERS = 6
 
 class Pokemon:
     _attack = None
@@ -131,7 +131,7 @@ def calcDamage(attackingPokemon, defendingPokemon, move):
             "Generation {} not implemented yet".format(attackingPokemon.gen)))
 
 
-def performActions(p1_pokemon, p2_pokemon, p1action, p2action, team_poke):
+def performActions(p1_pokemon, p2_pokemon, p1action, p2action):
     ret = []
     #print("p1_pokemon is {}, p2_pokemon is {}".format(p1_pokemon, p2_pokemon))
     # switch first
@@ -223,7 +223,7 @@ class Move:
         # Copy pokemon for the new state
         ourPokemon_hit = copy.copy(ourPokemon)
         theirPokemon_hit = copy.copy(theirPokemon)
-        print("orig Stats are ",
+        '''print("orig Stats are ",
                 "att: {}",
                 "def: {}",
                 "spa: {}",
@@ -234,6 +234,7 @@ class Move:
                     theirPokemon.sp_att,
                     theirPokemon.sp_def,
                     theirPokemon.speed))
+        '''
         states = []
         #print("our pokemon hit is ", ourPokemon_hit)
         # First, check for freeze/sleep and do nothing if we're frozen/sleeped
@@ -354,7 +355,9 @@ with open('pysim/effectiveness.csv', 'rt') as csvfile:
 
 def getLegalTeamActions(curr_poke, team_poke):
     actions = []
+    #print("curr poke unicorn is ", curr_poke)
     for move in team_poke[curr_poke].moveids:
+        #print("move is ", move)
         actions.append(("move", move))
     for poke_id, pokemon in team_poke.items():
         if poke_id != curr_poke and pokemon.currhp > 0:

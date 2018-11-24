@@ -59,9 +59,8 @@ def get_action():
 
 
 
-
-
   pokemonTeam = {}
+  print("max hp values: ",dataDict['ourMaxHp'])    
   for p in dataDict['ourHp'].keys():
     p = str(p)
     ourCurrStats = list(dataDict['ourStats'][p].values())                      
@@ -125,7 +124,7 @@ def get_action():
       ally[7], # status
       ally[8] # stat multiplier
     )
-    print("Ally: ", ally)
+    #print("Ally: ", ally)
   enemy_poke = sim.Pokemon( #enemy pokemon object
     enemy[0],
     enemy[1][0], #att
@@ -142,7 +141,7 @@ def get_action():
     enemy[7], # status
     enemy[8] # stat multiplier
     )
-  print("Enemy: ", enemy)
+  #print("Enemy: ", enemy)
   curr_poke = str(dataDict["currPokemon"]) #current pokemon 
 
   agent = pokemon_minimax.MinimaxAgent() #can specify search depth here 

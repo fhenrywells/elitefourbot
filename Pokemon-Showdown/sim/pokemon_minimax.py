@@ -25,7 +25,7 @@ class MultiAgentSearchAgent(Agent):
 	"""
 	"""
 
-	def __init__(self, depth = '3'):
+	def __init__(self, depth = '2'):
 		self.index = 0 
 		self.depth = int(depth)
 
@@ -39,21 +39,22 @@ class MinimaxAgent(MultiAgentSearchAgent):
 				return [], sim.getScore(team_poke, enemy_poke)
 			legalPlayerMoves = sim.getLegalTeamActions(curr_poke, team_poke)
 			legalEnemyMoves = sim.getLegalEnemyActions(enemy_poke)
+
+			print("depth is ", depth)
 			if len(legalPlayerMoves) == 0 or len(legalEnemyMoves) == 0:
 				return [], sim.getScore(team_poke, enemy_poke)
 			if depth == 0:
 				return [], sim.getScore(team_poke, enemy_poke)
-			
 			if player:
 				nextPlayer = 0
 			else:
-				depth -=1
+				depth -= 1
 				nextPlayer = 1
 			candidates = []
 			action_pairs = list(
 				itertools.product(legalPlayerMoves, legalEnemyMoves)) \
 			+ list(itertools.product(legalEnemyMoves, legalPlayerMoves))
-
+			action_pair = action_pairs[0]
 			for pair in action_pairs:
 				p1action = pair[0]
 				p2action = pair[1]
@@ -63,16 +64,15 @@ class MinimaxAgent(MultiAgentSearchAgent):
 					enemy_poke,
 					p1action,
 					p2action,
-					team_poke
 					)
-				print(results)
-
+				#print(results)
 				for result in results:
 					new_team_poke = copy.deepcopy(team_poke)
 					new_team_poke[pair[0][1].poke_id if pair[0][0] == "switch" else curr_poke] = result[1][0]
-					print(new_team_poke)
-					score = result[0] * recurse(result[1][0], result[1][1], depth, nextPlayer)
-
+					#print(new_team_poke)
+					rec = recurse(result[1][0].poke_id, new_team_poke, result[1][1], depth, nextPlayer)
+					#print("rec is ", rec)
+					score = result[0] * rec[1]
 					if player == 0:
 						threshold = float('-inf')
 						for candidate in candidates:
@@ -90,13 +90,13 @@ class MinimaxAgent(MultiAgentSearchAgent):
 		player = self.index
 		action, value = recurse(curr_poke, team_poke, enemy_poke, depth, player)
 		index = 1
-		print("action produced")
-		for key in pokemon.ourDmg.keys():
-			#print(action)
-			print("key is {}, action is {}".format(key,action))
-			if str(key) == str(action):
+		print("action produced: ", action)
+
+		for move in team_poke[curr_poke].moveids:
+			print(move)
+			if str(move) == str(action[0][1]):
 				return "move " + str(index)
-			index +=1
+				index += 1
 
 		#return action 
 		# END_YOUR_CODE

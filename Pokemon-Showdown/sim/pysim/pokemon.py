@@ -196,10 +196,7 @@ class Move:
         self.type = movedata['type'].lower()
         self.boosts = movedata.get('boosts', None)
         self.status = movedata.get('status', None)
-        if 'effect' in movedata.keys():
-            self.effect = getattr(self, movedata['id'])
-        else:
-            self.effect = self.defaultmove
+        self.effect = getattr(self, movedata['id'], self.defaultmove)
         self.critratio = movedata.get('critratio', 1)
 
     def defaultmove(self, ourPokemon, theirPokemon):

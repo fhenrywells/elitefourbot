@@ -362,6 +362,7 @@ def getLegalTeamActions(curr_poke, team_poke):
     for poke_id, pokemon in team_poke.items():
         if poke_id != curr_poke and pokemon.currhp > 0:
             actions.append(("switch", team_poke[poke_id]))
+    print("legal actions are ",actions)
     return actions
 
 def getLegalEnemyActions(enemy_poke):

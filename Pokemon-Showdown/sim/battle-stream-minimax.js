@@ -524,6 +524,16 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
                     ourDetails[pokedexNum] = request.side.pokemon[i].details
                     ourTypes[pokedexNum] = POKEDEX[getPokemonName(request.side.pokemon[i])].types
                     ourPokemon[pokedexNum] = pokedexNum
+                    if (pokedexNum == POKEDEX[getPokemonName(minimaxBotPokemon)].num){
+                        var moveList = new Array()
+                        console.log("moves are ", moves)
+                        for (var thisMove in moves) {
+                            if(thisMove.disabled == false) {
+                                moveList.push(thisMove.id)
+                            } 
+                        }
+                        ourMoves[pokedexNum] = moveList
+                    }
                 }
 
                 if (POKEDEX[getPokemonName(baselineBotPokemon)].num in theirBaseStats) {

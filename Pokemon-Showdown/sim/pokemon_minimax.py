@@ -54,7 +54,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
 			action_pairs = list(
 				itertools.product(legalPlayerMoves, legalEnemyMoves)) \
 			+ list(itertools.product(legalEnemyMoves, legalPlayerMoves))
-			action_pair = action_pairs[0]
+			#action_pair = action_pairs[0]
 			for pair in action_pairs:
 				p1action = pair[0]
 				p2action = pair[1]
@@ -66,37 +66,50 @@ class MinimaxAgent(MultiAgentSearchAgent):
 					p2action,
 					)
 				#print(results)
+				score = 0
+				print("results are ", results)
 				for result in results:
+
 					new_team_poke = copy.deepcopy(team_poke)
 					new_team_poke[pair[0][1].poke_id if pair[0][0] == "switch" else curr_poke] = result[1][0]
 					#print(new_team_poke)
 					rec = recurse(result[1][0].poke_id, new_team_poke, result[1][1], depth, nextPlayer)
 					#print("rec is ", rec)
-					score = result[0] * rec[1]
-					if player == 0:
-						threshold = float('-inf')
-						for candidate in candidates:
-							if candidate[1] > threshold:
-								threshold = candidate[1] #score
-								action_pair = pair
-					else: #enemy
-						threshold = float('+inf')
-						for candidate in candidates:
-							if candidate[1] < threshold:
-								threshold = candidate[1]
-								action_pair = pair
-					return (action_pair, threshold)
+					score += result[0] * rec[1]
+				candidates.append((pair, score))
+				print("candidates are ", candidates)
+				if player == 0:
+					threshold = float('-inf')
+					for candidate in candidates:
+						if candidate[1] > threshold:
+							threshold = candidate[1] #score
+							action_pair = candidate[0]
+				else: #enemy
+					threshold = float('+inf')
+					for candidate in candidates:
+						if candidate[1] < threshold:
+							threshold = candidate[1]
+							action_pair = candidate[0]
+			return (action_pair, threshold) #bug is around here, need to know when to return the value properly
+
+
 		depth = self.depth
 		player = self.index
+		print("player is ", player)
 		action, value = recurse(curr_poke, team_poke, enemy_poke, depth, player)
 		index = 1
 		print("action produced: ", action)
-
-		for move in team_poke[curr_poke].moveids:
-			print(move)
-			if str(move) == str(action[0][1]):
-				return "move " + str(index)
+		if type(action[0][1]) is str:
+			for move in team_poke[curr_poke].moveids:
+				print(move)
+				if str(move) == str(action[0][1]):
+					return ("move " + str(index))
 				index += 1
+		else:
+			print("Team poke is ", team_poke)
+			for poke in team_poke:
+				print("poke is ", poke)
+				if poke == action[0][1].poke_id:
+					return ("switch " + str(index))
 
-		#return action 
-		# END_YOUR_CODE
+

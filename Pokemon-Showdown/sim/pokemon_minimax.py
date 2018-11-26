@@ -33,6 +33,7 @@ class MultiAgentSearchAgent(Agent):
 class MinimaxAgent(MultiAgentSearchAgent):
 	def getAction(self, curr_poke, team_poke, enemy_poke,):
 		def recurse(curr_poke, team_poke, enemy_poke, depth, player):
+			print("player is minotaur ", player)
 			if sim.isWin(enemy_poke):
 				return [], sim.getScore(team_poke, enemy_poke)
 			if sim.isLose(team_poke):
@@ -52,9 +53,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
 				nextPlayer = 1
 			candidates = []
 			action_pairs = list(
-				itertools.product(legalPlayerMoves, legalEnemyMoves)) \
-			+ list(itertools.product(legalEnemyMoves, legalPlayerMoves))
-			#action_pair = action_pairs[0]
+				itertools.product(legalPlayerMoves, legalEnemyMoves)) 
 			for pair in action_pairs:
 				p1action = pair[0]
 				p2action = pair[1]
@@ -100,11 +99,13 @@ class MinimaxAgent(MultiAgentSearchAgent):
 		index = 1
 		print("action produced: ", action)
 		if type(action[0][1]) is str:
-			for move in team_poke[curr_poke].moveids:
-				print(move)
-				if str(move) == str(action[0][1]):
-					return ("move " + str(index))
-				index += 1
+			if player == 0:
+				for move in team_poke[curr_poke].moveids:
+					print(move)
+					if str(move) == str(action[0][1]):
+						print("do we get here")
+						return ("move " + str(index))
+					index += 1
 		else:
 			print("Team poke is ", team_poke)
 			for poke in team_poke:

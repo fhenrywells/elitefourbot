@@ -213,8 +213,6 @@ class BaselinePlayerAI extends BattleStreams.BattlePlayer {
             // wait request
             // do nothing
         } else if (request.forceSwitch) {
-            fainted++
-            console.log("FAINTED", fainted)
             // switch request
             const pokemon = request.side.pokemon;
             let chosen = /** @type {number[]} */ ([]);
@@ -516,6 +514,7 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
                 var ourTypes = new Object()
                 var ourPokemon = new Object()
 
+                //console.log("size of team is", request.side.pokemon.length)
                 for (i = 0; i < request.side.pokemon.length; i++) {
                     var pokedexNum = POKEDEX[getPokemonName(request.side.pokemon[i])].num
                     ourCondition[pokedexNum] = request.side.pokemon[i].condition
@@ -526,16 +525,17 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
                     ourPokemon[pokedexNum] = pokedexNum
                     if (pokedexNum == POKEDEX[getPokemonName(minimaxBotPokemon)].num){
                         var moveList = new Array()
-                        console.log("moves are ", moves)
-                        for (var thisMove in moves) {
-                            if(thisMove.disabled == false) {
-                                moveList.push(thisMove.id)
+                        //console.log("moves are ", moves)
+                        for (var j = 0; j < moves.length; j ++) {
+                            //console.log("move state is ", moves[j].disabled)
+                            if(moves[j].disabled == false) {
+                                moveList.push(moves[j].id)
                             } 
                         }
                         ourMoves[pokedexNum] = moveList
                     }
                 }
-
+                //console.log("our stats are ",ourStats) 
                 if (POKEDEX[getPokemonName(baselineBotPokemon)].num in theirBaseStats) {
                     console.log("seen this poke before")
                 } else {
@@ -549,7 +549,7 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
                 } //implement proper basestat module 
                 const choices = request.active.map((/** @type {AnyObject} */ pokemon, /** @type {number} */ i) => {
 
-
+                //console.log("our base stats are ",ourBaseStats) 
                 var ret = requestapi('POST', 'http://127.0.0.1:5000/getaction', {
                     json: {
                         generation: gen,

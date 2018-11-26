@@ -356,12 +356,15 @@ with open('pysim/effectiveness.csv', 'rt') as csvfile:
 def getLegalTeamActions(curr_poke, team_poke):
     actions = []
     #print("curr poke unicorn is ", curr_poke)
+    print("team is ", team_poke)
+    print("curr poke is ", curr_poke)
+    print("move array is ", team_poke[curr_poke].moveids)
     for move in team_poke[curr_poke].moveids:
-        #print("move is ", move)
+        print("move is ", move)
         actions.append(("move", move))
-    for poke_id, pokemon in team_poke.items():
-        if poke_id != curr_poke and pokemon.currhp > 0:
-            actions.append(("switch", team_poke[poke_id]))
+    #for poke_id, pokemon in team_poke.items():
+    #    if poke_id != curr_poke and pokemon.currhp > 0:
+    #        actions.append(("switch", team_poke[poke_id]))
     print("legal actions are ",actions)
     return actions
 

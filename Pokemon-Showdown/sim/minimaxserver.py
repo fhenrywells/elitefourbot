@@ -26,11 +26,11 @@ def get_action():
     dataDict['theirHp'] = float(theirHp[0]) / float(theirHp[1])
     dataDict['theirMaxHp'] = int(theirHp[1])
     dataDict['theirStatus'] = "None"
-  print(dataDict["theirDetails"])
+  print("Their details are", dataDict["theirDetails"])
   if "Mime" in dataDict["theirDetails"]:
     dataDict["theirDetails"].replace(" Mime", "Mime")
   theirLevelInfo = dataDict['theirDetails'].split(" ")
-  dataDict["theirLevel"] = theirLevelInfo[1]
+  dataDict["theirLevel"] = theirLevelInfo[-1]
 
   #Our Team Info
   dataDict['ourMaxHp'] = {}
@@ -53,6 +53,7 @@ def get_action():
         dataDict['ourHp'][key] = float(ourHp[0]) / float(ourHp[1])
         dataDict['ourMaxHp'][key] = int(ourHp[1])
         dataDict['ourStatus'][key] = "None"
+      print("Our details are", dataDict["ourDetails"][key])
       if "Mime" in dataDict["ourDetails"][key]:
         dataDict["ourDetails"][key].replace(" Mime", "Mime")
       ourLevelInfo = dataDict['ourDetails'][key].split(" ")
@@ -62,12 +63,15 @@ def get_action():
   #Temporary data containers for packing dataDict info
 
   pokemonTeam = {}
-  print("max hp values: ",dataDict['ourMaxHp'])    
+  #print("base stats are ", dataDict['ourBaseStats'])
+  #print("max hp values: ",dataDict['ourMaxHp'])    
   for key, value in dataDict['ourHp'].items():
     if value != "0 fnt":
+      print("max hp values: ",dataDict['ourMaxHp'])    
       key = str(key)
       ourCurrStats = list(dataDict['ourStats'][key].values())                      
       #keyrint(dataDict['ourStatus'])
+      print("base stats are ", dataDict['ourBaseStats'])
       ourBaseStats = list(dataDict['ourBaseStats'][key].values())
       ourStatMultiplier = {}
       for i in range(len(dataDict["ourTypes"][key])):

@@ -1,7 +1,14 @@
 import itertools 
 import copy
+from collections import defaultdict
+import json
+import jsonpickle
 
 import pysim.pokemon_simple as sim
+
+
+
+states = defaultdict(list)
 
 class Agent:
 	"""
@@ -33,19 +40,13 @@ class MultiAgentSearchAgent(Agent):
 class MinimaxAgent(MultiAgentSearchAgent):
 	def getAction(self, curr_poke, team_poke, enemy_poke,):
 		def recurse(curr_poke, team_poke, enemy_poke, depth, player):
+			global states
 			#print("player is minotaur ", player)
-			if sim.isWin(enemy_poke):
-				return [], sim.getScore(team_poke, enemy_poke)
-			if sim.isLose(team_poke):
+			if sim.isWin(enemy_poke) or sim.isLose(team_poke) or depth == 0:
 				return [], sim.getScore(team_poke, enemy_poke)
 			legalPlayerMoves = sim.getLegalTeamActions(curr_poke, team_poke)
 			legalEnemyMoves = sim.getLegalEnemyActions(enemy_poke)
 
-			#print("depth is ", depth)
-			if len(legalPlayerMoves) == 0 or len(legalEnemyMoves) == 0:
-				return [], sim.getScore(team_poke, enemy_poke)
-			if depth == 0:
-				return [], sim.getScore(team_poke, enemy_poke)
 			if player:
 				nextPlayer = 0
 			else:
@@ -65,16 +66,26 @@ class MinimaxAgent(MultiAgentSearchAgent):
 					p2action,
 					)
 				#print(results)
+				candidate = results[0]
+				depth_state = states[depth]
+				if candidate not in depth_state:
+					depth_state.append(candidate)
 				score = 0
 				#print("results are ", results)
 				for result in results:
-
 					new_team_poke = copy.deepcopy(team_poke)
 					new_team_poke[pair[0][1].poke_id if pair[0][0] == "switch" else curr_poke] = result[1][0]
 					rec = recurse(result[1][0].poke_id, new_team_poke, result[1][1], depth, nextPlayer)
 					score += result[0] * rec[1]
 				candidates.append((pair, score))
-				#print("candidates purple are ", candidates)
+
+				for candidate in candidates:
+					for ourMove in candidate[0]:
+						for theirMove in candidate[1]
+					print("candidate is ", candidate)					
+
+
+				print("move, scores are ", candidates)
 				if player == 0:
 					threshold = float('-inf')
 					for candidate in candidates:
@@ -87,7 +98,10 @@ class MinimaxAgent(MultiAgentSearchAgent):
 						if candidate[1] < threshold:
 							threshold = candidate[1]
 							action_pair = candidate[0]
-			return (action_pair, threshold) #bug is around here, need to know when to return the value properly
+			return (action_pair, threshold) 
+
+			#keep track of which player is maximizing
+			#keep track of whether fastest has gone, if has then at end of function set it back to false
 
 
 		depth = self.depth
@@ -95,8 +109,14 @@ class MinimaxAgent(MultiAgentSearchAgent):
 		#print("player is ", player)
 		action, value = recurse(curr_poke, team_poke, enemy_poke, depth, player)
 		index = 1
-		print("action produced: ", action)
+		#print("action produced: ", action)
+		for key, value in states.items():
+			print("depth: {}, num states {}".format(key, len(value)))
+		#print(json.dumps(json.loads(jsonpickle.encode(states)), indent=2))
+		#print("states are ", states)
 		return "move " + action[0][1]
+
+
 		if type(action[0][1]) is str:
 			if player == 0:
 				for move in team_poke[curr_poke].moveids:
@@ -108,9 +128,9 @@ class MinimaxAgent(MultiAgentSearchAgent):
 						return val
 					index += 1
 		else:
-			print("Team poke is ", team_poke)
+			#print("Team poke is ", team_poke)
 			for poke in team_poke:
-				print("poke is ", poke)
+				#print("poke is ", poke)
 				if poke == action[0][1].poke_id:
 					return ("switch " + str(index))
 

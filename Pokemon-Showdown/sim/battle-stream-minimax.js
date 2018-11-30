@@ -551,6 +551,7 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
 
                 if (turn == 1){
                     //var ourBaseStats = 
+                    console.log("base stats set!")
                     ourBaseStats = JSON.parse(JSON.stringify(ourStats));
 
                 } //implement proper basestat module 
@@ -602,7 +603,6 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
  * Run AI
  *********************************************************************/
  
-// for (var i = 0; i < 10; i++) {
 const streams = BattleStreams.getPlayerStreams(new BattleStreams.BattleStream());
  
 const gen = "gen1"
@@ -623,6 +623,10 @@ const PokedexFile = '../mods/' + gen + "/pokedex.js"
 const Pokedex = require(PokedexFile)
 const POKEDEX = Pokedex.BattlePokedex
 
+var turn = 0
+
+//for (var i = 0; i < 10; i++) {
+
 
 const battleType = gen + "randombattle"
 
@@ -635,6 +639,9 @@ const p2spec = {
     name: "Minimax Bot",
     team: Dex.packTeam(Dex.generateTeam(battleType)),
 };
+
+
+
 const team = Dex.fastUnpackTeam(p2spec.team)
 //console.log("team is ", team)
 var turn = 1;
@@ -656,4 +663,4 @@ const p2 = new MinimaxPlayerAI(streams.p2);
 streams.omniscient.write(`>start ${JSON.stringify(spec)}
 >player p1 ${JSON.stringify(p1spec)}
 >player p2 ${JSON.stringify(p2spec)}`);
-// }
+//}

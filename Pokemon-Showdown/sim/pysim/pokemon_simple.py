@@ -125,16 +125,16 @@ def calcDamage(attackingPokemon, defendingPokemon, move):
         stab = 1.5 if move.type in attackingPokemon.types else 1
         modifier = stab * effectiveness
 
-        print("speed stages are ", defendingPokemon.spe_stage, attackingPokemon.spe_stage)
-        print("spa stages are ", defendingPokemon.spa_stage, attackingPokemon.spa_stage)
-        print("defending pokemon stats: {}, {}, {}, {}, {}".format(
-            defendingPokemon.attack, defendingPokemon.defense,
-            defendingPokemon.sp_att, defendingPokemon.sp_def,
-            defendingPokemon.speed))
-        print("attacking pokemon stats: {}, {}, {}, {}, {}".format(
-            attackingPokemon.attack, attackingPokemon.defense,
-            attackingPokemon.sp_att, attackingPokemon.sp_def,
-            attackingPokemon.speed))
+        #print("speed stages are ", defendingPokemon.spe_stage, attackingPokemon.spe_stage)
+        #print("spa stages are ", defendingPokemon.spa_stage, attackingPokemon.spa_stage)
+        #print("defending pokemon stats: {}, {}, {}, {}, {}".format(
+        #    defendingPokemon.attack, defendingPokemon.defense,
+        #    defendingPokemon.sp_att, defendingPokemon.sp_def,
+        #    defendingPokemon.speed))
+        #print("attacking pokemon stats: {}, {}, {}, {}, {}".format(
+        #    attackingPokemon.attack, attackingPokemon.defense,
+        #    attackingPokemon.sp_att, attackingPokemon.sp_def,
+        #    attackingPokemon.speed))
 
         if move.category.lower() == "physical":
             a = attackingPokemon.attack
@@ -199,7 +199,7 @@ def performActions(p1_pokemon, p2_pokemon, p1action, p2action):
                                  for newprob, (p2_poke_final, p1_poke_final) in p2_move_results]
             else:
                 p2_move_results = p2move.effect(p2_pokemon, p1_pokemon)
-                print(p2_move_results)
+                #print(p2_move_results)
                 for prob, (p2_poke, p1_poke) in p2_move_results:
                     p1_move_results = p1move.effect(p1_poke, p2_poke)
                     ret = ret + [(prob * newprob, (p1_poke_final, p2_poke_final))
@@ -330,19 +330,19 @@ class Move:
         return [(1.0, (ourPokemon_new, theirPokemon_new))]
 
     def bide(self, ourPokemon, theirPokemon):
-        print("bide")
+        #print("bide")
         return [(1.0, (copy.copy(ourPokemon), copy.copy(theirPokemon)))]
 
     def counter(self, ourPokemon, theirPokemon):
-        print("counter")
+        #print("counter")
         return [(1.0, (copy.copy(ourPokemon), copy.copy(theirPokemon)))]
 
     def reflect(self, ourPokemon, theirPokemon):
-        print("reflect")
+        #print("reflect")
         return [(1.0, (copy.copy(ourPokemon), copy.copy(theirPokemon)))]
 
     def substitute(self, ourPokemon, theirPokemon):
-        print("substitute")
+        #print("substitute")
         return [(1.0, (copy.copy(ourPokemon), copy.copy(theirPokemon)))]
 
 
@@ -395,7 +395,7 @@ def getScore(ourPokemon, enemyPokemon):
         #if pokemon.gen == 1 and stat == 3:
         #    continue
         #stat_multiplier *= stat
-        teamScore += pokemon.currhp * status_effect * stat_multiplier
+        teamScore += pokemon.currhp*status_effect*stat_multiplier
     teamScore = teamScore / NUM_TEAM_MEMBERS
     #if enemyPokemon.status != "None":
     #  status_effect = 0.5
@@ -415,7 +415,7 @@ def getScore(ourPokemon, enemyPokemon):
     stat_multiplier *= (2+ pokemon.spa_stage[0])/(2 - pokemon.spa_stage[1])
     #stat_multiplier *= (2+ pokemon.spd_stage[0])/(2 - pokemon.spd_stage[1]) gen1
     stat_multiplier *= (2+ pokemon.spe_stage[0])/(2 - pokemon.spe_stage[1])
-    enemyScore = enemyPokemon.currhp * status_effect * stat_multiplier
+    enemyScore = enemyPokemon.currhp*status_effect*stat_multiplier
     score = teamScore - enemyScore
     return score
 

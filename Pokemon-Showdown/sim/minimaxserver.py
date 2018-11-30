@@ -26,7 +26,7 @@ def get_action():
     dataDict['theirHp'] = float(theirHp[0]) / float(theirHp[1])
     dataDict['theirMaxHp'] = int(theirHp[1])
     dataDict['theirStatus'] = "None"
-  print("Their details are", dataDict["theirDetails"])
+  #print("Their details are", dataDict["theirDetails"])
   #if "Mime" in dataDict["theirDetails"]:
   #  dataDict["theirDetails"].replace(" Mime", "Mime")
   theirLevelInfo = dataDict['theirDetails'].split(", ")
@@ -53,7 +53,7 @@ def get_action():
         dataDict['ourHp'][key] = float(ourHp[0]) / float(ourHp[1])
         dataDict['ourMaxHp'][key] = int(ourHp[1])
         dataDict['ourStatus'][key] = "None"
-      print("Our details are", dataDict["ourDetails"][key])
+      #print("Our details are", dataDict["ourDetails"][key])
       #if "Mime" in dataDict["ourDetails"][key]:
       #  dataDict["ourDetails"][key].replace(" Mime", "Mime")
       ourLevelInfo = dataDict['ourDetails'][key].split(", ")
@@ -67,7 +67,7 @@ def get_action():
   #print("max hp values: ",dataDict['ourMaxHp'])    
   for key, value in dataDict['ourHp'].items():
     if value != "0 fnt":
-      print("max hp values: ",dataDict['ourMaxHp'])    
+      #print("max hp values: ",dataDict['ourMaxHp'])    
       key = str(key)
       ourCurrStats = list(dataDict['ourStats'][key].values())                      
       #keyrint(dataDict['ourStatus'])
@@ -89,10 +89,6 @@ def get_action():
                         dataDict['ourStatus'][key],
                         ourStatMultiplier
                         )
-    for pokemon in pokemonTeam:
-      if pokemon == str(dataDict["currPokemon"]): #current pokemon 
-        print("Poke moves: ", pokemonTeam[pokemon][5])
-
   theirCurrStats = list(dataDict["theirStats"].values())
   theirBaseStats = list(dataDict["theirBaseStats"][str(dataDict['theirPokemon'])].values())
   theirStatMultiplier = {}
@@ -115,6 +111,7 @@ def get_action():
           )
   #print("Enemy: ",enemy)
   team_poke = {} #dictionary containing our team's pokemon objects
+  print("generation is ", type(generation))
   for p in pokemonTeam.keys():
     ally = pokemonTeam[p]
     team_poke[p] = sim.Pokemon(
@@ -159,7 +156,8 @@ def get_action():
 
   agent = pokemon_minimax.MinimaxAgent() #can specify search depth here 
   action = agent.getAction(curr_poke=curr_poke, team_poke = team_poke, enemy_poke = enemy_poke)
-  #print("Action is ", action)
+  print("our moves are", team_poke[curr_poke].moveids)
+  print("Action is ", action)
   return(action)
 
 

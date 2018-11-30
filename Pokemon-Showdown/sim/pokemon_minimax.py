@@ -39,19 +39,16 @@ class MultiAgentSearchAgent(Agent):
 
 class MinimaxAgent(MultiAgentSearchAgent):
 	def getAction(self, curr_poke, team_poke, enemy_poke,):
-		def recurse(curr_poke, team_poke, enemy_poke, depth, player):
+		def recurse(curr_poke, team_poke, enemy_poke, depth):
 			global states
 			#print("player is minotaur ", player)
 			if sim.isWin(enemy_poke) or sim.isLose(team_poke) or depth == 0:
 				return [], sim.getScore(team_poke, enemy_poke)
 			legalPlayerMoves = sim.getLegalTeamActions(curr_poke, team_poke)
 			legalEnemyMoves = sim.getLegalEnemyActions(enemy_poke)
-
-			if player:
-				nextPlayer = 0
-			else:
-				depth -= 1
-				nextPlayer = 1
+			
+			depth -= 1
+			#nextPlayer = 1
 			candidates = []
 			action_pairs = list(
 				itertools.product(legalPlayerMoves, legalEnemyMoves)) 
@@ -75,33 +72,43 @@ class MinimaxAgent(MultiAgentSearchAgent):
 				for result in results:
 					new_team_poke = copy.deepcopy(team_poke)
 					new_team_poke[pair[0][1].poke_id if pair[0][0] == "switch" else curr_poke] = result[1][0]
-					rec = recurse(result[1][0].poke_id, new_team_poke, result[1][1], depth, nextPlayer)
+					rec = recurse(result[1][0].poke_id, new_team_poke, result[1][1], depth)
 					score += result[0] * rec[1]
 				candidates.append((pair, score))
 				ourMoves = {}
 				theirMoves = {}
-				for candidate in candidates:
-					ourMove = candidate[0][0]
-					score = candidate[1]
-					theirMove = candidate[0][1]
-					if ourMove not in ourMoves.keys():
-						ourMoves[ourMove] = [(score, theirMove)]
-					else:
-						ourMoves[ourMove].append((score, theirMove))
-
-					if ourMove not in ourMoves:
-						ourMoves.append((ourMove, score))
-					if theirMove not in theirMoves:
-						theirMoves.append((theirMove, score))
-
-
-
-
-				#maximized our minimized actions
-				print(ourMoves)
-				print(theirMoves)
-
-				print("move, scores are ", candidates)
+			for candidate in candidates:
+				ourMove = candidate[0][0]
+				score = candidate[1]
+				theirMove = candidate[0][1]
+				if ourMove not in ourMoves.keys():
+					ourMoves[ourMove] = [(score, theirMove)]
+				else:
+					ourMoves[ourMove].append((score, theirMove))
+			#maximized our minimized actions
+			print("combined moves are ", ourMoves)
+			for move, value in ourMoves.items():
+				print("value is ", value)
+				min_score = float('inf')
+				for score_theirMove in value:
+					if score_theirMove[0] < min_score:
+						theirMinMove = score_theirMove[1]
+						min_score = score_theirMove[0]
+						ourMoves[move] = (min_score, theirMove)
+			print("minimized moves are ", ourMoves)
+			#for move in ourMoves:
+			max_score = float("-inf")
+			for move in ourMoves:
+				if ourMoves[move][0] > max_score:
+					max_score = ourMoves[move][0]
+					best_move = move
+					theirMove = ourMoves[move][1]
+			result = ((best_move, theirMove), max_score)
+			print("result is ", result)
+			return result
+			'''
+				#print(theirMoves)
+				#print("move, scores are ", candidates)
 				if player == 0:
 					threshold = float('-inf')
 					for candidate in candidates:
@@ -115,19 +122,20 @@ class MinimaxAgent(MultiAgentSearchAgent):
 							threshold = candidate[1]
 							action_pair = candidate[0]
 			return (action_pair, threshold) 
+			'''
 
 			#keep track of which player is maximizing
 			#keep track of whether fastest has gone, if has then at end of function set it back to false
 
 
 		depth = self.depth
-		player = self.index
+		#player = self.index
 		#print("player is ", player)
-		action, value = recurse(curr_poke, team_poke, enemy_poke, depth, player)
+		action, value = recurse(curr_poke, team_poke, enemy_poke, depth)
 		index = 1
 		#print("action produced: ", action)
-		for key, value in states.items():
-			print("depth: {}, num states {}".format(key, len(value)))
+		#for key, value in states.items():
+			#print("depth: {}, num states {}".format(key, len(value)))
 		#print(json.dumps(json.loads(jsonpickle.encode(states)), indent=2))
 		#print("states are ", states)
 		return "move " + action[0][1]

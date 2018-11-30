@@ -26,7 +26,7 @@ class Pokemon:
     stat_multipliers = None 
 
     status = {"brn":0, "frz":0, "par":0, "psn":0, "slp":0, "tox":0}
-
+    recharging = False 
     atk_stage = [0, 0]
     def_stage = [0, 0]
     spa_stage = [0, 0]
@@ -333,6 +333,11 @@ class Move:
         #print("bide")
         return [(1.0, (copy.copy(ourPokemon), copy.copy(theirPokemon)))]
 
+    def hyperbeam(self, ourPokemon, theirPokemon):
+        ourPokemon.recharging = True
+        self.defaultmove(ourPokemon, theirPokemon)
+
+
     def counter(self, ourPokemon, theirPokemon):
         #print("counter")
         return [(1.0, (copy.copy(ourPokemon), copy.copy(theirPokemon)))]
@@ -359,10 +364,9 @@ with open(dir_path + '/effectiveness.csv', 'rt') as csvfile:
 
 def getLegalTeamActions(curr_poke, team_poke):
     actions = []
-    #print("curr poke unicorn is ", curr_poke)
-    #print("team is ", team_poke)
-    #print("curr poke is ", curr_poke)
-    #print("move array is ", team_poke[curr_poke].moveids)
+    if team_poke[curr_poke].recharging:
+        team_poke[curr_poke].recharging = False 
+        return actions
     for move in team_poke[curr_poke].moveids:
         #print("move is ", move)
         actions.append(("move", move))

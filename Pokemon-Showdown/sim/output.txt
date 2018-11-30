@@ -1,0 +1,281 @@
+baseline moves are  [ { move: 'Fire Blast',
+    id: 'fireblast',
+    pp: 8,
+    maxpp: 8,
+    target: 'normal',
+    disabled: false,
+    index: 4 },
+  { move: 'Psychic',
+    id: 'psychic',
+    pp: 16,
+    maxpp: 16,
+    target: 'normal',
+    disabled: false,
+    index: 1 },
+  { move: 'Confuse Ray',
+    id: 'confuseray',
+    pp: 16,
+    maxpp: 16,
+    target: 'normal',
+    disabled: false,
+    index: 2 },
+  { move: 'Body Slam',
+    id: 'bodyslam',
+    pp: 24,
+    maxpp: 24,
+    target: 'normal',
+    disabled: false,
+    index: 3 } ]
+baseline move is  4
+Possible moves are  [ { move: 'Hydro Pump',
+    id: 'hydropump',
+    pp: 8,
+    maxpp: 8,
+    target: 'normal',
+    disabled: false,
+    index: 3 },
+  { move: 'Blizzard',
+    id: 'blizzard',
+    pp: 8,
+    maxpp: 8,
+    target: 'normal',
+    disabled: false,
+    index: 4 },
+  { move: 'Rest',
+    id: 'rest',
+    pp: 16,
+    maxpp: 16,
+    target: 'self',
+    disabled: false,
+    index: 1 },
+  { move: 'Body Slam',
+    id: 'bodyslam',
+    pp: 24,
+    maxpp: 24,
+    target: 'normal',
+    disabled: false,
+    index: 2 } ]
+undefined
+base stats set!
+ret is  move hydropump
+possible moves are  [ 'hydropump', 'blizzard', 'rest', 'bodyslam' ]
+
+
+|player|p1|Baseline Bot|
+|player|p2|Minimax Bot|
+|teamsize|p1|6
+|teamsize|p2|6
+|gametype|singles
+|gen|1
+|tier|[Gen 1] Custom Game
+|seed|44947,39588,42136,3587
+|rule|HP Percentage Mod: HP is shown in percentages
+|
+|start
+|switch|p1a: Magmar|Magmar, L74|249/249
+|switch|p2a: Blastoise|Blastoise, L74|269/269
+|turn|1
+baseline moves are  [ { move: 'Fire Blast',
+    id: 'fireblast',
+    pp: 7,
+    maxpp: 8,
+    target: 'normal',
+    disabled: false,
+    index: 4 },
+  { move: 'Psychic',
+    id: 'psychic',
+    pp: 16,
+    maxpp: 16,
+    target: 'normal',
+    disabled: false,
+    index: 1 },
+  { move: 'Confuse Ray',
+    id: 'confuseray',
+    pp: 16,
+    maxpp: 16,
+    target: 'normal',
+    disabled: false,
+    index: 2 },
+  { move: 'Body Slam',
+    id: 'bodyslam',
+    pp: 24,
+    maxpp: 24,
+    target: 'normal',
+    disabled: false,
+    index: 3 } ]
+baseline move is  1
+Possible moves are  [ { move: 'Hydro Pump',
+    id: 'hydropump',
+    pp: 7,
+    maxpp: 8,
+    target: 'normal',
+    disabled: false,
+    index: 3 },
+  { move: 'Blizzard',
+    id: 'blizzard',
+    pp: 8,
+    maxpp: 8,
+    target: 'normal',
+    disabled: false,
+    index: 4 },
+  { move: 'Rest',
+    id: 'rest',
+    pp: 16,
+    maxpp: 16,
+    target: 'self',
+    disabled: false,
+    index: 1 },
+  { move: 'Body Slam',
+    id: 'bodyslam',
+    pp: 24,
+    maxpp: 24,
+    target: 'normal',
+    disabled: false,
+    index: 2 } ]
+undefined
+seen this poke before
+ret is  move hydropump
+possible moves are  [ 'hydropump', 'blizzard', 'rest', 'bodyslam' ]
+
+
+|
+|move|p1a: Magmar|Fire Blast|p2a: Blastoise
+|-resisted|p2a: Blastoise
+|-damage|p2a: Blastoise|218/269
+|move|p2a: Blastoise|Hydro Pump|p1a: Magmar
+|-supereffective|p1a: Magmar
+|-damage|p1a: Magmar|46/249
+|
+|upkeep
+|turn|2
+|
+|move|p1a: Magmar|Psychic|p2a: Blastoise
+|-damage|p2a: Blastoise|164/269
+|move|p2a: Blastoise|Hydro Pump|p1a: Magmar
+|-supereffective|p1a: Magmar
+|-damage|p1a: Magmar|0 fnt
+|faint|p1a: Magmar
+baseline moves are  [ { move: 'Hyper Beam',
+    id: 'hyperbeam',
+    pp: 8,
+    maxpp: 8,
+    target: 'normal',
+    disabled: false,
+    index: 1 },
+  { move: 'Thunder',
+    id: 'thunder',
+    pp: 16,
+    maxpp: 16,
+    target: 'normal',
+    disabled: false,
+    index: 4 },
+  { move: 'Thunderbolt',
+    id: 'thunderbolt',
+    pp: 24,
+    maxpp: 24,
+    target: 'normal',
+    disabled: false,
+    index: 3 },
+  { move: 'Thunder Wave',
+    id: 'thunderwave',
+    pp: 32,
+    maxpp: 32,
+    target: 'normal',
+    disabled: false,
+    index: 2 } ]
+baseline move is  1
+Possible moves are  [ { move: 'Hydro Pump',
+    id: 'hydropump',
+    pp: 6,
+    maxpp: 8,
+    target: 'normal',
+    disabled: false,
+    index: 3 },
+  { move: 'Blizzard',
+    id: 'blizzard',
+    pp: 8,
+    maxpp: 8,
+    target: 'normal',
+    disabled: false,
+    index: 4 },
+  { move: 'Rest',
+    id: 'rest',
+    pp: 16,
+    maxpp: 16,
+    target: 'self',
+    disabled: false,
+    index: 1 },
+  { move: 'Body Slam',
+    id: 'bodyslam',
+    pp: 24,
+    maxpp: 24,
+    target: 'normal',
+    disabled: false,
+    index: 2 } ]
+undefined
+ret is  move hydropump
+possible moves are  [ 'hydropump', 'blizzard', 'rest', 'bodyslam' ]
+
+
+|
+|switch|p1a: Magneton|Magneton, L74|226/226
+|turn|3
+baseline moves are  [ { move: 'Hyper Beam',
+    id: 'hyperbeam',
+    pp: 7,
+    maxpp: 8,
+    target: 'normal',
+    disabled: false,
+    index: 1 },
+  { move: 'Thunder',
+    id: 'thunder',
+    pp: 16,
+    maxpp: 16,
+    target: 'normal',
+    disabled: false,
+    index: 4 },
+  { move: 'Thunderbolt',
+    id: 'thunderbolt',
+    pp: 24,
+    maxpp: 24,
+    target: 'normal',
+    disabled: false,
+    index: 3 },
+  { move: 'Thunder Wave',
+    id: 'thunderwave',
+    pp: 32,
+    maxpp: 32,
+    target: 'normal',
+    disabled: false,
+    index: 2 } ]
+baseline move is  1
+Possible moves are  [ { move: 'Hydro Pump',
+    id: 'hydropump',
+    pp: 5,
+    maxpp: 8,
+    target: 'normal',
+    disabled: false,
+    index: 3 },
+  { move: 'Blizzard',
+    id: 'blizzard',
+    pp: 8,
+    maxpp: 8,
+    target: 'normal',
+    disabled: false,
+    index: 4 },
+  { move: 'Rest',
+    id: 'rest',
+    pp: 16,
+    maxpp: 16,
+    target: 'self',
+    disabled: false,
+    index: 1 },
+  { move: 'Body Slam',
+    id: 'bodyslam',
+    pp: 24,
+    maxpp: 24,
+    target: 'normal',
+    disabled: false,
+    index: 2 } ]
+undefined
+seen this poke before

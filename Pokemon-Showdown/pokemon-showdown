@@ -14,7 +14,7 @@ fi
 echo "We require Node.js version 8 or later; Node.js not found"
 exit 1
 */;
-console.log("TEST")
+
 var child_process = require('child_process');
 var fs = require('fs');
 var path = require('path');

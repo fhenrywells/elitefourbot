@@ -78,12 +78,28 @@ class MinimaxAgent(MultiAgentSearchAgent):
 					rec = recurse(result[1][0].poke_id, new_team_poke, result[1][1], depth, nextPlayer)
 					score += result[0] * rec[1]
 				candidates.append((pair, score))
-
+				ourMoves = {}
+				theirMoves = {}
 				for candidate in candidates:
-					for ourMove in candidate[0]:
-						for theirMove in candidate[1]
-					print("candidate is ", candidate)					
+					ourMove = candidate[0][0]
+					score = candidate[1]
+					theirMove = candidate[0][1]
+					if ourMove not in ourMoves.keys():
+						ourMoves[ourMove] = [(score, theirMove)]
+					else:
+						ourMoves[ourMove].append((score, theirMove))
 
+					if ourMove not in ourMoves:
+						ourMoves.append((ourMove, score))
+					if theirMove not in theirMoves:
+						theirMoves.append((theirMove, score))
+
+
+
+
+				#maximized our minimized actions
+				print(ourMoves)
+				print(theirMoves)
 
 				print("move, scores are ", candidates)
 				if player == 0:

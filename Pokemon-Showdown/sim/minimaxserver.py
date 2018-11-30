@@ -27,9 +27,9 @@ def get_action():
     dataDict['theirMaxHp'] = int(theirHp[1])
     dataDict['theirStatus'] = "None"
   print("Their details are", dataDict["theirDetails"])
-  if "Mime" in dataDict["theirDetails"]:
-    dataDict["theirDetails"].replace(" Mime", "Mime")
-  theirLevelInfo = dataDict['theirDetails'].split(" ")
+  #if "Mime" in dataDict["theirDetails"]:
+  #  dataDict["theirDetails"].replace(" Mime", "Mime")
+  theirLevelInfo = dataDict['theirDetails'].split(", ")
   dataDict["theirLevel"] = theirLevelInfo[-1]
 
   #Our Team Info
@@ -54,9 +54,9 @@ def get_action():
         dataDict['ourMaxHp'][key] = int(ourHp[1])
         dataDict['ourStatus'][key] = "None"
       print("Our details are", dataDict["ourDetails"][key])
-      if "Mime" in dataDict["ourDetails"][key]:
-        dataDict["ourDetails"][key].replace(" Mime", "Mime")
-      ourLevelInfo = dataDict['ourDetails'][key].split(" ")
+      #if "Mime" in dataDict["ourDetails"][key]:
+      #  dataDict["ourDetails"][key].replace(" Mime", "Mime")
+      ourLevelInfo = dataDict['ourDetails'][key].split(", ")
       dataDict["ourLevel"][key] = ourLevelInfo[1]
       generation = dataDict['generation'][-1:]
 
@@ -89,7 +89,9 @@ def get_action():
                         dataDict['ourStatus'][key],
                         ourStatMultiplier
                         )
-  #print("Team: ", pokemonTeam)
+    for pokemon in pokemonTeam:
+      if pokemon == str(dataDict["currPokemon"]): #current pokemon 
+        print("Poke moves: ", pokemonTeam[pokemon][5])
 
   theirCurrStats = list(dataDict["theirStats"].values())
   theirBaseStats = list(dataDict["theirBaseStats"][str(dataDict['theirPokemon'])].values())
@@ -150,6 +152,10 @@ def get_action():
     )
   #print("Enemy: ", enemy)
   curr_poke = str(dataDict["currPokemon"]) #current pokemon 
+
+  #recharging (deprecated, handled in battle-stream)
+  #if len(team_poke[curr_poke].moveids) == 0:
+  #  return ("move recharge")
 
   agent = pokemon_minimax.MinimaxAgent() #can specify search depth here 
   action = agent.getAction(curr_poke=curr_poke, team_poke = team_poke, enemy_poke = enemy_poke)

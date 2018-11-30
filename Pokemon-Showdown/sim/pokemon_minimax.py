@@ -71,12 +71,10 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
 					new_team_poke = copy.deepcopy(team_poke)
 					new_team_poke[pair[0][1].poke_id if pair[0][0] == "switch" else curr_poke] = result[1][0]
-					#print(new_team_poke)
 					rec = recurse(result[1][0].poke_id, new_team_poke, result[1][1], depth, nextPlayer)
-					#print("rec is ", rec)
 					score += result[0] * rec[1]
 				candidates.append((pair, score))
-				print("candidates are ", candidates)
+				print("candidates purple are ", candidates)
 				if player == 0:
 					threshold = float('-inf')
 					for candidate in candidates:
@@ -98,13 +96,16 @@ class MinimaxAgent(MultiAgentSearchAgent):
 		action, value = recurse(curr_poke, team_poke, enemy_poke, depth, player)
 		index = 1
 		print("action produced: ", action)
+		return "move " + action[0][1]
 		if type(action[0][1]) is str:
 			if player == 0:
 				for move in team_poke[curr_poke].moveids:
 					print(move)
 					if str(move) == str(action[0][1]):
 						print("do we get here")
-						return ("move " + str(index))
+						val = ("move " + str(index + 1))
+						print(val)
+						return val
 					index += 1
 		else:
 			print("Team poke is ", team_poke)

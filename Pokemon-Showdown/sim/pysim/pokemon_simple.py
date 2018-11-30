@@ -144,7 +144,6 @@ def calcDamage(attackingPokemon, defendingPokemon, move):
             d = defendingPokemon.sp_att
         basedmg = int(int(int(2 * level / 5 + 2) *
                           move.basePower * a / d) / 50 + 2)
-        print("")
         # Proper way to do it, uncomment for increased accuracy
         #random = list(range(217, 256))  # all random values
         #damage_values = [int(basedmg * modifier * r / 255.0) for r in random]
@@ -283,18 +282,16 @@ class Move:
         if self.boosts is not None:
             # Apply boost to self
             if self.accuracy is True:
-                ourPokemon_new.atk_stage[0] += min(6, self.boosts.get("atk", 0))
-                ourPokemon_new.def_stage[0] += min(6, self.boosts.get("def", 0))
-                ourPokemon_new.spa_stage[0] += min(6, self.boosts.get("spa", 0))
-                #ourPokemon_hit.sp_def += max(6, self.boosts.get("spd",0))
-                ourPokemon_new.spe_stage[0] += min(6, self.boosts.get("spe", 0))
+                ourPokemon_new.atk_stage[0] = min(6, self.boosts.get("atk", 0) + ourPokemon_new.atk_stage[0])
+                ourPokemon_new.def_stage[0] = min(6, self.boosts.get("def", 0) + ourPokemon_new.def_stage[0])
+                ourPokemon_new.spa_stage[0] = min(6, self.boosts.get("spa", 0) + ourPokemon_new.spa_stage[0])
+                ourPokemon_new.spe_stage[0] = min(6, self.boosts.get("spe", 0) + ourPokemon_new.spe_stage[0])
             # Otherwise, apply boosts to opponent
             else:
-                theirPokemon_new.atk_stage[1] += max(-6, self.boosts.get("atk", 0) * acc)
-                theirPokemon_new.def_stage[1] += max(-6, self.boosts.get("def", 0) * acc)
-                theirPokemon_new.spa_stage[1] += max(-6, self.boosts.get("spa", 0) * acc)
-                #theirPokemon_hit.sp_def += max(-6, self.boosts.get("spd",0))
-                theirPokemon_new.spe_stage[1] += max(-6, self.boosts.get("spe", 0) * acc)
+                theirPokemon_new.atk_stage[1] = max(-6, self.boosts.get("atk", 0) * acc + theirPokemon_new.atk_stage[1])
+                theirPokemon_new.def_stage[1] = max(-6, self.boosts.get("def", 0) * acc + theirPokemon_new.def_stage[1])
+                theirPokemon_new.spa_stage[1] = max(-6, self.boosts.get("spa", 0) * acc + theirPokemon_new.spa_stage[1])
+                theirPokemon_new.spe_stage[1] = max(-6, self.boosts.get("spe", 0) * acc + theirPokemon_new.spe_stage[1])
 
         # Apply status effect if there is one
         #print("their pokemon hit is ", theirPokemon_hit)
@@ -325,11 +322,10 @@ class Move:
                         theirPokemon_secondary.sp_att,
                         theirPokemon_secondary.sp_def,
                         theirPokemon_secondary.speed))'''
-                theirPokemon_new.atk_stage[1] += max(-6, self.secondary['boosts'].get("atk", 0) * secondary_acc)
-                theirPokemon_new.def_stage[1] += max(-6, self.secondary['boosts'].get("def", 0) * secondary_acc)
-                theirPokemon_new.spa_stage[1] += max(-6, self.secondary['boosts'].get("spa", 0) * secondary_acc)
-                #theirPokemon_hit.sp_def += self.boosts.get("spd",0)
-                theirPokemon_new.spe_stage[1] += max(-6, self.secondary['boosts'].get("spe", 0) * secondary_acc)
+                theirPokemon_new.atk_stage[1] = max(-6, self.secondary['boosts'].get("atk", 0) * secondary_acc + theirPokemon_new.atk_stage[1])
+                theirPokemon_new.def_stage[1] = max(-6, self.secondary['boosts'].get("def", 0) * secondary_acc + theirPokemon_new.def_stage[1])
+                theirPokemon_new.spa_stage[1] = max(-6, self.secondary['boosts'].get("spa", 0) * secondary_acc + theirPokemon_new.spa_stage[1])
+                theirPokemon_new.spe_stage[1] = max(-6, self.secondary['boosts'].get("spe", 0) * secondary_acc + theirPokemon_new.spe_stage[1])
 
         return [(1.0, (ourPokemon_new, theirPokemon_new))]
 
@@ -364,16 +360,16 @@ with open(dir_path + '/effectiveness.csv', 'rt') as csvfile:
 def getLegalTeamActions(curr_poke, team_poke):
     actions = []
     #print("curr poke unicorn is ", curr_poke)
-    print("team is ", team_poke)
-    print("curr poke is ", curr_poke)
-    print("move array is ", team_poke[curr_poke].moveids)
+    #print("team is ", team_poke)
+    #print("curr poke is ", curr_poke)
+    #print("move array is ", team_poke[curr_poke].moveids)
     for move in team_poke[curr_poke].moveids:
-        print("move is ", move)
+        #print("move is ", move)
         actions.append(("move", move))
     #for poke_id, pokemon in team_poke.items():
     #    if poke_id != curr_poke and pokemon.currhp > 0:
     #        actions.append(("switch", team_poke[poke_id]))
-    print("legal actions are ",actions)
+    #print("legal actions are ",actions)
     return actions
 
 def getLegalEnemyActions(enemy_poke):

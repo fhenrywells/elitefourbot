@@ -3,7 +3,7 @@ import json
 from flask import Flask
 from flask import request
 
-import pysim.pokemon as sim
+import pysim.pokemon_simple as sim
 import pokemon_minimax
 
 app = Flask(__name__)

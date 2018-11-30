@@ -125,15 +125,26 @@ def calcDamage(attackingPokemon, defendingPokemon, move):
         stab = 1.5 if move.type in attackingPokemon.types else 1
         modifier = stab * effectiveness
 
+        print("speed stages are ", defendingPokemon.spe_stage, attackingPokemon.spe_stage)
+        print("spa stages are ", defendingPokemon.spa_stage, attackingPokemon.spa_stage)
+        print("defending pokemon stats: {}, {}, {}, {}, {}".format(
+            defendingPokemon.attack, defendingPokemon.defense,
+            defendingPokemon.sp_att, defendingPokemon.sp_def,
+            defendingPokemon.speed))
+        print("attacking pokemon stats: {}, {}, {}, {}, {}".format(
+            attackingPokemon.attack, attackingPokemon.defense,
+            attackingPokemon.sp_att, attackingPokemon.sp_def,
+            attackingPokemon.speed))
+
         if move.category.lower() == "physical":
             a = attackingPokemon.attack
             d = defendingPokemon.defense
         else:
             a = attackingPokemon.sp_att
             d = defendingPokemon.sp_att
-
         basedmg = int(int(int(2 * level / 5 + 2) *
                           move.basePower * a / d) / 50 + 2)
+        print("")
         # Proper way to do it, uncomment for increased accuracy
         #random = list(range(217, 256))  # all random values
         #damage_values = [int(basedmg * modifier * r / 255.0) for r in random]
@@ -373,27 +384,41 @@ def getLegalEnemyActions(enemy_poke):
 
 def getScore(ourPokemon, enemyPokemon):
     teamScore = 0
+
+
     for poke_id, pokemon in ourPokemon.items():  
-      if pokemon.status != "None":
-        status_effect = 0.5
-      else:
-        status_effect = 1
-      stat_multiplier = 1 
-      for stat,mult in pokemon.stat_multipliers.items():
-        if pokemon.gen == 1 and stat == 3:
-            continue
-        stat_multiplier *= stat
-      teamScore += pokemon.currhp * status_effect * stat_multiplier
+        #sum over all possible status effects, 
+        status_effect = (1 - 0.5*sum(pokemon.status.values())) 
+        stat_multiplier = 1 
+        stat_multiplier *= (2+ pokemon.atk_stage[0])/(2 - pokemon.atk_stage[1])
+        stat_multiplier *= (2+ pokemon.def_stage[0])/(2 - pokemon.def_stage[1])
+        stat_multiplier *= (2+ pokemon.spa_stage[0])/(2 - pokemon.spa_stage[1])
+        #stat_multiplier *= (2+ pokemon.spd_stage[0])/(2 - pokemon.spd_stage[1]) gen1
+        stat_multiplier *= (2+ pokemon.spe_stage[0])/(2 - pokemon.spe_stage[1])
+      #for stat,mult in pokemon.stat_multipliers.items():
+        #if pokemon.gen == 1 and stat == 3:
+        #    continue
+        #stat_multiplier *= stat
+        teamScore += pokemon.currhp * status_effect * stat_multiplier
     teamScore = teamScore / NUM_TEAM_MEMBERS
-    if enemyPokemon.status != "None":
-      status_effect = 0.5
-    else:
-      status_effect = 1
-    stat_multiplier = 1
-    for stat, mult in enemyPokemon.stat_multipliers.items():
-        if enemyPokemon.gen == 1 and stat == 3:
-            continue
-        stat_multiplier *= mult
+    #if enemyPokemon.status != "None":
+    #  status_effect = 0.5
+    #else:
+    #  status_effect = 1
+    #stat_multiplier = 1
+
+    #for stat, mult in enemyPokemon.stat_multipliers.items():
+    #    if enemyPokemon.gen == 1 and stat == 3:
+    #        continue
+    #    stat_multiplier *= mult
+    pokemon = enemyPokemon
+    status_effect = (1 - 0.5*sum(pokemon.status.values()))
+    stat_multiplier = 1 
+    stat_multiplier *= (2+ pokemon.atk_stage[0])/(2 - pokemon.atk_stage[1])
+    stat_multiplier *= (2+ pokemon.def_stage[0])/(2 - pokemon.def_stage[1])
+    stat_multiplier *= (2+ pokemon.spa_stage[0])/(2 - pokemon.spa_stage[1])
+    #stat_multiplier *= (2+ pokemon.spd_stage[0])/(2 - pokemon.spd_stage[1]) gen1
+    stat_multiplier *= (2+ pokemon.spe_stage[0])/(2 - pokemon.spe_stage[1])
     enemyScore = enemyPokemon.currhp * status_effect * stat_multiplier
     score = teamScore - enemyScore
     return score

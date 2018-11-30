@@ -1,7 +1,7 @@
 import itertools 
 import copy
 
-import pysim.pokemon as sim
+import pysim.pokemon_simple as sim
 
 class Agent:
 	"""
@@ -33,7 +33,7 @@ class MultiAgentSearchAgent(Agent):
 class MinimaxAgent(MultiAgentSearchAgent):
 	def getAction(self, curr_poke, team_poke, enemy_poke,):
 		def recurse(curr_poke, team_poke, enemy_poke, depth, player):
-			print("player is minotaur ", player)
+			#print("player is minotaur ", player)
 			if sim.isWin(enemy_poke):
 				return [], sim.getScore(team_poke, enemy_poke)
 			if sim.isLose(team_poke):
@@ -41,7 +41,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
 			legalPlayerMoves = sim.getLegalTeamActions(curr_poke, team_poke)
 			legalEnemyMoves = sim.getLegalEnemyActions(enemy_poke)
 
-			print("depth is ", depth)
+			#print("depth is ", depth)
 			if len(legalPlayerMoves) == 0 or len(legalEnemyMoves) == 0:
 				return [], sim.getScore(team_poke, enemy_poke)
 			if depth == 0:
@@ -66,7 +66,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
 					)
 				#print(results)
 				score = 0
-				print("results are ", results)
+				#print("results are ", results)
 				for result in results:
 
 					new_team_poke = copy.deepcopy(team_poke)
@@ -74,7 +74,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
 					rec = recurse(result[1][0].poke_id, new_team_poke, result[1][1], depth, nextPlayer)
 					score += result[0] * rec[1]
 				candidates.append((pair, score))
-				print("candidates purple are ", candidates)
+				#print("candidates purple are ", candidates)
 				if player == 0:
 					threshold = float('-inf')
 					for candidate in candidates:
@@ -92,7 +92,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
 		depth = self.depth
 		player = self.index
-		print("player is ", player)
+		#print("player is ", player)
 		action, value = recurse(curr_poke, team_poke, enemy_poke, depth, player)
 		index = 1
 		print("action produced: ", action)
@@ -102,7 +102,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
 				for move in team_poke[curr_poke].moveids:
 					print(move)
 					if str(move) == str(action[0][1]):
-						print("do we get here")
+						#print("do we get here")
 						val = ("move " + str(index + 1))
 						print(val)
 						return val

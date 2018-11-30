@@ -49,7 +49,8 @@ class Pokemon:
         self.moveids = moveids
         self.types = types
         self.stat_multipliers = stat_multipliers
-        self.status = status
+        if status is not None:
+            self.status[status] = 1.0
         atk_stage = list(stat_multipliers.values())[0] - 1
         def_stage = list(stat_multipliers.values())[1] - 1
         spa_stage = list(stat_multipliers.values())[2] - 1

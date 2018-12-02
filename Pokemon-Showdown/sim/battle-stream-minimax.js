@@ -519,6 +519,7 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
                 var ourDetails = new Object()
                 var ourTypes = new Object()
                 var ourPokemon = new Object()
+                var ourPokemonIndices = new Object()
 
                 //console.log("size of team is", request.side.pokemon.length)
                 for (i = 0; i < request.side.pokemon.length; i++) {
@@ -529,6 +530,7 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
                     ourDetails[pokedexNum] = request.side.pokemon[i].details
                     ourTypes[pokedexNum] = POKEDEX[getPokemonName(request.side.pokemon[i])].types
                     ourPokemon[pokedexNum] = pokedexNum
+                    ourPokemonIndices[pokedexNum] = i + 1
                     if (pokedexNum == POKEDEX[getPokemonName(minimaxBotPokemon)].num){
                         var moveList = new Array()
                         //console.log("moves are ", moves)
@@ -580,9 +582,14 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
                         ourBaseStats: ourBaseStats,
                         theirBaseStats: theirBaseStats
                     }
-                }); 
+                });
+                var action = ret.body.toString('utf8');
+                if (action.startsWith("switch")) {
+                    pokedexNum = action.split(" ")[1];
+                    action = "switch " + ourPokemonIndices[pokedexNum];
+                }
                 //console.log("ret is ", ret.body.toString('utf8'))
-                return ret.body.toString('utf8')
+                return action
                 //return `move ${move}${target}`;
             });
                 this.choose(choices.join(`, `));

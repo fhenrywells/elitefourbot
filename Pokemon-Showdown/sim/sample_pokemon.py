@@ -123,20 +123,32 @@ action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=te
 print(testpoke1, testpoke2)
 print("action is ", action) # favor earthquake over quickattack for raw DPS
 
-testpoke1 = sim.Pokemon(1, 199, 174, 253, 253, 223, 261, 62, 0.689, 1, ['blizzard', 'psychic', 'amnesia', 'recover'],['psychic'], "par", stat_multiplier)
-testpoke2 = sim.Pokemon(1, 251, 152, 125, 125, 202, 226, 74, 1.0, 1, ['bodyslam', 'highjumpkick', 'seismictoss', 'counter', 'counter', 'meditate'], ['fighting'], None, stat_multiplier)
+#poke_id, attack, defense, sp_att, sp_def, speed, maxhp, level, currhp, gen, moveids, types, status, stat_multipliers):
+testpoke1 = sim.Pokemon(1, 100, 100, 100, 100, 110, 100, 90, 0.1, 1, ['quickattack', 'earthquake'], ['normal'], None, stat_multiplier)
+testpoke2 = sim.Pokemon(1, 100, 100, 100, 100, 100, 100, 100, 0.1, 1, ['tackle'], ['normal'], None, stat_multiplier)
 
 action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=testpoke2)
 print(testpoke1, testpoke2)
-print("action is ", action) # Since we are paralyzed, we will choose recover. Is this what we want?
+print("action is ", action) # This time, we favor earthquake over quickattack even though we are at low hp, because we're faster
 
-testpoke1 = sim.Pokemon(1, 192, 139, 141, 141, 210, 250, 88, 0.5, 1, ['agility', 'substitute', 'doubleedge', 'drillpeck'],['normal', 'flying'], "None", stat_multiplier)
-testpoke2 = sim.Pokemon(1, 199, 175, 170, 170, 192, 241, 74, 0.08, 1, ['glare', 'earthquake', 'rockslide', 'hyperbeam', 'bodyslam'], ['poison'], "None", stat_multiplier)
+#poke_id, attack, defense, sp_att, sp_def, speed, maxhp, level, currhp, gen, moveids, types, status, stat_multipliers):
+testpoke1 = sim.Pokemon(1, 100, 100, 100, 100, 110, 100, 90, 0.1, 1, ['quickattack', 'earthquake'], ['normal'], None, stat_multiplier)
+testpoke2 = sim.Pokemon(1, 100, 100, 100, 100, 100, 100, 100, 0.1, 1, ['tackle', 'quickattack'], ['normal'], None, stat_multiplier)
+
+action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=testpoke2)
+print(testpoke1, testpoke2)
+print("action is ", action) # Now, we quickattack again, since they have quickattack as an option, and we don't want them to quickattack if we use earthquake
+
+testpoke1 = sim.Pokemon(1, 192, 139, 141, 141, 210, 250, 88, 1.0, 1, ['swordsdance', 'slash'],['normal'], "None", stat_multiplier)
+testpoke2 = sim.Pokemon(1, 199, 175, 170, 170, 192, 241, 74, 1.0, 1, ['tackle'], ['normal'], "None", stat_multiplier)
 
 print(testpoke1, testpoke2)
 agent = pokemon_minimax.MinimaxAgent(depth=1) #can specify search depth here
 action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=testpoke2)
-print("action is ", action) # Since we are paralyzed, we will choose recover. Is this what we want?
+print("action is ", action) # At depth 1, favour slash
+agent = pokemon_minimax.MinimaxAgent(depth=2) #can specify search depth here
+action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=testpoke2)
+print("action is ", action) # at depth 2, favour swordsdance
 
 
 

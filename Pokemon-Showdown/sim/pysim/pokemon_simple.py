@@ -522,9 +522,9 @@ def getLegalTeamActions(curr_poke, team_poke):
     for move in team_poke[curr_poke].moveids:
         #print("move is ", move)
         actions.append(("move", move))
-    #for poke_id, pokemon in team_poke.items():
-    #    if poke_id != curr_poke and pokemon.currhp > 0:
-    #        actions.append(("switch", team_poke[poke_id]))
+    for poke_id, pokemon in team_poke.items():
+        if poke_id != curr_poke and pokemon.currhp > 0:
+            actions.append(("switch", team_poke[poke_id]))
     #print("legal actions are ",actions)
     return actions
 

@@ -123,6 +123,13 @@ action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=te
 print(testpoke1, testpoke2)
 print("action is ", action) # favor earthquake over quickattack for raw DPS
 
+testpoke1 = sim.Pokemon(1, 199, 174, 253, 253, 223, 261, 62, 0.689, 1, ['blizzard', 'psychic', 'amnesia', 'recover'],['psychic'], "par", stat_multiplier)
+testpoke2 = sim.Pokemon(1, 251, 152, 125, 125, 202, 226, 74, 1.0, 1, ['bodyslam', 'highjumpkick', 'seismictoss', 'counter', 'counter', 'meditate'], ['fighting'], None, stat_multiplier)
+
+action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=testpoke2)
+print(testpoke1, testpoke2)
+print("action is ", action) # Since we are paralyzed, we will choose recover. Is this what we want?
+
 #battle 2 vileplume vs snorlax
 
 #battle 3 machamp vs snorlax

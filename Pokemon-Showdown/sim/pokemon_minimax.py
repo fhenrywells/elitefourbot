@@ -110,7 +110,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
                     #newrunningmovelist = copy.deepcopy(runningmovelist)
                     #newrunningmovelist.append((our_move, their_move))
                     score = \
-                        recurse(results[0][1][0].poke_id, new_team_poke, results[0][1][1], depth, player, runningmovelist)[
+                        recursealphabeta(results[0][1][0].poke_id, new_team_poke, results[0][1][1], depth, player, runningmovelist, alpha, beta)[
                             1]
                     #states[depth].append((our_move, their_move))
                     if min_their_score is None or score < min_their_score:
@@ -130,7 +130,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         depth = self.depth
         player = self.index
         # print("player is ", player)
-        action, value = recursealphabeta(curr_poke, team_poke, enemy_poke, depth, player)
+        action, value = recurse(curr_poke, team_poke, enemy_poke, depth, player)
         index = 1
         # print("action produced: ", action)
         #print("move " + action[0][1])

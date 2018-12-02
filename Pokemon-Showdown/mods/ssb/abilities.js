@@ -67,7 +67,7 @@ let BattleAbilities = {
 		onTryHit: function (target, source, move) {
 			if (target !== source && move.type === 'Electric') {
 				if (!this.heal(target.maxhp / 4)) {
-					this.add('-immune', target, '[msg]', '[from] ability: Shell Shocker');
+					this.add('-immune', target, '[from] ability: Shell Shocker');
 				}
 				return null;
 			}
@@ -84,7 +84,7 @@ let BattleAbilities = {
 		onTryHit: function (target, source, move) {
 			let plateType = this.getItem(target.item).onPlate;
 			if (target !== source && (move.type === 'Normal' || plateType === move.type)) {
-				this.add('-immune', target, '[msg]', '[from] ability: Logia');
+				this.add('-immune', target, '[from] ability: Logia');
 				return null;
 			}
 		},
@@ -105,7 +105,7 @@ let BattleAbilities = {
 					activated = true;
 				}
 				if (target.volatiles['substitute']) {
-					this.add('-immune', target, '[msg]');
+					this.add('-immune', target);
 				} else {
 					this.boost({atk: -1}, target, pokemon, this.getAbility('intimidate'));
 				}
@@ -361,7 +361,7 @@ let BattleAbilities = {
 		onSetStatus: function (status, target, source, effect) {
 			if (status.id !== 'brn') return;
 			if (!effect || !effect.status) return false;
-			this.add('-immune', target, '[msg]', '[from] ability: Sacred Shadow');
+			this.add('-immune', target, '[from] ability: Sacred Shadow');
 			return false;
 		},
 	},
@@ -404,7 +404,7 @@ let BattleAbilities = {
 	// Rory Mercury
 	recharge: {
 		desc: "Upon switching out, this Pokemon has its major status condition cured and restores 1/3 of its maximum HP, rounded down. When this Pokemon switches in, if it uses an Electric-type attack on the next turn, that attack's power will be doubled.",
-		shortDesc: "Switch-out: heals status + 33% HP. Switch-in: 2x power on Electric move next turn.",
+		shortDesc: "Switch-out: cures status + 33% HP. Switch-in: 2x power on Electric move next turn.",
 		id: "recharge",
 		name: "Recharge",
 		isNonstandard: true,
@@ -450,7 +450,7 @@ let BattleAbilities = {
 		onSetStatus: function (status, target, source, effect) {
 			if (status.id !== 'brn') return;
 			if (!effect || !effect.status) return false;
-			this.add('-immune', target, '[msg]', '[from] ability: Thiccer Fat');
+			this.add('-immune', target, '[from] ability: Thiccer Fat');
 			return false;
 		},
 	},
@@ -475,7 +475,7 @@ let BattleAbilities = {
 		onTryHit: function (target, source, move) {
 			if (target !== source && move.type === 'Rock') {
 				if (!this.heal(target.maxhp / 4)) {
-					this.add('-immune', target, '[msg]', '[from] ability: Solar Flare');
+					this.add('-immune', target, '[from] ability: Solar Flare');
 				}
 				return null;
 			}

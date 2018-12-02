@@ -47,7 +47,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
             #global states
             # print("player is minotaur ", player)
             if sim.isWin(enemy_poke) or sim.isLose(team_poke) or depth == 0:
-                # print(runningmovelist, sim.getScore(team_poke, enemy_poke))
+                print(runningmovelist, sim.getScore(team_poke, enemy_poke))
                 return [], sim.getScore(team_poke, enemy_poke)
             legalPlayerMoves = sim.getLegalTeamActions(curr_poke, team_poke)
             legalEnemyMoves = sim.getLegalEnemyActions(enemy_poke)
@@ -68,10 +68,10 @@ class MinimaxAgent(MultiAgentSearchAgent):
                     )
                     new_team_poke = copy.deepcopy(team_poke)
                     new_team_poke[our_move[1].poke_id if our_move[0] == "switch" else curr_poke] = results[0][1][0]
-                    #newrunningmovelist = copy.deepcopy(runningmovelist)
-                    #newrunningmovelist.append((our_move, their_move))
+                    newrunningmovelist = copy.deepcopy(runningmovelist)
+                    newrunningmovelist.append((our_move, their_move))
                     score = \
-                    recurse(results[0][1][0].poke_id, new_team_poke, results[0][1][1], depth, player, runningmovelist)[
+                    recurse(results[0][1][0].poke_id, new_team_poke, results[0][1][1], depth, player, newrunningmovelist)[
                         1]
                     #states[depth].append((our_move, their_move))
                     if min_their_score is None or score < min_their_score:

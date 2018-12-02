@@ -255,6 +255,20 @@ def prob_fainted(hp):
     c = 0
     return 1 / (1 + a * math.exp(b * hp) + c)
 
+def calc_acc_factor(move, pokemon):
+    if move.accuracy is True:
+        acc = 1.0
+    else:
+        acc = move.accuracy / 100.0
+
+    # Add a prob_fainted parameter so that move order actually matters. This parameter influences accuracy based on
+    # probability that the attacking pokemon is fainted, accounting for advantages in going first
+    prob_alive = 1 - prob_fainted(pokemon.currhp)
+    acc *= prob_alive
+    # Handle paralysis
+    acc *= 1 - pokemon.status['par'] * 0.25
+    acc *= 1 - pokemon.status['slp']
+    return acc
 
 class Move:
     accuracy = None
@@ -311,19 +325,7 @@ class Move:
         '''
         states = []
         #print("our pokemon hit is ", ourPokemon_hit)
-        # Add missed state first, if accuracy is <100
-        if self.accuracy is True:
-            acc = 1.0
-        else:
-            acc = self.accuracy / 100.0
-
-        # Add a prob_fainted parameter so that move order actually matters. This parameter influences accuracy based on
-        # probability that the attacking pokemon is fainted, accounting for advantages in going first
-        prob_alive = 1 - prob_fainted(ourPokemon.currhp)
-        acc *= prob_alive
-        # Handle paralysis
-        acc *= 1 - ourPokemon_new.status['par'] * 0.25
-        acc *= 1 - ourPokemon_new.status['slp']
+        acc = calc_acc_factor(self, ourPokemon_new)
 
         if isinstance(self.multihit, list):
             multihit = mean(self.multihit)
@@ -403,10 +405,11 @@ class Move:
     def explosion(self, ourPokemon, theirPokemon):
         ourPokemon_new = copy.copy(ourPokemon)
         theirPokemon_new = copy.copy(theirPokemon)
+        acc = calc_acc_factor(self, ourPokemon_new)
         their_poke_orig_def = theirPokemon_new._defense
         theirPokemon_new._defense = theirPokemon_new._defense * 0.5
         damage = calcDamage(ourPokemon_new, theirPokemon_new, self)
-        theirPokemon_new.damage(damage)
+        theirPokemon_new.damage(damage * acc)
         theirPokemon_new._defense = their_poke_orig_def
         ourPokemon_new.currhp = 0
         return [(1.0, (ourPokemon_new, theirPokemon_new))]
@@ -415,7 +418,8 @@ class Move:
 
     def megadrain(self, ourPokemon, theirPokemon):
         result = self.defaultmove(ourPokemon, theirPokemon)
-        result[0][1][0].currhp += result[0][1][1].last_dmg_taken * 1/2 / result[0][1][0].maxhp
+        acc = calc_acc_factor(self, ourPokemon)
+        result[0][1][0].currhp += result[0][1][1].last_dmg_taken * acc * 1/2 / result[0][1][0].maxhp
         return result
 
     def mirrormove(self, ourPokemon, theirPokemon):
@@ -435,21 +439,24 @@ class Move:
     def superfang(self, ourPokemon, theirPokemon):
         ourPokemon_new = copy.copy(ourPokemon)
         theirPokemon_new = copy.copy(theirPokemon)
-        theirPokemon_new.damage(theirPokemon_new.currhp * theirPokemon_new.maxhp * 0.5)
+        acc = calc_acc_factor(self, ourPokemon_new)
+        theirPokemon_new.damage(theirPokemon_new.currhp * acc * theirPokemon_new.maxhp * 0.5)
         return [(1.0, (ourPokemon_new, theirPokemon_new))]
 
     def psywave(self, ourPokemon, theirPokemon):
         ourPokemon_new = copy.copy(ourPokemon)
         theirPokemon_new = copy.copy(theirPokemon)
+        acc = calc_acc_factor(self, ourPokemon_new)
         effectiveness = calcEffectiveness(self, theirPokemon_new)
-        damage = effectiveness * ourPokemon_new.level
+        damage = effectiveness * ourPokemon_new.level * acc
         theirPokemon_new.damage(damage)
         return [(1.0, (ourPokemon_new, theirPokemon_new))]
 
     def seismictoss(self, ourPokemon, theirPokemon):
         ourPokemon_new = copy.copy(ourPokemon)
         theirPokemon_new = copy.copy(theirPokemon)
-        damage = ourPokemon_new.level
+        acc = calc_acc_factor(self, ourPokemon_new)
+        damage = ourPokemon_new.level * acc
         theirPokemon_new.damage(damage)
         return [(1.0, (ourPokemon_new, theirPokemon_new))]
 
@@ -458,7 +465,8 @@ class Move:
     def recover(self, ourPokemon, theirPokemon):
         ourPokemon_new = copy.copy(ourPokemon)
         theirPokemon_new = copy.copy(theirPokemon)
-        ourPokemon_new.currhp = min(ourPokemon_new.currhp + 0.5, 1)
+        acc = calc_acc_factor(self, ourPokemon_new)
+        ourPokemon_new.currhp = min(ourPokemon_new.currhp + acc * 0.5, 1)
         return [(1.0, (ourPokemon_new, theirPokemon_new))]
 
     softboiled = recover
@@ -597,6 +605,11 @@ def main():
                     1, ['blizzard'], ['fire', 'water'], None, {0:1, 1:1, 2:1, 3:1, 4:1})
 
     nextStates = performActions(poke1, poke2, ("move", "blizzard"), ("move", "counter"))
+
+    testpoke1 = Pokemon(1, 136, 115, 197, 197, 197, 229, 68, 0.677, 1, ['blizzard', 'lovelykiss', 'psychic', 'seismictoss'],['ice', 'psychic'], None, {0:1, 1:1, 2:1, 3:1, 4:1})
+    testpoke2 = Pokemon(1, 136, 129, 251, 251, 173, 216, 68, 0.29, 1, ['psychic', 'thunderwave', 'recover', 'reflect', 'reflect', 'counter', 'seismictoss', 'seismictoss'], ['psychic'], "par", {0:1, 1:1, 2:1, 3:1, 4:1})
+
+    nextStates = performActions(testpoke1, testpoke2, ("move", "lovelykiss"), ("move", "thunderwave"))
 
 
 #nextStates = performActions(

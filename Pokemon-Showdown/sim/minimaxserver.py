@@ -126,7 +126,7 @@ def get_action():
             ally[3],  # level
             ally[4],  # curr hp
             generation,
-            ally[5],  # moves
+            list(set(ally[5])),  # moves
             ally[6],  # types
             ally[7],  # status
             ally[8]  # stat multiplier
@@ -143,7 +143,7 @@ def get_action():
         enemy[3],  # level
         enemy[4],  # curr hp
         generation,
-        enemy[5],  # moves
+        list(set(enemy[5])),  # moves
         enemy[6],  # types
         enemy[7],  # status
         enemy[8]  # stat multiplier

@@ -1,6 +1,8 @@
 import copy
 import csv
 import json
+import math
+
 import jsonpickle
 import os
 
@@ -210,6 +212,12 @@ def performActions(p1_pokemon, p2_pokemon, p1action, p2action):
         poke_2.handle_status()
     return ret
 
+def prob_fainted(hp):
+    a = 1
+    b = 10
+    c = 0
+    return 1 / (1 + a * math.exp(b * hp) + c)
+
 
 class Move:
     accuracy = None
@@ -269,6 +277,10 @@ class Move:
         else:
             acc = self.accuracy / 100.0
 
+        # Add a prob_fainted parameter so that move order actually matters. This parameter influences accuracy based on
+        # probability that the attacking pokemon is fainted, accounting for advantages in going first
+        prob_alive = 1 - prob_fainted(ourPokemon.currhp)
+        acc *= prob_alive
         # Handle paralysis
         acc *= 1 - ourPokemon_new.status['par'] * 0.25
         acc *= 1 - ourPokemon_new.status['slp']
@@ -345,6 +357,10 @@ class Move:
         #print("substitute")
         return [(1.0, (copy.copy(ourPokemon), copy.copy(theirPokemon)))]
 
+    def hyperbeam(self, ourPokemon, theirPokemon):
+        ourPokemon.recover = True
+        return self.defaultmove(ourPokemon, theirPokemon)
+
 
 with open(dir_path + '/viablemovesdata.json') as f:
     move_data = json.loads(f.read())
@@ -378,6 +394,17 @@ def getLegalEnemyActions(enemy_poke):
         actions.append(("move", move))
     return actions
 
+def getHpScore(hp):
+    '''
+    Scoring function for HP, to allow non-linear scores for HP (presumably, doing damage at high HP isn't super important, but you wanna KO at lower HP
+    :param hp:
+    :return:
+    '''
+    a = -3.5
+    b = -7
+    c = 1
+    return a * math.exp(b * hp) + c
+
 def getScore(ourPokemon, enemyPokemon):
     teamScore = 0
 
@@ -395,7 +422,7 @@ def getScore(ourPokemon, enemyPokemon):
         #if pokemon.gen == 1 and stat == 3:
         #    continue
         #stat_multiplier *= stat
-        teamScore += pokemon.currhp*status_effect*stat_multiplier
+        teamScore += getHpScore(pokemon.currhp)*status_effect*stat_multiplier
     teamScore = teamScore / NUM_TEAM_MEMBERS
     #if enemyPokemon.status != "None":
     #  status_effect = 0.5
@@ -415,7 +442,7 @@ def getScore(ourPokemon, enemyPokemon):
     stat_multiplier *= (2+ pokemon.spa_stage[0])/(2 - pokemon.spa_stage[1])
     #stat_multiplier *= (2+ pokemon.spd_stage[0])/(2 - pokemon.spd_stage[1]) gen1
     stat_multiplier *= (2+ pokemon.spe_stage[0])/(2 - pokemon.spe_stage[1])
-    enemyScore = enemyPokemon.currhp*status_effect*stat_multiplier
+    enemyScore = getHpScore(enemyPokemon.currhp)*status_effect*stat_multiplier
     score = teamScore - enemyScore
     return score
 

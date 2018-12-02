@@ -14,8 +14,6 @@ app = Flask(__name__)
 def get_action():
     data = request.data
     dataDict = json.loads(data)
-    pprint(dataDict)
-
     theirHpStatus = dataDict['theirHp'].split(" ") # theirHpStatus[0] is hp, [1] is status effect
 
     # Enemy Pokemon Info
@@ -33,7 +31,7 @@ def get_action():
     # if "Mime" in dataDict["theirDetails"]:
     #  dataDict["theirDetails"].replace(" Mime", "Mime")
     theirLevelInfo = dataDict['theirDetails'].split(", ")
-    dataDict["theirLevel"] = int(theirLevelInfo[1:])
+    dataDict["theirLevel"] = int(theirLevelInfo[1][1:])
 
     # Our Team Info
     dataDict['ourMaxHp'] = {}

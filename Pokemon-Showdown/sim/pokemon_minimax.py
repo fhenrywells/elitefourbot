@@ -39,6 +39,8 @@ class MultiAgentSearchAgent(Agent):
 
 class MinimaxAgent(MultiAgentSearchAgent):
     def getAction(self, curr_poke, team_poke, enemy_poke, ):
+        #pickle.dump(team_poke, open("teampoke.p", "wb"))
+        #pickle.dump(enemy_poke, open("enemypoke.p", "wb"))
         global states
         states = defaultdict(list)
 
@@ -70,8 +72,8 @@ class MinimaxAgent(MultiAgentSearchAgent):
                     )
                     new_team_poke = copy.deepcopy(team_poke)
                     new_team_poke[our_move[1].poke_id if our_move[0] == "switch" else curr_poke] = results[0][1][0]
-                    # newrunningmovelist = copy.deepcopy(runningmovelist)
-                    # newrunningmovelist.append((our_move, their_move))
+                    #newrunningmovelist = copy.deepcopy(runningmovelist)
+                    #newrunningmovelist.append((our_move, their_move))
                     score = \
                     recurse(results[0][1][0].poke_id, new_team_poke, results[0][1][1], depth, player, runningmovelist)[
                         1]
@@ -79,13 +81,10 @@ class MinimaxAgent(MultiAgentSearchAgent):
                     if min_their_score is None or score < min_their_score:
                         min_their_score = score
                         min_their_move = their_move
-                if max_our_score is None or score > max_our_score:
-                    max_our_score = score
+                if max_our_score is None or min_their_score > max_our_score:
+                    max_our_score = min_their_score
                     max_our_move = our_move
             return (max_our_move, min_their_move), max_our_score
-
-        # keep track of which player is maximizing
-        # keep track of whether fastest has gone, if has then at end of function set it back to false
 
         depth = self.depth
         player = self.index
@@ -94,12 +93,6 @@ class MinimaxAgent(MultiAgentSearchAgent):
         index = 1
         # print("action produced: ", action)
         print("move " + action[0][1])
-
-        if action[0][1] == "reflect" or action[0][1] == "rest" or action[0][1] == "counter":
-            pickle.dump(team_poke, open("teampoke.p", "wb"))
-            pickle.dump(enemy_poke, open("enemypoke.p", "wb"))
-            print("oh no", curr_poke)
-            sys.exit()
 
         for key, value in states.items():
             print("depth: {}, num states {}".format(key, len(value)))

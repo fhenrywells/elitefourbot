@@ -33,7 +33,7 @@ class Pokemon:
 
     recharge = False
 
-    status = {"brn":0, "frz":0, "par":0, "psn":0, "slp":0, "tox":0}
+    status = {"brn": 0, "frz": 0, "par": 0, "psn": 0, "slp": 0, "tox": 0}
 
     atk_stage = [0, 0]
     def_stage = [0, 0]
@@ -57,8 +57,11 @@ class Pokemon:
         self.moveids = moveids
         self.types = types
         self.stat_multipliers = stat_multipliers
-        if status is not None:
+        if status != "None":
+            self.status = {"brn": 0, "frz": 0, "par": 0, "psn": 0, "slp": 0, "tox": 0}
             self.status[status] = 1.0
+        else:
+            self.status = {"brn": 0, "frz": 0, "par": 0, "psn": 0, "slp": 0, "tox": 0}
         atk_stage = list(stat_multipliers.values())[0] - 1
         def_stage = list(stat_multipliers.values())[1] - 1
         spa_stage = list(stat_multipliers.values())[2] - 1
@@ -116,6 +119,28 @@ class Pokemon:
     @property
     def speed(self):
         return int(self._speed * self.stage_to_multiplier(self.spe_stage) * (1 - 0.25 * self.status['par']))
+
+    def __str__(self):
+        currhpint = round(self.currhp * self.maxhp)
+        return "Pokemon {}: {{Status: {}/{} ({}), Level: {}, Types: {}, Base Stats: ({}, {}, {}, {}, {}), Boosted Stats: ({}, {}, {}, {}, {}), Moves: {}}}".format(
+            self.poke_id,
+            currhpint,
+            self.maxhp,
+            self.status,
+            self.level,
+            self.types,
+            self._attack,
+            self._defense,
+            self._sp_att,
+            self._sp_def,
+            self._speed,
+            self.attack,
+            self.defense,
+            self.sp_att,
+            self.sp_def,
+            self.speed,
+            self.moveids
+        )
 
 def calcEffectiveness(move, defendingPokemon):
     effectivenesses = [move_effectiveness[(
@@ -313,6 +338,7 @@ class Move:
                 damage = calcDamage(ourPokemon_new, theirPokemon_new, self)
             theirPokemon_new.damage(damage * acc * multihit)
 
+
         # Then apply boosts if they exist
         if self.boosts is not None:
             # Apply boost to self
@@ -393,7 +419,10 @@ class Move:
         return result
 
     def mirrormove(self, ourPokemon, theirPokemon):
-        result = theirPokemon.last_move_used.effect(ourPokemon, theirPokemon)
+        if theirPokemon.last_move_used is not None:
+            result = theirPokemon.last_move_used.effect(ourPokemon, theirPokemon)
+        else:
+            result = [(1.0, (copy.copy(ourPokemon), copy.copy(theirPokemon)))]
         return result
 
     def doubleedge(self, ourPokemon, theirPokemon):
@@ -423,6 +452,8 @@ class Move:
         damage = ourPokemon_new.level
         theirPokemon_new.damage(damage)
         return [(1.0, (ourPokemon_new, theirPokemon_new))]
+
+    nightshade = seismictoss
 
     def recover(self, ourPokemon, theirPokemon):
         ourPokemon_new = copy.copy(ourPokemon)
@@ -498,16 +529,16 @@ def getHpScore(hp):
     :param hp:
     :return:
     '''
-    a = -1
+    a = 1
     b = 5
     c = 0
-    return -1 / (1 + a * math.exp(b * hp) + c)
+    return -1 / (1 + a * math.exp(b * hp) + c) + 1
 
 def getScore(ourPokemon, enemyPokemon):
     teamScore = 0
 
 
-    for poke_id, pokemon in ourPokemon.items():  
+    for poke_id, pokemon in ourPokemon.items():
         #sum over all possible status effects, 
         status_effect = (1 - 0.5*sum(pokemon.status.values()))
         #status_effect = 1
@@ -534,23 +565,23 @@ def getScore(ourPokemon, enemyPokemon):
     #        continue
     #    stat_multiplier *= mult
     pokemon = enemyPokemon
-    status_effect = (1 - 0.25*sum(pokemon.status.values()))
+    status_effect = (1 - 0.5*sum(pokemon.status.values()))
     #status_effect = 1
-    stat_multiplier = 1 
+    stat_multiplier = 1
     stat_multiplier *= (2+ pokemon.atk_stage[0])/(2 - pokemon.atk_stage[1])
     stat_multiplier *= (2+ pokemon.def_stage[0])/(2 - pokemon.def_stage[1])
     stat_multiplier *= (2+ pokemon.spa_stage[0])/(2 - pokemon.spa_stage[1])
     #stat_multiplier *= (2+ pokemon.spd_stage[0])/(2 - pokemon.spd_stage[1]) gen1
     stat_multiplier *= (2+ pokemon.spe_stage[0])/(2 - pokemon.spe_stage[1])
     enemyScore = getHpScore(enemyPokemon.currhp)*status_effect*stat_multiplier
-    score = teamScore - enemyScore
+    score = teamScore - enemyScore * 1.5 # Favor doing damage to opponent rather than helping self
     return score
 
 def isWin(enemyPokemon):
-    return enemyPokemon.currhp <= 0 
+    return enemyPokemon.currhp <= 0
 
 def isLose(ourPokemon):
-    allFainted = True 
+    allFainted = True
     for pokemon in ourPokemon.values():
         if pokemon.currhp > 0:
             allFainted = False

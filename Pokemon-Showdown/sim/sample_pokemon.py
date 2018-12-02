@@ -104,6 +104,7 @@ testpoke1 = sim.Pokemon(1, 100, 100, 100, 100, 100, 100, 100, 1.0, 1, ['hyperbea
 testpoke2 = sim.Pokemon(1, 100, 100, 100, 100, 100, 100, 100, 1.0, 1, ['tackle'], ['normal'], None, stat_multiplier)
 
 action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=testpoke2)
+print(testpoke1, testpoke2)
 print("action is ", action) # should be earthquake at depth=2, hyperbeam at depth=1
 
 #poke_id, attack, defense, sp_att, sp_def, speed, maxhp, level, currhp, gen, moveids, types, status, stat_multipliers):
@@ -111,7 +112,16 @@ testpoke1 = sim.Pokemon(1, 100, 100, 100, 100, 90, 100, 90, 0.1, 1, ['quickattac
 testpoke2 = sim.Pokemon(1, 100, 100, 100, 100, 100, 100, 100, 0.1, 1, ['tackle'], ['normal'], None, stat_multiplier)
 
 action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=testpoke2)
-print("action is ", action) # favor quickattack over earthquake, since it has a higher chance of fainting the pokemon more quickly
+print(testpoke1, testpoke2)
+print("action is ", action) # favor quickattack over earthquake, since it has a higher chance of fainting the other pokemon before you can faint yourself
+
+#poke_id, attack, defense, sp_att, sp_def, speed, maxhp, level, currhp, gen, moveids, types, status, stat_multipliers):
+testpoke1 = sim.Pokemon(1, 100, 100, 100, 100, 90, 100, 90, 1.0, 1, ['quickattack', 'earthquake'], ['normal'], None, stat_multiplier)
+testpoke2 = sim.Pokemon(1, 100, 100, 100, 100, 100, 100, 100, 1.0, 1, ['tackle'], ['normal'], None, stat_multiplier)
+
+action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=testpoke2)
+print(testpoke1, testpoke2)
+print("action is ", action) # favor earthquake over quickattack for raw DPS
 
 #battle 2 vileplume vs snorlax
 

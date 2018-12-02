@@ -1,5 +1,5 @@
 import json
-from pprint import pprint
+import logging
 
 from flask import Flask
 from flask import request
@@ -154,13 +154,18 @@ def get_action():
     # recharging (deprecated, handled in battle-stream)
     # if len(team_poke[curr_poke].moveids) == 0:
     #  return ("move recharge")
+    print(team_poke[curr_poke])
+    print(enemy_poke)
 
     agent = pokemon_minimax.MinimaxAgent()  # can specify search depth here
     action = agent.getAction(curr_poke=curr_poke, team_poke=team_poke, enemy_poke=enemy_poke)
     # print("our moves are", team_poke[curr_poke].moveids)
     # print("Action is ", action)
+    print("Action is ", action)
     return (action)
 
 
 if __name__ == '__main__':
+    log = logging.getLogger('werkzeug')
+    log.setLevel(logging.ERROR)
     app.run(debug=True, host="127.0.0.1", port=5000)

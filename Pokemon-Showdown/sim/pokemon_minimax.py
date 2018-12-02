@@ -6,7 +6,7 @@ from collections import defaultdict
 
 import pysim.pokemon_simple as sim
 
-states = defaultdict(list)
+#states = defaultdict(list)
 
 
 class Agent:
@@ -39,14 +39,12 @@ class MultiAgentSearchAgent(Agent):
 
 class MinimaxAgent(MultiAgentSearchAgent):
     def getAction(self, curr_poke, team_poke, enemy_poke, ):
-        pickle.dump(team_poke, open("teampoke.p", "wb"))
-        pickle.dump(enemy_poke, open("enemypoke.p", "wb"))
-        global states
-        states = defaultdict(list)
-        print(sim.getLegalTeamActions(curr_poke, team_poke))
+        #global states
+        #states = defaultdict(list)
+        #print(sim.getLegalTeamActions(curr_poke, team_poke))
 
         def recurse(curr_poke, team_poke, enemy_poke, depth, player, runningmovelist=[]):
-            global states
+            #global states
             # print("player is minotaur ", player)
             if sim.isWin(enemy_poke) or sim.isLose(team_poke) or depth == 0:
                 # print(runningmovelist, sim.getScore(team_poke, enemy_poke))
@@ -55,9 +53,6 @@ class MinimaxAgent(MultiAgentSearchAgent):
             legalEnemyMoves = sim.getLegalEnemyActions(enemy_poke)
 
             depth -= 1
-            candidates = []
-            action_pairs = list(
-                itertools.product(legalPlayerMoves, legalEnemyMoves))
 
             max_our_move = None
             max_our_score = None
@@ -78,7 +73,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
                     score = \
                     recurse(results[0][1][0].poke_id, new_team_poke, results[0][1][1], depth, player, runningmovelist)[
                         1]
-                    states[depth].append((our_move, their_move))
+                    #states[depth].append((our_move, their_move))
                     if min_their_score is None or score < min_their_score:
                         min_their_score = score
                         min_their_move = their_move
@@ -93,13 +88,10 @@ class MinimaxAgent(MultiAgentSearchAgent):
         action, value = recurse(curr_poke, team_poke, enemy_poke, depth, player)
         index = 1
         # print("action produced: ", action)
-        print("move " + action[0][1])
-        if action[0][1] == "substitute":
-            print("oh no")
-            sys.exit()
+        #print("move " + action[0][1])
 
-        for key, value in states.items():
-            print("depth: {}, num states {}".format(key, len(value)))
+        #for key, value in states.items():
+        #    print("depth: {}, num states {}".format(key, len(value)))
         # print(json.dumps(json.loads(jsonpickle.encode(states)), indent=2))
         # print("states are ", states)
         return "move " + action[0][1]

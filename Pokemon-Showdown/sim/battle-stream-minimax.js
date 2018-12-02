@@ -287,9 +287,9 @@ class BaselinePlayerAI extends BattleStreams.BattlePlayer {
                 }).filter(move => (!move.disabled)).sort(function(a, b) {
                     return a.maxpp - b.maxpp
                 })
-                console.log("baseline moves are ", moves)
+                //console.log("baseline moves are ", moves)
                 let move = moves[moves.length > 1? Math.round(Math.random()): 0].index
-                console.log("baseline move is ", move)
+                //console.log("baseline move is ", move)
                 const targetable = request.active.length > 1 && ['normal', 'any'].includes(pokemon.moves[move - 1].target);
                 const target = targetable ? ` ${1 + Math.floor(Math.random() * 2)}` : ``;
                 return `move ${move}${target}`;
@@ -468,7 +468,6 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
                 }).filter(move => (!move.disabled)).sort(function(a, b) {
                     return a.maxpp - b.maxpp
                 })
-                console.log("Possible moves are ", moves)
 
                 // Damage calculated for each move
                 //let damageCalculator = calculateDamage(minimaxBotPokemon, baselineBotPokemon, moves)
@@ -486,7 +485,7 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
                 let theirMoves = FORMATSDATA[getPokemonName(baselineBotPokemon)]['randomBattleMoves']
                 var essentialMove = FORMATSDATA[getPokemonName(baselineBotPokemon)]['essentialMove']
                 if (typeof(essentialMove) === 'undefined') {
-                    console.log("undefined")
+                    //console.log("undefined")
                 } else {
                     theirMoves = theirMoves.concat(essentialMove)
                 }
@@ -494,7 +493,7 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
                 var exclusiveMoves = FORMATSDATA[getPokemonName(baselineBotPokemon)]['exclusiveMoves']
 
                 if (typeof(exclusiveMoves) === 'undefined') {
-                    console.log("undefined")
+                    //console.log("undefined")
                 } else {
                     theirMoves = theirMoves.concat(exclusiveMoves)
                 }
@@ -544,14 +543,14 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
                 }
                 //console.log("our stats are ",ourStats) 
                 if (POKEDEX[getPokemonName(baselineBotPokemon)].num in theirBaseStats) {
-                    console.log("seen this poke before")
+                    //console.log("seen this poke before")
                 } else {
                     theirBaseStats[POKEDEX[getPokemonName(baselineBotPokemon)].num] = baselineBotPokemon.stats
                 }
 
                 if (turn == 1){
                     //var ourBaseStats = 
-                    console.log("base stats set!")
+                    //console.log("base stats set!")
                     ourBaseStats = JSON.parse(JSON.stringify(ourStats));
 
                 } //implement proper basestat module 
@@ -582,8 +581,7 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
                         theirBaseStats: theirBaseStats
                     }
                 }); 
-                console.log("ret is ", ret.body.toString('utf8'))
-                console.log("possible moves are ", moveList)
+                //console.log("ret is ", ret.body.toString('utf8'))
                 return ret.body.toString('utf8')
                 //return `move ${move}${target}`;
             });

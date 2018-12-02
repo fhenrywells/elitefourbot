@@ -21,11 +21,16 @@ class Pokemon:
     _speed = None
     maxhp = None
     level = None
-    currhp = 1.0
+    _currhp = 1.0
     gen = None
     moveids = []
     types = []
-    stat_multipliers = None 
+    stat_multipliers = None
+    last_dmg_taken = 0
+    last_move_taken = None
+    last_move_used = None
+
+    recharge = False
 
     status = {"brn":0, "frz":0, "par":0, "psn":0, "slp":0, "tox":0}
 
@@ -46,7 +51,7 @@ class Pokemon:
         self._speed = speed
         self.maxhp = maxhp
         self.level = level
-        self.currhp = currhp
+        self._currhp = currhp
         self.gen = gen
         self.moveids = moveids
         self.types = types
@@ -75,13 +80,13 @@ class Pokemon:
         '''
         for status, val in self.status.items():
             if status == "brn":
-                self.currhp -= 1.0/16.0 * val
+                self._currhp -= 1.0/16.0 * val
             elif status == "frz":
                 pass
             elif status == "par":
                 pass
             elif status == "psn" or self.status == "tox": # will need to be changed to account for tox
-                self.currhp -= 1.0/16.0 * val # for gen1 will need to be changed for future gens
+                self._currhp -= 1.0/16.0 * val # for gen1 will need to be changed for future gens
             elif self.status == "slp":
                 pass
         #elif self.status == "tox":
@@ -107,6 +112,15 @@ class Pokemon:
     @property
     def speed(self):
         return int(self._speed * self.stage_to_multiplier(self.spe_stage) * (1 - 0.25 * self.status['par']))
+
+    @property
+    def currhp(self):
+        return self._currhp
+
+    @currhp.setter
+    def currhp(self, val):
+        self.last_dmg_taken = (self.currhp - val) * self.maxhp
+        self._currhp = val
 
 
 def calcDamage(attackingPokemon, defendingPokemon, move):
@@ -257,6 +271,8 @@ class Move:
         # Copy pokemon for the new state
         ourPokemon_new = copy.copy(ourPokemon)
         theirPokemon_new = copy.copy(theirPokemon)
+        ourPokemon_new.last_move_used = self
+        theirPokemon_new.last_move_taken = self
         '''print("orig Stats are ",
                 "att: {}",
                 "def: {}",
@@ -346,8 +362,10 @@ class Move:
         return [(1.0, (copy.copy(ourPokemon), copy.copy(theirPokemon)))]
 
     def counter(self, ourPokemon, theirPokemon):
-        #print("counter")
-        return [(1.0, (copy.copy(ourPokemon), copy.copy(theirPokemon)))]
+        theirPokemon_new = copy.copy(theirPokemon)
+        if ourPokemon.last_move_taken.basePower != 0 and ourPokemon.last_move_taken.type in ['normal', 'fighting']:
+            theirPokemon_new.currhp -= 2 * ourPokemon.last_dmg_taken / theirPokemon_new.maxhp
+        return [(1.0, (copy.copy(ourPokemon), theirPokemon_new))]
 
     def reflect(self, ourPokemon, theirPokemon):
         #print("reflect")
@@ -358,7 +376,7 @@ class Move:
         return [(1.0, (copy.copy(ourPokemon), copy.copy(theirPokemon)))]
 
     def hyperbeam(self, ourPokemon, theirPokemon):
-        ourPokemon.recover = True
+        ourPokemon.recharge = True
         return self.defaultmove(ourPokemon, theirPokemon)
 
 
@@ -379,6 +397,9 @@ def getLegalTeamActions(curr_poke, team_poke):
     #print("team is ", team_poke)
     #print("curr poke is ", curr_poke)
     #print("move array is ", team_poke[curr_poke].moveids)
+    if team_poke[curr_poke].recharge:
+        team_poke[curr_poke].recharge = False
+        return [("switch", team_poke[curr_poke])]
     for move in team_poke[curr_poke].moveids:
         #print("move is ", move)
         actions.append(("move", move))
@@ -411,13 +432,14 @@ def getScore(ourPokemon, enemyPokemon):
 
     for poke_id, pokemon in ourPokemon.items():  
         #sum over all possible status effects, 
-        status_effect = (1 - 0.5*sum(pokemon.status.values())) 
-        stat_multiplier = 1 
-        stat_multiplier *= (2+ pokemon.atk_stage[0])/(2 - pokemon.atk_stage[1])
-        stat_multiplier *= (2+ pokemon.def_stage[0])/(2 - pokemon.def_stage[1])
-        stat_multiplier *= (2+ pokemon.spa_stage[0])/(2 - pokemon.spa_stage[1])
-        #stat_multiplier *= (2+ pokemon.spd_stage[0])/(2 - pokemon.spd_stage[1]) gen1
-        stat_multiplier *= (2+ pokemon.spe_stage[0])/(2 - pokemon.spe_stage[1])
+        status_effect = (1 - 0.5*sum(pokemon.status.values()))
+        status_effect = 1
+        stat_multiplier = 1
+        stat_multiplier *= (2+ pokemon.atk_stage[0] * 1000)/(2 - pokemon.atk_stage[1] * 1000)
+        stat_multiplier *= (2+ pokemon.def_stage[0] * 1000)/(2 - pokemon.def_stage[1] * 1000)
+        stat_multiplier *= (2+ pokemon.spa_stage[0] * 1000)/(2 - pokemon.spa_stage[1] * 1000)
+        #stat_multiplier *= (2+ pokemon.spd_stage[0] * 1000)/(2 - pokemon.spd_stage[1] * 1000) gen1
+        stat_multiplier *= (2+ pokemon.spe_stage[0] * 1000)/(2 - pokemon.spe_stage[1] * 1000)
       #for stat,mult in pokemon.stat_multipliers.items():
         #if pokemon.gen == 1 and stat == 3:
         #    continue
@@ -436,6 +458,7 @@ def getScore(ourPokemon, enemyPokemon):
     #    stat_multiplier *= mult
     pokemon = enemyPokemon
     status_effect = (1 - 0.5*sum(pokemon.status.values()))
+    status_effect = 1
     stat_multiplier = 1 
     stat_multiplier *= (2+ pokemon.atk_stage[0])/(2 - pokemon.atk_stage[1])
     stat_multiplier *= (2+ pokemon.def_stage[0])/(2 - pokemon.def_stage[1])
@@ -465,10 +488,7 @@ def main():
     poke2 = Pokemon("2", 90, 90, 100, 2, 100, 353, 100, 1.0,
                     1, ['blizzard'], ['fire', 'water'], None, {0:1, 1:1, 2:1, 3:1, 4:1})
 
-    nextStates = performActions(poke1, poke2, ("move", "blizzard"), ("move", "agility"))
-    nextStates = performActions(nextStates[0][1][0], nextStates[0][1][1], ("move", "blizzard"), ("move", "agility"))
-    nextStates = performActions(nextStates[0][1][0], nextStates[0][1][1], ("move", "blizzard"), ("move", "fireblast"))
-    nextStates = performActions(nextStates[0][1][0], nextStates[0][1][1], ("move", "blizzard"), ("move", "bubblebeam"))
+    nextStates = performActions(poke1, poke2, ("move", "blizzard"), ("move", "counter"))
 
 
 #nextStates = performActions(

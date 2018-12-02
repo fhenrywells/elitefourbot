@@ -39,10 +39,11 @@ class MultiAgentSearchAgent(Agent):
 
 class MinimaxAgent(MultiAgentSearchAgent):
     def getAction(self, curr_poke, team_poke, enemy_poke, ):
-        #pickle.dump(team_poke, open("teampoke.p", "wb"))
-        #pickle.dump(enemy_poke, open("enemypoke.p", "wb"))
+        pickle.dump(team_poke, open("teampoke.p", "wb"))
+        pickle.dump(enemy_poke, open("enemypoke.p", "wb"))
         global states
         states = defaultdict(list)
+        print(sim.getLegalTeamActions(curr_poke, team_poke))
 
         def recurse(curr_poke, team_poke, enemy_poke, depth, player, runningmovelist=[]):
             global states
@@ -93,6 +94,9 @@ class MinimaxAgent(MultiAgentSearchAgent):
         index = 1
         # print("action produced: ", action)
         print("move " + action[0][1])
+        if action[0][1] == "substitute":
+            print("oh no")
+            sys.exit()
 
         for key, value in states.items():
             print("depth: {}, num states {}".format(key, len(value)))

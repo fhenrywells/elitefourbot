@@ -107,7 +107,7 @@ action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=te
 print("action is ", action) # should be earthquake at depth=2, hyperbeam at depth=1
 
 #poke_id, attack, defense, sp_att, sp_def, speed, maxhp, level, currhp, gen, moveids, types, status, stat_multipliers):
-testpoke1 = sim.Pokemon(1, 100, 100, 100, 100, 90, 100, 100, 0.1, 1, ['quickattack', 'earthquake'], ['normal'], None, stat_multiplier)
+testpoke1 = sim.Pokemon(1, 100, 100, 100, 100, 90, 100, 90, 0.1, 1, ['quickattack', 'earthquake'], ['normal'], None, stat_multiplier)
 testpoke2 = sim.Pokemon(1, 100, 100, 100, 100, 100, 100, 100, 0.1, 1, ['tackle'], ['normal'], None, stat_multiplier)
 
 action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=testpoke2)

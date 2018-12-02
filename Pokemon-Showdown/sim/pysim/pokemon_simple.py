@@ -498,10 +498,10 @@ def getHpScore(hp):
     :param hp:
     :return:
     '''
-    a = -3.5
-    b = -7
-    c = 1
-    return a * math.exp(b * hp) + c
+    a = -1
+    b = 5
+    c = 0
+    return -1 / (1 + a * math.exp(b * hp) + c)
 
 def getScore(ourPokemon, enemyPokemon):
     teamScore = 0

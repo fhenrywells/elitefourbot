@@ -35,11 +35,11 @@ class Pokemon:
 
     status = {"brn": 0, "frz": 0, "par": 0, "psn": 0, "slp": 0, "tox": 0}
 
-    atk_stage = [0, 0]
-    def_stage = [0, 0]
-    spa_stage = [0, 0]
-    spd_stage = [0, 0]
-    spe_stage = [0, 0]
+    atk_stage = 0
+    def_stage = 0
+    spa_stage = 0
+    spd_stage = 0
+    spe_stage = 0
 
     #_tox_stage = 1
 
@@ -62,22 +62,18 @@ class Pokemon:
             self.status[status] = 1.0
         else:
             self.status = {"brn": 0, "frz": 0, "par": 0, "psn": 0, "slp": 0, "tox": 0}
-        atk_stage = list(stat_multipliers.values())[0] - 1
-        def_stage = list(stat_multipliers.values())[1] - 1
-        spa_stage = list(stat_multipliers.values())[2] - 1
-        spd_stage = list(stat_multipliers.values())[3] - 1
-        spe_stage = list(stat_multipliers.values())[4] - 1
-        self.atk_stage = [max(0, atk_stage), min(0, atk_stage)]
-        self.def_stage = [max(0, def_stage), min(0, def_stage)]
-        self.spa_stage = [max(0, spa_stage), min(0, spa_stage)]
-        self.spd_stage = [max(0, spd_stage), min(0, spd_stage)]
-        self.spe_stage = [max(0, spe_stage), min(0, spe_stage)]
+        self.atk_stage = list(stat_multipliers.values())[0] - 1
+        self.def_stage = list(stat_multipliers.values())[1] - 1
+        self.spa_stage = list(stat_multipliers.values())[2] - 1
+        self.spd_stage = list(stat_multipliers.values())[3] - 1
+        self.spe_stage = list(stat_multipliers.values())[4] - 1
         #self._tox_stage = _tox_stage
 
     def stage_to_multiplier(self, stage):
-        return max(2, 2 + stage[0]) / max(2, 2 - stage[1])
+        return max(2, 2 + stage) / max(2, 2 - stage)
 
     def damage(self, damage):
+        self.last_dmg_taken = damage
         self.currhp -= damage / self.maxhp
 
     def handle_status(self):
@@ -97,8 +93,8 @@ class Pokemon:
             elif self.status == "slp":
                 pass
         #elif self.status == "tox":
-           #self.currhp -= self._tox_stage/16.0
-            #self._tox_stage += 1
+        #self.currhp -= self._tox_stage/16.0
+        #self._tox_stage += 1
 
     @property
     def attack(self):
@@ -156,7 +152,7 @@ def calcDamage(attackingPokemon, defendingPokemon, move):
         #print("level is ", attackingPokemon.level)
         level = attackingPokemon.level
         level = level * (1 * (
-            1 - critchance) + 2 * critchance)  # Expected value for level, taking into account crit chance
+                1 - critchance) + 2 * critchance)  # Expected value for level, taking into account crit chance
         #print("defendingPokemon is ", defendingPokemon)
         #print("def types are ", defendingPokemon.types)
         #print("effectiveness keys are ",move_effectiveness.keys())
@@ -345,16 +341,16 @@ class Move:
         if self.boosts is not None:
             # Apply boost to self
             if self.accuracy is True:
-                ourPokemon_new.atk_stage[0] = min(6, self.boosts.get("atk", 0) + ourPokemon_new.atk_stage[0])
-                ourPokemon_new.def_stage[0] = min(6, self.boosts.get("def", 0) + ourPokemon_new.def_stage[0])
-                ourPokemon_new.spa_stage[0] = min(6, self.boosts.get("spa", 0) + ourPokemon_new.spa_stage[0])
-                ourPokemon_new.spe_stage[0] = min(6, self.boosts.get("spe", 0) + ourPokemon_new.spe_stage[0])
+                ourPokemon_new.atk_stage = min(6, self.boosts.get("atk", 0) + ourPokemon_new.atk_stage)
+                ourPokemon_new.def_stage = min(6, self.boosts.get("def", 0) + ourPokemon_new.def_stage)
+                ourPokemon_new.spa_stage = min(6, self.boosts.get("spa", 0) + ourPokemon_new.spa_stage)
+                ourPokemon_new.spe_stage = min(6, self.boosts.get("spe", 0) + ourPokemon_new.spe_stage)
             # Otherwise, apply boosts to opponent
             else:
-                theirPokemon_new.atk_stage[1] = max(-6, self.boosts.get("atk", 0) * acc + theirPokemon_new.atk_stage[1])
-                theirPokemon_new.def_stage[1] = max(-6, self.boosts.get("def", 0) * acc + theirPokemon_new.def_stage[1])
-                theirPokemon_new.spa_stage[1] = max(-6, self.boosts.get("spa", 0) * acc + theirPokemon_new.spa_stage[1])
-                theirPokemon_new.spe_stage[1] = max(-6, self.boosts.get("spe", 0) * acc + theirPokemon_new.spe_stage[1])
+                theirPokemon_new.atk_stage = max(-6, self.boosts.get("atk", 0) * acc + theirPokemon_new.atk_stage)
+                theirPokemon_new.def_stage = max(-6, self.boosts.get("def", 0) * acc + theirPokemon_new.def_stage)
+                theirPokemon_new.spa_stage = max(-6, self.boosts.get("spa", 0) * acc + theirPokemon_new.spa_stage)
+                theirPokemon_new.spe_stage = max(-6, self.boosts.get("spe", 0) * acc + theirPokemon_new.spe_stage)
 
         # Apply status effect if there is one
         #print("their pokemon hit is ", theirPokemon_hit)
@@ -385,10 +381,10 @@ class Move:
                         theirPokemon_secondary.sp_att,
                         theirPokemon_secondary.sp_def,
                         theirPokemon_secondary.speed))'''
-                theirPokemon_new.atk_stage[1] = max(-6, self.secondary['boosts'].get("atk", 0) * secondary_acc + theirPokemon_new.atk_stage[1])
-                theirPokemon_new.def_stage[1] = max(-6, self.secondary['boosts'].get("def", 0) * secondary_acc + theirPokemon_new.def_stage[1])
-                theirPokemon_new.spa_stage[1] = max(-6, self.secondary['boosts'].get("spa", 0) * secondary_acc + theirPokemon_new.spa_stage[1])
-                theirPokemon_new.spe_stage[1] = max(-6, self.secondary['boosts'].get("spe", 0) * secondary_acc + theirPokemon_new.spe_stage[1])
+                theirPokemon_new.atk_stage = max(-6, self.secondary['boosts'].get("atk", 0) * secondary_acc + theirPokemon_new.atk_stage)
+                theirPokemon_new.def_stage = max(-6, self.secondary['boosts'].get("def", 0) * secondary_acc + theirPokemon_new.def_stage)
+                theirPokemon_new.spa_stage = max(-6, self.secondary['boosts'].get("spa", 0) * secondary_acc + theirPokemon_new.spa_stage)
+                theirPokemon_new.spe_stage = max(-6, self.secondary['boosts'].get("spe", 0) * secondary_acc + theirPokemon_new.spe_stage)
 
         return [(1.0, (ourPokemon_new, theirPokemon_new))]
 
@@ -551,12 +547,12 @@ def getScore(ourPokemon, enemyPokemon):
         status_effect = (1 - 0.5*sum(pokemon.status.values()))
         #status_effect = 1
         stat_multiplier = 1
-        stat_multiplier *= (2+ pokemon.atk_stage[0])/(2 - pokemon.atk_stage[1])
-        stat_multiplier *= (2+ pokemon.def_stage[0])/(2 - pokemon.def_stage[1])
-        stat_multiplier *= (2+ pokemon.spa_stage[0])/(2 - pokemon.spa_stage[1])
-        #stat_multiplier *= (2+ pokemon.spd_stage[0] * 1000)/(2 - pokemon.spd_stage[1] * 1000) gen1
-        stat_multiplier *= (2+ pokemon.spe_stage[0])/(2 - pokemon.spe_stage[1])
-      #for stat,mult in pokemon.stat_multipliers.items():
+        stat_multiplier *= pokemon.stage_to_multiplier(pokemon.atk_stage)
+        stat_multiplier *= pokemon.stage_to_multiplier(pokemon.def_stage)
+        stat_multiplier *= pokemon.stage_to_multiplier(pokemon.spa_stage)
+        #stat_multiplier *= pokemon.stage_to_multiplier(pokemon.spd_stage)
+        stat_multiplier *= pokemon.stage_to_multiplier(pokemon.spe_stage)
+        #for stat,mult in pokemon.stat_multipliers.items():
         #if pokemon.gen == 1 and stat == 3:
         #    continue
         #stat_multiplier *= stat
@@ -576,11 +572,11 @@ def getScore(ourPokemon, enemyPokemon):
     status_effect = (1 - 0.5*sum(pokemon.status.values()))
     #status_effect = 1
     stat_multiplier = 1
-    stat_multiplier *= (2+ pokemon.atk_stage[0])/(2 - pokemon.atk_stage[1])
-    stat_multiplier *= (2+ pokemon.def_stage[0])/(2 - pokemon.def_stage[1])
-    stat_multiplier *= (2+ pokemon.spa_stage[0])/(2 - pokemon.spa_stage[1])
-    #stat_multiplier *= (2+ pokemon.spd_stage[0])/(2 - pokemon.spd_stage[1]) gen1
-    stat_multiplier *= (2+ pokemon.spe_stage[0])/(2 - pokemon.spe_stage[1])
+    stat_multiplier *= pokemon.stage_to_multiplier(enemyPokemon.atk_stage)
+    stat_multiplier *= pokemon.stage_to_multiplier(enemyPokemon.def_stage)
+    stat_multiplier *= pokemon.stage_to_multiplier(enemyPokemon.spa_stage)
+    #stat_multiplier *= pokemon.stage_to_multiplier(enemyPokemon.spd_stage)
+    stat_multiplier *= pokemon.stage_to_multiplier(enemyPokemon.spe_stage)
     enemyScore = getHpScore(enemyPokemon.currhp)*status_effect*stat_multiplier
     score = teamScore - enemyScore * 1.5 # Favor doing damage to opponent rather than helping self
     return score
@@ -612,7 +608,7 @@ def main():
     nextStates = performActions(testpoke1, testpoke2, ("move", "lovelykiss"), ("move", "thunderwave"))
 
 
-#nextStates = performActions(
+    #nextStates = performActions(
     #    nextStates[0][1][0], nextStates[0][1][1], ("move", "blizzard"), ("move", "blizzard"))
     print(json.dumps(json.loads(jsonpickle.encode(nextStates)), indent=2))
 

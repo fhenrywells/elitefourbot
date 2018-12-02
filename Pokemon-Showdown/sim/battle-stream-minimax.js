@@ -12,7 +12,6 @@
  var requestapi = require('sync-request');
 
 const BattleStreams = require('./battle-stream');
-const DAMAGE_URI = "https://calc-api.herokuapp.com/calc-api"
 const Dex = require('./dex');
 const TypeChart = require('../data/typechart')
 const TYPES = TypeChart.BattleTypeChart

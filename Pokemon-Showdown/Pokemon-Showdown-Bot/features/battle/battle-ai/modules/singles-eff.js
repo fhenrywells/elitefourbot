@@ -8,7 +8,10 @@ exports.id = "singles-eff";
 var TypeChart = require('./../typechart.js');
 var Calc = require('./../calc.js');
 var Data = require('./../battle-data.js');
+var BaselineBot = require('./baseline-bot.js')
+var MinimaxBot = require('./minimax-bot.js')
 
+var BattleBot = BaselineBot
 var Pokemon = Calc.Pokemon;
 var Conditions = Calc.Conditions;
 
@@ -689,9 +692,11 @@ var getBestSwitch = exports.getBestSwitch = function (battle, decisions) {
 exports.decide = function (battle, decisions) {
 	if (battle.gametype !== "singles") throw new Error("This module only works for singles gametype");
 	if (battle.request.forceSwitch) {
-		return getBestSwitch(battle, decisions);
+		return BattleBot.getBestSwitch(battle, decisions)
+		// return getBestSwitch(battle, decisions);
 	} else if (battle.request.active) {
-		return getBestMove(battle, decisions);
+		return BattleBot.getBestMove(battle, decisions)
+		// return getBestMove(battle, decisions);
 	} else {
 		return decisions[Math.floor(Math.random() * decisions.length)];
 	}

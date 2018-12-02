@@ -93,30 +93,22 @@ var Battle = exports.Battle = (function () {
 							}
 						}
 					}
-					//console.log("team", str)
 					str += "team " + team.join("");
 					break;
 				case "move":
 					str += "move " + (decision[i].moveId + 1);
 					if (decision[i].mega) str += " mega";
-					if (decision[i].target !== null) {
-						//console.log("decision", decision[i])
-						if (decision[i].target >= 0) str += " " + (decision[i].target + 1);
-						else str += " " + (decision[i].target);
-					}
-					//console.log("move", str)
+					console.log("MOVE", str)
 					break;
 				case "switch":
 					str += "switch " + (decision[i].pokeId + 1);
-					//console.log("switch", str)
+					console.log("SWITCH", str)
 					break;
 				case "pass":
 					str += "pass";
-					//console.log("pass", str)
 					break;
 				case "shift":
 					str += "shift";
-					//console.log("shift", str)
 					break;
 			}
 			if (i < decision.length - 1) str += ", ";
@@ -190,6 +182,7 @@ var Battle = exports.Battle = (function () {
 		if (!forced && this.lastSend.rqid >= 0 && this.lastSend.rqid === this.rqid) {
 			if (Date.now() - this.lastSend.time < MIN_TIME_LOCK) return;
 			if (this.lastSend.decision) {
+				console.log("LAST SEND")
 				this.sendDecision(this.lastSend.decision);
 				return;
 			}
@@ -218,6 +211,7 @@ var Battle = exports.Battle = (function () {
 				var decision = mod.decide(this, decisions);
 				if (decision instanceof Array) {
 					this.lock = false;
+					console.log("MOD", mod.id)
 					this.sendDecision(decision);
 					return;
 				}
@@ -228,6 +222,7 @@ var Battle = exports.Battle = (function () {
 			SecurityLog.log("BATTLE MODULE FAILED: " + ex.message + "\nmodule: " + mod.id + "\n" + ex.stack);
 		}
 		this.lock = false;
+		console.log("ELSE REACHED")
 		this.sendDecision(decisions[Math.floor(Math.random() * decisions.length)]);
 	};
 

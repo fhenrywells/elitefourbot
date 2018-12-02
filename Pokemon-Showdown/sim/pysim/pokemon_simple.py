@@ -2,6 +2,7 @@ import copy
 import csv
 import json
 import math
+from statistics import mean
 
 import jsonpickle
 import os
@@ -21,7 +22,7 @@ class Pokemon:
     _speed = None
     maxhp = None
     level = None
-    _currhp = 1.0
+    currhp = 1.0
     gen = None
     moveids = []
     types = []
@@ -51,7 +52,7 @@ class Pokemon:
         self._speed = speed
         self.maxhp = maxhp
         self.level = level
-        self._currhp = currhp
+        self.currhp = currhp
         self.gen = gen
         self.moveids = moveids
         self.types = types
@@ -73,6 +74,9 @@ class Pokemon:
     def stage_to_multiplier(self, stage):
         return max(2, 2 + stage[0]) / max(2, 2 - stage[1])
 
+    def damage(self, damage):
+        self.currhp -= damage / self.maxhp
+
     def handle_status(self):
         '''
         Handles status effects in place. Run on the Pokemon instance after performing actions.
@@ -80,13 +84,13 @@ class Pokemon:
         '''
         for status, val in self.status.items():
             if status == "brn":
-                self._currhp -= 1.0/16.0 * val
+                self.currhp -= 1.0/16.0 * val
             elif status == "frz":
                 pass
             elif status == "par":
                 pass
             elif status == "psn" or self.status == "tox": # will need to be changed to account for tox
-                self._currhp -= 1.0/16.0 * val # for gen1 will need to be changed for future gens
+                self.currhp -= 1.0/16.0 * val # for gen1 will need to be changed for future gens
             elif self.status == "slp":
                 pass
         #elif self.status == "tox":
@@ -113,15 +117,13 @@ class Pokemon:
     def speed(self):
         return int(self._speed * self.stage_to_multiplier(self.spe_stage) * (1 - 0.25 * self.status['par']))
 
-    @property
-    def currhp(self):
-        return self._currhp
-
-    @currhp.setter
-    def currhp(self, val):
-        self.last_dmg_taken = (self.currhp - val) * self.maxhp
-        self._currhp = val
-
+def calcEffectiveness(move, defendingPokemon):
+    effectivenesses = [move_effectiveness[(
+        move.type, def_type)] for def_type in defendingPokemon.types]
+    effectiveness = 1
+    for e in effectivenesses:
+        effectiveness = effectiveness * e
+    return effectiveness
 
 def calcDamage(attackingPokemon, defendingPokemon, move):
     if attackingPokemon.gen == 1:
@@ -133,11 +135,7 @@ def calcDamage(attackingPokemon, defendingPokemon, move):
         #print("defendingPokemon is ", defendingPokemon)
         #print("def types are ", defendingPokemon.types)
         #print("effectiveness keys are ",move_effectiveness.keys())
-        effectivenesses = [move_effectiveness[(
-            move.type, def_type)] for def_type in defendingPokemon.types]
-        effectiveness = 1
-        for e in effectivenesses:
-            effectiveness = effectiveness * e
+        effectiveness = calcEffectiveness(move, defendingPokemon)
         stab = 1.5 if move.type in attackingPokemon.types else 1
         modifier = stab * effectiveness
 
@@ -257,6 +255,7 @@ class Move:
         self.secondary = movedata['secondary']
         self.type = movedata['type'].lower()
         self.boosts = movedata.get('boosts', None)
+        self.damage = movedata.get('damage', None)
         self.status = movedata.get('status', None)
         self.effect = getattr(self, movedata['id'], self.defaultmove)
         self.critratio = movedata.get('critratio', 1)
@@ -301,10 +300,18 @@ class Move:
         acc *= 1 - ourPokemon_new.status['par'] * 0.25
         acc *= 1 - ourPokemon_new.status['slp']
 
+        if isinstance(self.multihit, list):
+            multihit = mean(self.multihit)
+        else:
+            multihit = self.multihit
+
         # Do damage calc first
         if self.basePower != 0:
-            damage = calcDamage(ourPokemon_new, theirPokemon_new, self)
-            theirPokemon_new.currhp -= damage / theirPokemon_new.maxhp * acc
+            if self.damage is not None:
+                damage = self.damage
+            else:
+                damage = calcDamage(ourPokemon_new, theirPokemon_new, self)
+            theirPokemon_new.damage(damage * acc * multihit)
 
         # Then apply boosts if they exist
         if self.boosts is not None:
@@ -363,9 +370,79 @@ class Move:
 
     def counter(self, ourPokemon, theirPokemon):
         theirPokemon_new = copy.copy(theirPokemon)
-        if ourPokemon.last_move_taken.basePower != 0 and ourPokemon.last_move_taken.type in ['normal', 'fighting']:
-            theirPokemon_new.currhp -= 2 * ourPokemon.last_dmg_taken / theirPokemon_new.maxhp
+        if ourPokemon.last_move_taken is not None and ourPokemon.last_move_taken.basePower != 0 and ourPokemon.last_move_taken.type in ['normal', 'fighting']:
+            theirPokemon_new.damage(ourPokemon.last_dmg_taken * 2)
         return [(1.0, (copy.copy(ourPokemon), theirPokemon_new))]
+
+    def explosion(self, ourPokemon, theirPokemon):
+        ourPokemon_new = copy.copy(ourPokemon)
+        theirPokemon_new = copy.copy(theirPokemon)
+        their_poke_orig_def = theirPokemon_new._defense
+        theirPokemon_new._defense = theirPokemon_new._defense * 0.5
+        damage = calcDamage(ourPokemon_new, theirPokemon_new, self)
+        theirPokemon_new.damage(damage)
+        theirPokemon_new._defense = their_poke_orig_def
+        ourPokemon_new.currhp = 0
+        return [(1.0, (ourPokemon_new, theirPokemon_new))]
+
+    selfdestruct = explosion
+
+    def megadrain(self, ourPokemon, theirPokemon):
+        result = self.defaultmove(ourPokemon, theirPokemon)
+        result[0][1][0].currhp += result[0][1][1].last_dmg_taken * 1/2 / result[0][1][0].maxhp
+        return result
+
+    def mirrormove(self, ourPokemon, theirPokemon):
+        result = theirPokemon.last_move_used.effect(ourPokemon, theirPokemon)
+        return result
+
+    def doubleedge(self, ourPokemon, theirPokemon):
+        result = self.defaultmove(ourPokemon, theirPokemon)
+        result[0][1][0].damage(result[0][1][1].last_dmg_taken / 4)
+        return result
+
+    submission = doubleedge
+
+    def superfang(self, ourPokemon, theirPokemon):
+        ourPokemon_new = copy.copy(ourPokemon)
+        theirPokemon_new = copy.copy(theirPokemon)
+        theirPokemon_new.damage(theirPokemon_new.currhp * theirPokemon_new.maxhp * 0.5)
+        return [(1.0, (ourPokemon_new, theirPokemon_new))]
+
+    def psywave(self, ourPokemon, theirPokemon):
+        ourPokemon_new = copy.copy(ourPokemon)
+        theirPokemon_new = copy.copy(theirPokemon)
+        effectiveness = calcEffectiveness(self, theirPokemon_new)
+        damage = effectiveness * ourPokemon_new.level
+        theirPokemon_new.damage(damage)
+        return [(1.0, (ourPokemon_new, theirPokemon_new))]
+
+    def seismictoss(self, ourPokemon, theirPokemon):
+        ourPokemon_new = copy.copy(ourPokemon)
+        theirPokemon_new = copy.copy(theirPokemon)
+        damage = ourPokemon_new.level
+        theirPokemon_new.damage(damage)
+        return [(1.0, (ourPokemon_new, theirPokemon_new))]
+
+    def recover(self, ourPokemon, theirPokemon):
+        ourPokemon_new = copy.copy(ourPokemon)
+        theirPokemon_new = copy.copy(theirPokemon)
+        ourPokemon_new.currhp = min(ourPokemon_new.currhp + 0.5, 1)
+        return [(1.0, (ourPokemon_new, theirPokemon_new))]
+
+    softboiled = recover
+
+    def rest(self, ourPokemon, theirPokemon):
+        ourPokemon_new = copy.copy(ourPokemon)
+        theirPokemon_new = copy.copy(theirPokemon)
+        ourPokemon_new.status = {"brn":0, "frz":0, "par":0, "psn":0, "slp":1, "tox":0}
+        ourPokemon_new.currhp = 1.0
+        return [(1.0, (ourPokemon_new, theirPokemon_new))]
+
+    def transform(self, ourPokemon, theirPokemon):
+        ourPokemon_new = copy.copy(theirPokemon)
+        theirPokemon_new = copy.copy(theirPokemon)
+        return [(1.0, (ourPokemon_new, theirPokemon_new))]
 
     def reflect(self, ourPokemon, theirPokemon):
         #print("reflect")
@@ -433,13 +510,13 @@ def getScore(ourPokemon, enemyPokemon):
     for poke_id, pokemon in ourPokemon.items():  
         #sum over all possible status effects, 
         status_effect = (1 - 0.5*sum(pokemon.status.values()))
-        status_effect = 1
+        #status_effect = 1
         stat_multiplier = 1
-        stat_multiplier *= (2+ pokemon.atk_stage[0] * 1000)/(2 - pokemon.atk_stage[1] * 1000)
-        stat_multiplier *= (2+ pokemon.def_stage[0] * 1000)/(2 - pokemon.def_stage[1] * 1000)
-        stat_multiplier *= (2+ pokemon.spa_stage[0] * 1000)/(2 - pokemon.spa_stage[1] * 1000)
+        stat_multiplier *= (2+ pokemon.atk_stage[0])/(2 - pokemon.atk_stage[1])
+        stat_multiplier *= (2+ pokemon.def_stage[0])/(2 - pokemon.def_stage[1])
+        stat_multiplier *= (2+ pokemon.spa_stage[0])/(2 - pokemon.spa_stage[1])
         #stat_multiplier *= (2+ pokemon.spd_stage[0] * 1000)/(2 - pokemon.spd_stage[1] * 1000) gen1
-        stat_multiplier *= (2+ pokemon.spe_stage[0] * 1000)/(2 - pokemon.spe_stage[1] * 1000)
+        stat_multiplier *= (2+ pokemon.spe_stage[0])/(2 - pokemon.spe_stage[1])
       #for stat,mult in pokemon.stat_multipliers.items():
         #if pokemon.gen == 1 and stat == 3:
         #    continue
@@ -457,8 +534,8 @@ def getScore(ourPokemon, enemyPokemon):
     #        continue
     #    stat_multiplier *= mult
     pokemon = enemyPokemon
-    status_effect = (1 - 0.5*sum(pokemon.status.values()))
-    status_effect = 1
+    status_effect = (1 - 0.25*sum(pokemon.status.values()))
+    #status_effect = 1
     stat_multiplier = 1 
     stat_multiplier *= (2+ pokemon.atk_stage[0])/(2 - pokemon.atk_stage[1])
     stat_multiplier *= (2+ pokemon.def_stage[0])/(2 - pokemon.def_stage[1])

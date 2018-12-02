@@ -108,10 +108,10 @@ class Pokemon:
 
 
 def calcDamage(attackingPokemon, defendingPokemon, move):
-    if attackingPokemon.gen == "1":
+    if attackingPokemon.gen == 1:
         critchance = attackingPokemon.speed / 512 * 8 ** (move.critratio - 1)
         #print("level is ", attackingPokemon.level)
-        level = int(attackingPokemon.level[1:])
+        level = attackingPokemon.level
         level = level * (1 * (
             1 - critchance) + 2 * critchance)  # Expected value for level, taking into account crit chance
         #print("defendingPokemon is ", defendingPokemon)
@@ -433,10 +433,10 @@ def isLose(ourPokemon):
 
 def main():
     # (attack, defense, sp_att, sp_def, speed, maxhp, level, currhp, gen, moveids, types)
-    poke1 = Pokemon("1", 90, 90, 100, 1, 100, 353, "L100", 1.0,
-                    "1", ['blizzard'], ['fire', 'water'], {"brn":0, "frz":0, "par":0, "psn":0, "slp":0, "tox":0}, {0:1, 1:1, 2:1, 3:1, 4:1})
-    poke2 = Pokemon("2", 90, 90, 100, 2, 100, 353, "L100", 1.0,
-                    "1", ['blizzard'], ['fire', 'water'], {"brn":0, "frz":0, "par":0, "psn":0, "slp":0, "tox":0}, {0:1, 1:1, 2:1, 3:1, 4:1})
+    poke1 = Pokemon("1", 90, 90, 100, 1, 100, 353, 100, 1.0,
+                    1, ['blizzard'], ['fire', 'water'], None, {0:1, 1:1, 2:1, 3:1, 4:1})
+    poke2 = Pokemon("2", 90, 90, 100, 2, 100, 353, 100, 1.0,
+                    1, ['blizzard'], ['fire', 'water'], None, {0:1, 1:1, 2:1, 3:1, 4:1})
 
     nextStates = performActions(poke1, poke2, ("move", "blizzard"), ("move", "agility"))
     nextStates = performActions(nextStates[0][1][0], nextStates[0][1][1], ("move", "blizzard"), ("move", "agility"))

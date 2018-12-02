@@ -138,6 +138,13 @@ class Pokemon:
             self.moveids
         )
 
+    def __copy__(self):
+        cls = self.__class__
+        result = cls.__new__(cls)
+        result.__dict__.update(self.__dict__)
+        result.status = self.status.copy()
+        return result
+
 def calcEffectiveness(move, defendingPokemon):
     effectivenesses = [move_effectiveness[(
         move.type, def_type)] for def_type in defendingPokemon.types]

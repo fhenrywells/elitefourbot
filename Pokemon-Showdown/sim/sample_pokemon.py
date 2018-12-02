@@ -130,21 +130,14 @@ action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=te
 print(testpoke1, testpoke2)
 print("action is ", action) # Since we are paralyzed, we will choose recover. Is this what we want?
 
-testpoke1 = sim.Pokemon(1, 136, 115, 197, 197, 197, 229, 68, 0.677, 1, ['bodyslam', 'megadrain', 'swordsdance', 'spore'],['grass', 'bug'], "None", stat_multiplier)
-testpoke2 = sim.Pokemon(1, 136, 129, 251, 251, 173, 216, 68, 0.29, 1, ['bodyslam', 'hyperbeam', 'counter', 'submission', 'rockslide'], ['fighting'], "slp", stat_multiplier)
+testpoke1 = sim.Pokemon(1, 192, 139, 141, 141, 210, 250, 88, 0.5, 1, ['agility', 'substitute', 'doubleedge', 'drillpeck'],['normal', 'flying'], "None", stat_multiplier)
+testpoke2 = sim.Pokemon(1, 199, 175, 170, 170, 192, 241, 74, 0.08, 1, ['glare', 'earthquake', 'rockslide', 'hyperbeam', 'bodyslam'], ['poison'], "None", stat_multiplier)
 
+print(testpoke1, testpoke2)
 agent = pokemon_minimax.MinimaxAgent(depth=1) #can specify search depth here
 action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=testpoke2)
-print(testpoke1, testpoke2)
 print("action is ", action) # Since we are paralyzed, we will choose recover. Is this what we want?
 
-testpoke11 = sim.Pokemon(1, 136, 115, 197, 197, 197, 229, 68, 0.677, 1, ['bodyslam', 'megadrain', 'swordsdance', 'spore'],['grass', 'bug'], "None", stat_multiplier)
-testpoke12 = sim.Pokemon(1, 136, 129, 251, 251, 173, 216, 68, 0.29, 1, ['bodyslam', 'hyperbeam', 'counter', 'submission', 'rockslide'], ['fighting'], "slp", stat_multiplier)
-
-testpoke21 = sim.Pokemon(1, 136, 115, 197, 197, 197, 229, 68, 0.677, 1, ['bodyslam', 'megadrain', 'swordsdance', 'spore'],['grass', 'bug'], "None", stat_multiplier)
-testpoke22 = sim.Pokemon(1, 136, 129, 251, 251, 173, 216, 68, -0.01, 1, ['bodyslam', 'hyperbeam', 'counter', 'submission', 'rockslide'], ['fighting'], "slp", stat_multiplier)
-
-print(sim.getScore({1:testpoke11}, testpoke12))
 
 
 #battle 2 vileplume vs snorlax

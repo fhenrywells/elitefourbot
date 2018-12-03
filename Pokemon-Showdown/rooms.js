@@ -115,6 +115,7 @@ class BasicRoom {
 		/** @type {Map<string, ChatRoom>?} */
 		this.subRooms = null;
 		this.gameNumber = 0;
+		this.highTraffic = false;
 	}
 
 	/**
@@ -842,7 +843,6 @@ class GlobalRoom extends BasicRoom {
 	onConnect(user, connection) {
 		let initdata = '|updateuser|' + user.name + '|' + (user.named ? '1' : '0') + '|' + user.avatar + '\n';
 		connection.send(initdata + this.configRankList + this.formatListText);
-		if (this.chatRooms.length > 2) connection.send('|queryresponse|rooms|null'); // should display room list
 	}
 	/**
 	 * @param {User} user

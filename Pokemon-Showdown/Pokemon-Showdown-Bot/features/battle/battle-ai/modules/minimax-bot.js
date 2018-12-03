@@ -1,3 +1,4 @@
+
 'use strict';
 var SYNC_REQUEST = require('sync-request');
 
@@ -10,9 +11,11 @@ const POKEDEX = require(DATA_DIR + "pokedex").BattlePokedex
 const TYPES = require(DATA_DIR + 'typechart').BattleTypeChart
 const SPECIAL_CHARS = /[%\s\.'-]/g
 
+
 var ourBaseStats = new Object()
 var theirBaseStats = new Object()
 var turn = 1
+
 
 var getBestMove = exports.getBestMove = (battle, decisions) => {
     let foePokemon = battle.request.side.pokemon.filter(pokemon => pokemon.active)[0]
@@ -31,6 +34,7 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
     // Get random of strongest 2 moves
     let move = moves[moves.length > 1? Math.round(Math.random()): 0]
     let decision = decisions.filter(decision => move.move == decision[0].move)[0]
+
 
     try {
         var damageArray = {}
@@ -155,6 +159,7 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
     }
 
     console.log("UH OH SPAGHETTIOS")
+
     // If no viable moves, choose any move
     if (decision.length == 0) {
         let viableMoves = decisions.filter(decision => decision[0].type == 'move')

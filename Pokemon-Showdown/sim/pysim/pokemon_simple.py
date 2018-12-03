@@ -414,7 +414,7 @@ class Move:
         damage = calcDamage(ourPokemon_new, theirPokemon_new, self)
         theirPokemon_new.damage(damage * acc)
         theirPokemon_new._defense = their_poke_orig_def
-        ourPokemon_new.currhp = 0
+        ourPokemon_new.currhp = -1 # do -1 and not 0, because 0 doesn't mean fully fainted in our model
         return [(1.0, (ourPokemon_new, theirPokemon_new))]
 
     selfdestruct = explosion
@@ -522,9 +522,9 @@ def getLegalTeamActions(curr_poke, team_poke):
     for move in team_poke[curr_poke].moveids:
         #print("move is ", move)
         actions.append(("move", move))
-    for poke_id, pokemon in team_poke.items():
-        if poke_id != curr_poke and pokemon.currhp > 0:
-            actions.append(("switch", team_poke[poke_id]))
+    #for poke_id, pokemon in team_poke.items():
+    #    if poke_id != curr_poke and pokemon.currhp > 0:
+    #        actions.append(("switch", team_poke[poke_id]))
     #print("legal actions are ",actions)
     return actions
 
@@ -563,7 +563,7 @@ def getScore(ourPokemon, enemyPokemon):
         #if pokemon.gen == 1 and stat == 3:
         #    continue
         #stat_multiplier *= stat
-        teamScore += getHpScore(pokemon.currhp)*status_effect*stat_multiplier
+        teamScore += getHpScore(pokemon.currhp)*status_effect*(stat_multiplier ** 0.5)
     teamScore = teamScore / NUM_TEAM_MEMBERS
     #if enemyPokemon.status != "None":
     #  status_effect = 0.5
@@ -584,7 +584,7 @@ def getScore(ourPokemon, enemyPokemon):
     stat_multiplier *= pokemon.stage_to_multiplier(enemyPokemon.spa_stage)
     #stat_multiplier *= pokemon.stage_to_multiplier(enemyPokemon.spd_stage)
     stat_multiplier *= pokemon.stage_to_multiplier(enemyPokemon.spe_stage)
-    enemyScore = getHpScore(enemyPokemon.currhp)*status_effect*stat_multiplier
+    enemyScore = getHpScore(enemyPokemon.currhp)*status_effect*(stat_multiplier ** 0.5)
     score = teamScore - enemyScore * 1.5 # Favor doing damage to opponent rather than helping self
     return score
 

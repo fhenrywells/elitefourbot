@@ -48,7 +48,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
     def getAction(self, curr_poke, team_poke, enemy_poke, ):
         #global states
         #states = defaultdict(list)
-        print(sim.getLegalTeamActions(curr_poke, team_poke))
+        #print(sim.getLegalTeamActions(curr_poke, team_poke))
 
         def recurse(curr_poke, team_poke, enemy_poke, depth, player, runningmovelist=[]):
             #global states

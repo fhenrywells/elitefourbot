@@ -1,4 +1,3 @@
-
 'use strict';
 var SYNC_REQUEST = require('sync-request');
 
@@ -7,15 +6,13 @@ const MODS_DIR = '../../../../../mods/'
 const DATA_DIR = '../../../../../data/'
 const FORMATS_DATA = require(MODS_DIR + GEN + "/formats-data").BattleFormatsData
 const MOVES = require(DATA_DIR + "moves").BattleMovedex
-const POKEDEX = require(DATA_DIR + "pokedex").BattlePokedex
+const POKEDEX = require(MODS_DIR + GEN + "/pokedex").BattlePokedex
 const TYPES = require(DATA_DIR + 'typechart').BattleTypeChart
 const SPECIAL_CHARS = /[%\s\.'-]/g
-
 
 var ourBaseStats = new Object()
 var theirBaseStats = new Object()
 var turn = 1
-
 
 var getBestMove = exports.getBestMove = (battle, decisions) => {
     let foePokemon = battle.request.side.pokemon.filter(pokemon => pokemon.active)[0]
@@ -34,7 +31,6 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
     // Get random of strongest 2 moves
     let move = moves[moves.length > 1? Math.round(Math.random()): 0]
     let decision = decisions.filter(decision => move.move == decision[0].move)[0]
-
 
     try {
         var damageArray = {}
@@ -115,10 +111,12 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
             console.log("ISSUES ON THE HORIZON")
         }
         // console.log("OUR BASE STATS", ourBaseStats)
+        let currPokemon = battle.request.side.pokemon.filter(pokemon => pokemon.active)[0]
+        console.log(currPokemon)
         var ret = SYNC_REQUEST('POST', 'http://127.0.0.1:5000/getaction', {
             json: {
                 generation: GEN,
-                currPokemon: POKEDEX[formatName(battle.self.pokemon[0].species)].num,
+                currPokemon: POKEDEX[getPokemonName(currPokemon)].num,
                 ourPokemon: ourPokemon,
                 theirPokemon: POKEDEX[foeName].num,
                 ourHp: ourCondition,
@@ -153,19 +151,21 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
                 console.log(nextPokemon)
                 return nextPokemon[0]
             }
+        } else {
+            console.log("ERROR IN minimaxserver.py. ACTION NOT RETURNED")
         }
     } catch (error) {
         console.log(error)
     }
 
-    console.log("UH OH SPAGHETTIOS")
-
+    console.log("BASELINE MOVE RETURNED")
     // If no viable moves, choose any move
     if (decision.length == 0) {
         let viableMoves = decisions.filter(decision => decision[0].type == 'move')
         return viableMoves[viableMoves.length > 0 ? Math.floor(Math.random() * viableMoves.length-1): 0]
     }
 
+    turn++
     // If try-catch fails, choose baseline move
     return decision
 }
@@ -173,7 +173,7 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
 var getBestSwitch = exports.getBestSwitch = (battle, decisions) => {
     let foePokemon = battle.foe.pokemon[0].species
     let foeName = formatName(foePokemon)
-    // fainted++
+    turn++
     
     // Get available pokemon sorted by level
     let availablePokemon = battle.request.side.pokemon.map((pokemon, i) => {

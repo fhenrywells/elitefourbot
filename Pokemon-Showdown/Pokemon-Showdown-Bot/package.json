@@ -44,8 +44,7 @@
   "license": "MIT",
   "dependencies": {
     "colors": "1.0.3",
-    "sugar": "1.4.1",
-    "sync-request": "^6.0.0",
+    "sugar": "^1.4.1",
     "websocket": "1.0.18"
   },
   "devDependencies": {

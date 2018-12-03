@@ -21,8 +21,9 @@ class Pokemon:
     moveids = []
     types = []
     status = None
+    stat_multipliers = None
 
-    def __init__(self, poke_id, attack, defense, sp_att, sp_def, speed, maxhp, level, currhp, gen, moveids, types, status):
+    def __init__(self, poke_id, attack, defense, sp_att, sp_def, speed, maxhp, level, currhp, gen, moveids, types, status, stat_multipliers):
         self.poke_id = poke_id
         self.attack = attack
         self.defense = defense
@@ -36,6 +37,7 @@ class Pokemon:
         self.moveids = moveids
         self.types = types
         self.status = status
+        self.stat_multipliers = stat_multipliers
 
 
 def calcDamage(attackingPokemon, defendingPokemon, move):
@@ -66,9 +68,23 @@ def calcDamage(attackingPokemon, defendingPokemon, move):
             "Generation {} not implemented yet".format(attackingPokemon.gen)))
 
 
-def performActions(p1_pokemon, p2_pokemon, p1action, p2action):
-    ret = []
+def getLegalTeamActions(curr_poke, team_poke):
+    actions = []
+    for move in team_poke[curr_poke].moveids:
+        actions.append(("move", move))
+    for poke_id, pokemon in team_poke.items():
+        if poke_id != curr_poke and pokemon.currhp > 0:
+            actions.append(("switch", poke_id))
+    return actions
 
+def getLegalEnemyActions(enemy_poke):
+    actions = []
+    for move in enemy_poke.moveids:
+        actions.append(("move", move))
+    return actions
+
+def performActions(p1_pokemon, p2_pokemon, p1action, p2action, team):
+    ret = []
     # switch first
     if p1action[0] == "switch" and p2action[0] == "move":
         p1_pokemon = p1action[1]
@@ -76,7 +92,6 @@ def performActions(p1_pokemon, p2_pokemon, p1action, p2action):
     if p2action[0] == "switch" and p2action[0] == "move":
         p2_pokemon = p2action[1]
         ret = viable_moves[p1action[1]].effect(p1_pokemon, p2_pokemon)
-
     if p1action[0] == "move" and p2action[0] == "move":
         p1move = viable_moves[p1action[1]]
         p2move = viable_moves[p2action[1]]
@@ -175,14 +190,14 @@ class Move:
                 ourPokemon_hit.attack += self.boosts.get("atk", 0)
                 ourPokemon_hit.defense += self.boosts.get("def", 0)
                 ourPokemon_hit.sp_att += self.boosts.get("spa", 0)
-                #ourPokemon_hit.sp_def += self.boosts.get("spd",0)
+                ourPokemon_hit.sp_def += self.boosts.get("spd",0)
                 ourPokemon_hit.speed += self.boosts.get("spe", 0)
             # Otherwise, apply boosts to opponent
             else:
                 theirPokemon_hit.attack += self.boosts.get("atk", 0)
                 theirPokemon_hit.defense += self.boosts.get("def", 0)
                 theirPokemon_hit.sp_att += self.boosts.get("spa", 0)
-                #theirPokemon_hit.sp_def += self.boosts.get("spd",0)
+                theirPokemon_hit.sp_def += self.boosts.get("spd",0)
                 theirPokemon_hit.speed += self.boosts.get("spe", 0)
 
         # Then, apply secondary effects if they exist
@@ -199,7 +214,7 @@ class Move:
                     "def", 0)
                 theirPokemon_secondary.sp_att += self.secondary['boosts'].get(
                     "spa", 0)
-                #theirPokemon_secondary.sp_def += self.secondary['boosts'].get("spd",0)
+                theirPokemon_secondary.sp_def += self.secondary['boosts'].get("spd",0)
                 theirPokemon_secondary.speed += self.secondary['boosts'].get(
                     "spe", 0)
             states.append(
@@ -237,6 +252,43 @@ with open('pysim/effectiveness.csv', 'rt') as csvfile:
     for row in reader:
         move_effectiveness[(row[0], row[1])] = float(row[2])
 
+
+def getScore(ourPokemon, enemyPokemon):
+    teamScore = 0
+    for poke_id, pokemon in ourPokemon.items():  
+      if pokemon.status != "None":
+        status_effect = 0.5
+      else:
+        status_effect = 1
+      stat_multiplier = 1 
+      for stat,mult in pokemon.stat_multipliers.items():
+        if pokemon.gen == 1 and stat == 3:
+            continue
+        stat_multiplier *= stat
+      teamScore += pokemon.currhp * status_effect * stat_multiplier
+    teamScore = teamScore / NUM_TEAM_MEMBERS
+    if enemyPokemon.status != "None":
+      status_effect = 0.5
+    else:
+      status_effect = 1
+    stat_multiplier = 1
+    for stat, mult in enemyPokemon.stat_multipliers.items():
+        if enemyPokemon.gen == 1 and stat == 3:
+            continue
+        stat_multiplier *= mult
+    enemyScore = enemyPokemon.currhp * status_effect * stat_multiplier
+    score = teamScore - enemyScore
+    return score
+
+def isWin(enemyPokemon):
+    return enemyPokemon.currhp <= 0 
+
+def isLose(ourPokemon):
+    allFainted = True 
+    for pokemon in ourPokemon.values():
+        if pokemon.currhp > 0:
+            allFainted = False
+    return allFainted
 
 def main():
     # (attack, defense, sp_att, sp_def, speed, maxhp, level, currhp, gen, moveids, types)

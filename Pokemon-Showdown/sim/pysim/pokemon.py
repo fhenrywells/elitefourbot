@@ -5,7 +5,7 @@ import jsonpickle
 
 move_effectiveness = {}
 viable_moves = {}
-
+NUM_TEAM_MEMBERS = 6
 
 class Pokemon:
     _attack = None
@@ -19,6 +19,7 @@ class Pokemon:
     gen = None
     moveids = []
     types = []
+    stat_multipliers = None 
 
     status = None
     atk_stage = 0
@@ -27,9 +28,10 @@ class Pokemon:
     spd_stage = 0
     spe_stage = 0
 
-    _tox_stage = 1
+    #_tox_stage = 1
 
-    def __init__(self, attack, defense, sp_att, sp_def, speed, maxhp, level, currhp, gen, moveids, types):
+    def __init__(self, poke_id, attack, defense, sp_att, sp_def, speed, maxhp, level, currhp, gen, moveids, types, status, stat_multipliers):
+        self.poke_id = str(poke_id)
         self._attack = attack
         self._defense = defense
         self._sp_att = sp_att
@@ -41,6 +43,14 @@ class Pokemon:
         self.gen = gen
         self.moveids = moveids
         self.types = types
+        self.stat_multipliers = stat_multipliers
+        self.status = status
+        self.atk_stage = list(stat_multipliers.values())[0] - 1 
+        self.def_stage = list(stat_multipliers.values())[1] - 1
+        self.spa_stage = list(stat_multipliers.values())[2] - 1
+        self.spd_stage = list(stat_multipliers.values())[3] - 1
+        self.spe_stage = list(stat_multipliers.values())[4] - 1
+        #self._tox_stage = _tox_stage
 
     def stage_to_multiplier(self, stage):
         return max(2, 2 + stage) / max(2, 2 - stage)
@@ -56,13 +66,13 @@ class Pokemon:
             pass
         elif self.status == "par":
             pass
-        elif self.status == "psn":
-            self.currhp -= 1.0/16.0
+        elif self.status == "psn" or self.status == "tox": # will need to be changed to account for tox 
+            self.currhp -= 1.0/16.0 # for gen1 will need to be changed for future gens
         elif self.status == "slp":
             pass
-        elif self.status == "tox":
-            self.currhp -= self._tox_stage/16.0
-            self._tox_stage += 1
+        #elif self.status == "tox":
+           #self.currhp -= self._tox_stage/16.0
+            #self._tox_stage += 1
 
     @property
     def attack(self):
@@ -88,9 +98,13 @@ class Pokemon:
 def calcDamage(attackingPokemon, defendingPokemon, move):
     if attackingPokemon.gen == 1:
         critchance = attackingPokemon.speed / 512 * 8 ** (move.critratio - 1)
-        level = attackingPokemon.level * (1 * (
+        #print("level is ", attackingPokemon.level)
+        level = attackingPokemon.level
+        level = level * (1 * (
             1 - critchance) + 2 * critchance)  # Expected value for level, taking into account crit chance
-
+        #print("defendingPokemon is ", defendingPokemon)
+        #print("def types are ", defendingPokemon.types)
+        #print("effectiveness keys are ",move_effectiveness.keys())
         effectivenesses = [move_effectiveness[(
             move.type, def_type)] for def_type in defendingPokemon.types]
         effectiveness = 1
@@ -110,7 +124,8 @@ def calcDamage(attackingPokemon, defendingPokemon, move):
                           move.basePower * a / d) / 50 + 2)
         random = list(range(217, 256))  # all random values
         damage_values = [int(basedmg * modifier * r / 255.0) for r in random]
-        return sum(damage_values) / len(damage_values)
+        dam = sum(damage_values) / len(damage_values)
+        return dam
     else:
         raise (NotImplementedError(
             "Generation {} not implemented yet".format(attackingPokemon.gen)))
@@ -118,7 +133,7 @@ def calcDamage(attackingPokemon, defendingPokemon, move):
 
 def performActions(p1_pokemon, p2_pokemon, p1action, p2action):
     ret = []
-
+    #print("p1_pokemon is {}, p2_pokemon is {}".format(p1_pokemon, p2_pokemon))
     # switch first
     if p1action[0] == "switch" and p2action[0] == "switch":
         return [(1.0, (copy.copy(p1action[1]), copy.copy(p2action[1])))]
@@ -134,7 +149,6 @@ def performActions(p1_pokemon, p2_pokemon, p1action, p2action):
     if p1action[0] == "move" and p2action[0] == "move":
         p1move = viable_moves[p1action[1]]
         p2move = viable_moves[p2action[1]]
-
         # First, compare priorities
         if p1move.priority != p2move.priority:
             if p1move.priority > p2move.priority:
@@ -196,10 +210,7 @@ class Move:
         self.type = movedata['type'].lower()
         self.boosts = movedata.get('boosts', None)
         self.status = movedata.get('status', None)
-        if 'effect' in movedata.keys():
-            self.effect = getattr(self, movedata['id'])
-        else:
-            self.effect = self.defaultmove
+        self.effect = getattr(self, movedata['id'], self.defaultmove)
         self.critratio = movedata.get('critratio', 1)
 
     def defaultmove(self, ourPokemon, theirPokemon):
@@ -212,7 +223,6 @@ class Move:
         # Copy pokemon for the new state
         ourPokemon_hit = copy.copy(ourPokemon)
         theirPokemon_hit = copy.copy(theirPokemon)
-
         states = []
         # First, check for freeze/sleep and do nothing if we're frozen/sleeped
         if ourPokemon_hit.status == "frz" or ourPokemon_hit.status == "slp":
@@ -254,11 +264,12 @@ class Move:
                 theirPokemon_hit.spe_stage += self.boosts.get("spe", 0)
 
         # Apply status effect if there is one
+        #print("their pokemon hit is ", theirPokemon_hit)
         if self.status is not None and theirPokemon_hit.status is None:
             # Except fire-type moves can't burn fire-type pokemon
             if not (self.status == "brn" and self.type == "fire" and "fire" in theirPokemon.types):
                 theirPokemon_hit.status = self.status
-                theirPokemon_hit._tox_stage = 1
+                #theirPokemon_hit._tox_stage = 1
 
         # If their Pokemon is frozen and this is a physical fire-type move that can burn, unfreeze them
         if theirPokemon_hit.status == "frz" and self.type == "fire" and self.status == "brn" and self.category == "physical":
@@ -272,14 +283,26 @@ class Move:
             if "status" in self.secondary.keys() and theirPokemon_secondary.status is None:
                 theirPokemon_secondary.status = self.secondary['status']
             if "boosts" in self.secondary.keys():
-                theirPokemon_secondary.attack += self.secondary['boosts'].get(
+                '''print("Stats are ",
+                    "att: {}",
+                    "def: {}",
+                    "spa: {}",
+                    "spd: {}",
+                    "spe: {}".format(
+                        theirPokemon_secondary.attack,
+                        theirPokemon_secondary.defense,
+                        theirPokemon_secondary.sp_att,
+                        theirPokemon_secondary.sp_def,
+                        theirPokemon_secondary.speed))'''
+                theirPokemon_secondary.atk_stage += self.secondary['boosts'].get(
                     "atk", 0)
-                theirPokemon_secondary.defense += self.secondary['boosts'].get(
+                theirPokemon_secondary.def_stage += self.secondary['boosts'].get(
                     "def", 0)
-                theirPokemon_secondary.sp_att += self.secondary['boosts'].get(
+                theirPokemon_secondary.spa_stage += self.secondary['boosts'].get(
                     "spa", 0)
-                #theirPokemon_secondary.sp_def += self.secondary['boosts'].get("spd",0)
-                theirPokemon_secondary.speed += self.secondary['boosts'].get(
+                theirPokemon_secondary.spd_stage += self.secondary['boosts'].get(
+                    "spd", 0)
+                theirPokemon_secondary.spe_stage += self.secondary['boosts'].get(
                     "spe", 0)
             states.append(
                 (acc * secondary_acc, (ourPokemon_secondary, theirPokemon_secondary)))
@@ -306,15 +329,75 @@ class Move:
         return [(1.0, (copy.copy(ourPokemon), copy.copy(theirPokemon)))]
 
 
-with open('viablemovesdata.json') as f:
+with open('pysim/viablemovesdata.json') as f:
     move_data = json.loads(f.read())
     for id, data in move_data.items():
         viable_moves[id] = Move(data)
 
-with open('effectiveness.csv', 'rt') as csvfile:
+with open('pysim/effectiveness.csv', 'rt') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     for row in reader:
         move_effectiveness[(row[0], row[1])] = float(row[2])
+
+
+def getLegalTeamActions(curr_poke, team_poke):
+    actions = []
+    #print("curr poke unicorn is ", curr_poke)
+    print("team is ", team_poke)
+    print("curr poke is ", curr_poke)
+    print("move array is ", team_poke[curr_poke].moveids)
+    for move in team_poke[curr_poke].moveids:
+        print("move is ", move)
+        actions.append(("move", move))
+    #for poke_id, pokemon in team_poke.items():
+    #    if poke_id != curr_poke and pokemon.currhp > 0:
+    #        actions.append(("switch", team_poke[poke_id]))
+    print("legal actions are ",actions)
+    return actions
+
+def getLegalEnemyActions(enemy_poke):
+    actions = []
+    for move in enemy_poke.moveids:
+        actions.append(("move", move))
+    return actions
+
+def getScore(ourPokemon, enemyPokemon):
+    teamScore = 0
+    for poke_id, pokemon in ourPokemon.items():  
+      if pokemon.status != "None":
+        status_effect = 0.5
+      else:
+        status_effect = 1
+      stat_multiplier = 1 
+      for stat,mult in pokemon.stat_multipliers.items():
+        if pokemon.gen == 1 and stat == 3:
+            continue
+        stat_multiplier *= stat
+      teamScore += pokemon.currhp * status_effect * stat_multiplier
+    teamScore = teamScore / NUM_TEAM_MEMBERS
+    if enemyPokemon.status != "None":
+      status_effect = 0.5
+    else:
+      status_effect = 1
+    stat_multiplier = 1
+    for stat, mult in enemyPokemon.stat_multipliers.items():
+        if enemyPokemon.gen == 1 and stat == 3:
+            continue
+        stat_multiplier *= mult
+    enemyScore = enemyPokemon.currhp * status_effect * stat_multiplier
+    score = teamScore - enemyScore
+    return score
+
+def isWin(enemyPokemon):
+    return enemyPokemon.currhp <= 0 
+
+def isLose(ourPokemon):
+    allFainted = True 
+    for pokemon in ourPokemon.values():
+        if pokemon.currhp > 0:
+            allFainted = False
+    return allFainted
+
 
 
 def main():

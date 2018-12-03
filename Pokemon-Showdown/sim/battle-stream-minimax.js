@@ -20,7 +20,8 @@ const SPECIAL_CHARS = /[%\s\.'-]/g
 var randomBotPokemon = ''
 var baselineBotPokemon = ''
 var minimaxBotPokemon = ''
-var fainted = 0
+var ourBaseStats = new Object()
+var theirBaseStats = new Object()
  
 /*********************************************************************
  * Helper functions
@@ -86,7 +87,9 @@ function calculateDamage(attacker, defender, moves) {
  
 function getAttackStat(attacker, move) {
     let attack = 0
- 
+    if (MOVES[move] == null) {
+        return 0
+    }
     if (MOVES[move].category == "Special") {
         attack = attacker.stats.spa
     } else if (MOVES[move].category == "Physical") {
@@ -101,7 +104,9 @@ function getAttackStat(attacker, move) {
  
 function getDefenseStat(defender, move) {
     let defense = 0
- 
+    if (MOVES[move] == null) {
+        return 0
+    }
     if (MOVES[move].category == "Special") {
         defense = defender.stats.spd
     } else if (MOVES[move].category == "Physical") {
@@ -170,7 +175,7 @@ class RandomPlayerAI extends BattleStreams.BattlePlayer {
                 chosen.push(target);
                 return `switch ${target}`;
             });
-            console.log("Choices are ", choices)
+            //console.log("Choices are ", choices)
             this.choose(choices.join(`, `));
         } else if (request.active) {
             randomBotPokemon = request.side.pokemon.filter((pokemon) => {
@@ -211,8 +216,6 @@ class BaselinePlayerAI extends BattleStreams.BattlePlayer {
             // wait request
             // do nothing
         } else if (request.forceSwitch) {
-            fainted++
-            console.log("FAINTED", fainted)
             // switch request
             const pokemon = request.side.pokemon;
             let chosen = /** @type {number[]} */ ([]);
@@ -283,8 +286,9 @@ class BaselinePlayerAI extends BattleStreams.BattlePlayer {
                 }).filter(move => (!move.disabled)).sort(function(a, b) {
                     return a.maxpp - b.maxpp
                 })
- 
+                //console.log("baseline moves are ", moves)
                 let move = moves[moves.length > 1? Math.round(Math.random()): 0].index
+                //console.log("baseline move is ", move)
                 const targetable = request.active.length > 1 && ['normal', 'any'].includes(pokemon.moves[move - 1].target);
                 const target = targetable ? ` ${1 + Math.floor(Math.random() * 2)}` : ``;
                 return `move ${move}${target}`;
@@ -391,6 +395,7 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
             // do nothing
         } else if (request.forceSwitch) {
             // switch request
+            turn += 1
             const pokemon = request.side.pokemon;
             let chosen = /** @type {number[]} */ ([]);
  
@@ -412,12 +417,12 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
                 )).sort(function(a, b) {
                     a.details.split(", ")[1] - b.details.split(" ")[1]
                 })
- 
+                
+
                 if (baselineBotPokemon != '') {
                     // choose pokemon that fares well against enemy type
                     let opponent = getPokemonName(baselineBotPokemon)
                     let damageTaken = []
- 
                     // Get damage by types
                     for (let entry of POKEDEX[opponent]['types']) {
                         for (let pokeType in TYPES[entry]['damageTaken']) {
@@ -462,40 +467,36 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
                 }).filter(move => (!move.disabled)).sort(function(a, b) {
                     return a.maxpp - b.maxpp
                 })
+
                 // Damage calculated for each move
-                let damageCalculator = calculateDamage(minimaxBotPokemon, baselineBotPokemon, moves)
-                console.log("DAMAGE", damageCalculator)
+                //let damageCalculator = calculateDamage(minimaxBotPokemon, baselineBotPokemon, moves)
+                //console.log("DAMAGE", damageCalculator)
 
                 let move = moves[moves.length > 1? Math.round(Math.random()): 0].index
                 const targetable = request.active.length > 1 && ['normal', 'any'].includes(pokemon.moves[move - 1].target);
                 const target = targetable ? ` ${1 + Math.floor(Math.random() * 2)}` : ``;
 
-                var damageArray = new Object()
-                for (i = 0; i < damageCalculator.length; i++) {
-                    damageArray[damageCalculator[i][1]['id']] = damageCalculator[i][0]
-                }
+                //var damageArray = new Object()
+                //for (i = 0; i < damageCalculator.length; i++) {
+                //    damageArray[damageCalculator[i][1]['id']] = damageCalculator[i][0]
+                //}
 
                 let theirMoves = FORMATSDATA[getPokemonName(baselineBotPokemon)]['randomBattleMoves']
                 var essentialMove = FORMATSDATA[getPokemonName(baselineBotPokemon)]['essentialMove']
-                console.log("Type of essentialMove is", typeof(essentialMove))
-                console.log("essentialMove is", essentialMove)
                 if (typeof(essentialMove) === 'undefined') {
-                    console.log("undefined")
+                    //console.log("undefined")
                 } else {
                     theirMoves = theirMoves.concat(essentialMove)
                 }
                 
                 var exclusiveMoves = FORMATSDATA[getPokemonName(baselineBotPokemon)]['exclusiveMoves']
-                console.log("Type of exclusiveMoves is", typeof(exclusiveMoves))
-                console.log("exclusiveMoves are", exclusiveMoves)
 
                 if (typeof(exclusiveMoves) === 'undefined') {
-                    console.log("undefined")
+                    //console.log("undefined")
                 } else {
                     theirMoves = theirMoves.concat(exclusiveMoves)
                 }
 
-                console.log("Their moves are ", theirMoves)
                /* var theirMoves = new Array(theirMoveNames.length)
                 for (i = 0; i < theirMoveNames.length; i++) {
                     theirMoves[i] = MOVES[theirMoveNames[i]]
@@ -510,13 +511,16 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
                 }
                 */
                 
+
                 var ourCondition= new Object()
                 var ourStats = new Object()
                 var ourMoves = new Object()
                 var ourDetails = new Object()
                 var ourTypes = new Object()
                 var ourPokemon = new Object()
+                var ourPokemonIndices = new Object()
 
+                //console.log("size of team is", request.side.pokemon.length)
                 for (i = 0; i < request.side.pokemon.length; i++) {
                     var pokedexNum = POKEDEX[getPokemonName(request.side.pokemon[i])].num
                     ourCondition[pokedexNum] = request.side.pokemon[i].condition
@@ -525,13 +529,38 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
                     ourDetails[pokedexNum] = request.side.pokemon[i].details
                     ourTypes[pokedexNum] = POKEDEX[getPokemonName(request.side.pokemon[i])].types
                     ourPokemon[pokedexNum] = pokedexNum
+                    ourPokemonIndices[pokedexNum] = i + 1
+                    if (pokedexNum == POKEDEX[getPokemonName(minimaxBotPokemon)].num){
+                        var moveList = new Array()
+                        //console.log("moves are ", moves)
+                        for (var j = 0; j < moves.length; j ++) {
+                            //console.log("move state is ", moves[j].disabled)
+                            if(moves[j].disabled == false) {
+                                moveList.push(moves[j].id)
+                            } 
+                        }
+                        ourMoves[pokedexNum] = moveList
+                    }
+                }
+                //console.log("our stats are ",ourStats) 
+                if (POKEDEX[getPokemonName(baselineBotPokemon)].num in theirBaseStats) {
+                    //console.log("seen this poke before")
+                } else {
+                    theirBaseStats[POKEDEX[getPokemonName(baselineBotPokemon)].num] = baselineBotPokemon.stats
                 }
 
-                //var theirMoves = MOVES[getPokemonName(baselineBotPokemon)]
+                if (turn == 1){
+                    //var ourBaseStats = 
+                    //console.log("base stats set!")
+                    ourBaseStats = JSON.parse(JSON.stringify(ourStats));
 
+                } //implement proper basestat module 
                 const choices = request.active.map((/** @type {AnyObject} */ pokemon, /** @type {number} */ i) => {
+                //console.log("our base stats are ",ourBaseStats) 
 
-                console.log("GEN is", gen)
+                if (moves.length == 1){ //handles recharge moves 
+                    return ("move " + moves[0].id)
+                }
 
                 var ret = requestapi('POST', 'http://127.0.0.1:5000/getaction', {
                     json: {
@@ -548,11 +577,18 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
                         ourDetails: ourDetails,
                         theirDetails: baselineBotPokemon.details,
                         ourTypes: ourTypes,
-                        theirTypes: POKEDEX[getPokemonName(baselineBotPokemon)].types
+                        theirTypes: POKEDEX[getPokemonName(baselineBotPokemon)].types,
+                        ourBaseStats: ourBaseStats,
+                        theirBaseStats: theirBaseStats
                     }
-                }); 
-                return ret.body.toString('utf8')
-
+                });
+                var action = ret.body.toString('utf8');
+                if (action.startsWith("switch")) {
+                    pokedexNum = action.split(" ")[1];
+                    action = "switch " + ourPokemonIndices[pokedexNum];
+                }
+                //console.log("ret is ", ret.body.toString('utf8'))
+                return action
                 //return `move ${move}${target}`;
             });
                 this.choose(choices.join(`, `));
@@ -562,6 +598,7 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
             // team preview?
             this.choose(`default`);
         }
+        turn += 1
     }
 }
  
@@ -570,7 +607,6 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
  * Run AI
  *********************************************************************/
  
-// for (var i = 0; i < 10; i++) {
 const streams = BattleStreams.getPlayerStreams(new BattleStreams.BattleStream());
  
 const gen = "gen1"
@@ -591,7 +627,9 @@ const PokedexFile = '../mods/' + gen + "/pokedex.js"
 const Pokedex = require(PokedexFile)
 const POKEDEX = Pokedex.BattlePokedex
 
+var turn = 0
 
+//for (var i = 0; i < 10; i++) {
 
 
 const battleType = gen + "randombattle"
@@ -606,11 +644,16 @@ const p2spec = {
     team: Dex.packTeam(Dex.generateTeam(battleType)),
 };
 
+
+
+const team = Dex.fastUnpackTeam(p2spec.team)
+//console.log("team is ", team)
+var turn = 1;
+
 // eslint-disable-next-line no-unused-vars
 const p1 = new BaselinePlayerAI(streams.p1);
 // eslint-disable-next-line no-unused-vars
 const p2 = new MinimaxPlayerAI(streams.p2);
-
 //console.log(Dex.fastUnpackTeam(p2spec.team))
 
  
@@ -624,4 +667,4 @@ const p2 = new MinimaxPlayerAI(streams.p2);
 streams.omniscient.write(`>start ${JSON.stringify(spec)}
 >player p1 ${JSON.stringify(p1spec)}
 >player p2 ${JSON.stringify(p2spec)}`);
-// }
+//}

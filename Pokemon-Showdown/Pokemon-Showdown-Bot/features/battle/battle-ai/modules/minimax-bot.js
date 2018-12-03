@@ -1,4 +1,7 @@
+
+'use strict';
 var SYNC_REQUEST = require('sync-request');
+
 const GEN = "gen1"
 const MODS_DIR = '../../../../../mods/'
 const DATA_DIR = '../../../../../data/'
@@ -8,7 +11,11 @@ const POKEDEX = require(DATA_DIR + "pokedex").BattlePokedex
 const TYPES = require(DATA_DIR + 'typechart').BattleTypeChart
 const SPECIAL_CHARS = /[%\s\.'-]/g
 
-// var fainted = 0
+
+var ourBaseStats = new Object()
+var theirBaseStats = new Object()
+var turn = 1
+
 
 var getBestMove = exports.getBestMove = (battle, decisions) => {
     let foePokemon = battle.request.side.pokemon.filter(pokemon => pokemon.active)[0]
@@ -28,72 +35,130 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
     let move = moves[moves.length > 1? Math.round(Math.random()): 0]
     let decision = decisions.filter(decision => move.move == decision[0].move)[0]
 
-    // Damage calculated for each move
-    let damageCalculator = calculateDamage(battle, moves)
-    var damageArray = {}
-    for (let i = 0; i < damageCalculator.length; i++) {
-        damageArray[damageCalculator[i][1]['id']] = damageCalculator[i][0]
-    }
 
-    var theirMoves = []
-    if (FORMATS_DATA.hasOwnProperty(foeName)) {
-        if (FORMATS_DATA[foeName].hasOwnProperty('randomBattleMoves')) {
-            theirMoves = theirMoves.concat(FORMATS_DATA[foeName]["randomBattleMoves"])
-        } else {
-            console.log("FORMATS_DATA[foeName]", FORMATS_DATA[foeName])
+    try {
+        var damageArray = {}
+
+        // Damage calculated for each move
+        let damageCalculator = calculateDamage(battle, moves)
+        // console.log(damageCalculator)
+        for (let i = 0; i < damageCalculator.length; i++) {
+            damageArray[damageCalculator[i][1]['id']] = damageCalculator[i][0]
         }
-    } else { 
-        console.log("ISSUE WITH FORMATS_DATA")
-    }
 
-    if (FORMATS_DATA[foeName].hasOwnProperty('essentialMove')) {
-        theirMoves = theirMoves.push(FORMATS_DATA[foeName]['essentialMove'])
-    }
-    if (FORMATS_DATA[foeName].hasOwnProperty('exclusiveMoves')) {
-        theirMoves = theirMoves.concat(FORMATS_DATA[foeName]['exclusiveMoves'])
-    }
-
-    let ourCondition = {}
-    let ourStats = {}
-    let ourMoves = {}
-    let ourDetails = {}
-    let ourTypes = {}
-    let ourPokemon = {}
-
-    console.log("MADE IT THIS FAR")
-    for (pokemon of battle.request.side.pokemon) {
-        let pokedexNum = POKEDEX[getPokemonName(pokemon)].num
-        ourCondition[pokedexNum] = pokemon.condition
-        ourStats[pokedexNum] = pokemon.stats
-        ourMoves[pokedexNum] = pokemon.moves
-        ourDetails[pokedexNum] = pokemon.details
-        ourTypes[pokedexNum] = POKEDEX[getPokemonName(pokemon)].types
-        ourPokemon[pokedexNum] = pokedexNum
-    }
-
-    console.log(foePokemon, theirMoves)
-    if (!POKEDEX.hasOwnProperty(foeName)) {
-        console.log("ISSUES ON THE HORIZON")
-    }
-    var ret = SYNC_REQUEST('POST', 'http://127.0.0.1:5000/getaction', {
-        json: {
-            generation: GEN,
-            currPokemon: POKEDEX[foeName].num,
-            ourPokemon: ourPokemon,
-            theirPokemon: POKEDEX[foeName].num,
-            ourHp: ourCondition,
-            theirHp: foePokemon['condition'],
-            ourMoves: ourMoves,
-            theirMoves: theirMoves,
-            ourStats: ourStats,
-            theirStats : foePokemon['stats'],
-            ourDetails: ourDetails,
-            theirDetails: foePokemon['details'],
-            ourTypes: ourTypes,
-            theirTypes: POKEDEX[foeName].types
+        // if (FORMATS_DATA.hasOwnProperty(foeName)) {
+        //     if (FORMATS_DATA[foeName].hasOwnProperty('randomBattleMoves')) {
+        //         theirMoves = theirMoves.concat(FORMATS_DATA[foeName]["randomBattleMoves"])
+        //         // console.log("THEIR MOVES 1:", theirMoves)
+        //     } else {
+        //         console.log("FORMATS_DATA[foeName]", FORMATS_DATA[foeName])
+        //     }
+        // } else { 
+        //     console.log("ISSUE WITH FORMATS_DATA")
+        // }
+        let theirMoves = FORMATS_DATA[foeName]['randomBattleMoves']
+        if (FORMATS_DATA[foeName].hasOwnProperty('essentialMove')) {
+            theirMoves = theirMoves.concat(FORMATS_DATA[foeName]['essentialMove'])
         }
-    });
-    console.log(ret.body.toString('utf8'))
+        if (FORMATS_DATA[foeName].hasOwnProperty('exclusiveMoves')) {
+            // console.log("THEIR MOVES 2:", theirMoves)
+            theirMoves = theirMoves.concat(FORMATS_DATA[foeName]['exclusiveMoves'])
+        }
+
+        let ourCondition = {}
+        let ourStats = {}
+        let ourMoves = {}
+        let ourDetails = {}
+        let ourTypes = {}
+        let ourPokemon = {}
+        var ourPokemonIndices = {}
+
+        console.log("MADE IT THIS FAR")
+        let pokemon = battle.request.side.pokemon
+        for (let i = 0; i < pokemon.length; i++) {
+            var pokedexNum = POKEDEX[getPokemonName(pokemon[i])].num
+            ourCondition[pokedexNum] = pokemon[i].condition
+            ourStats[pokedexNum] = pokemon[i].stats
+            ourMoves[pokedexNum] = pokemon[i].moves
+            ourDetails[pokedexNum] = pokemon[i].details
+            ourTypes[pokedexNum] = POKEDEX[getPokemonName(pokemon[i])].types
+            ourPokemon[pokedexNum] = pokedexNum
+            ourPokemonIndices[pokedexNum] = i + 1
+
+            if (pokedexNum == POKEDEX[getPokemonName(pokemon[i])].num) {
+                let moveList = []
+                //console.log("moves are ", moves)
+                for (let j = 0; j < moves.length; j++) {
+                    //console.log("move state is ", moves[j].disabled)
+                    if (moves[j].disabled == false) {
+                        moveList.push(moves[j].id)
+                    } 
+                }
+                ourMoves[pokedexNum] = moveList
+            }
+        }
+
+        if (!theirBaseStats.hasOwnProperty(POKEDEX[foeName].num)) {
+            theirBaseStats[POKEDEX[foeName].num] = foePokemon['stats']
+        }
+
+        if (turn == 1) {
+            //console.log("base stats set!")
+            ourBaseStats = JSON.parse(JSON.stringify(ourStats));
+        } //implement proper basestat module 
+
+        if (moves.length == 1) { //handles recharge moves 
+            return decisions.filter(decision => moves[0].move == decision[0].move)
+        }
+
+        if (!POKEDEX.hasOwnProperty(foeName)) {
+            console.log("ISSUES ON THE HORIZON")
+        }
+        // console.log("OUR BASE STATS", ourBaseStats)
+        var ret = SYNC_REQUEST('POST', 'http://127.0.0.1:5000/getaction', {
+            json: {
+                generation: GEN,
+                currPokemon: POKEDEX[formatName(battle.self.pokemon[0].species)].num,
+                ourPokemon: ourPokemon,
+                theirPokemon: POKEDEX[foeName].num,
+                ourHp: ourCondition,
+                theirHp: foePokemon['condition'],
+                ourMoves: ourMoves,
+                theirMoves: theirMoves,
+                ourStats: ourStats,
+                theirStats : foePokemon['stats'],
+                ourDetails: ourDetails,
+                theirDetails: foePokemon['details'],
+                ourTypes: ourTypes,
+                theirTypes: POKEDEX[foeName].types,
+                ourBaseStats: ourBaseStats,
+                theirBaseStats: theirBaseStats
+            }
+        });
+        let action = ret.body.toString('utf8').split(" ");
+        if (action[0] == "move") {
+            console.log("BASELINE MOVE: ", decision)
+            let newDecision = decisions.filter(decision => 
+                decision[0].type == 'move' &&
+                formatName(decision[0].move) == action[1]
+            )[0]
+            console.log("MINIMAX MOVE: ", newDecision)
+            return newDecision
+        } else if (action[0] == "switch") {
+            let nextPokemon = decisions.filter(decision => 
+                decision[0].type == 'switch' &&
+                formatName(decision.poke.split(" ")[1]) == action[1]
+            )
+            if (nextPokemon.length != 0) {
+                console.log(nextPokemon)
+                return nextPokemon[0]
+            }
+        }
+    } catch (error) {
+        console.log(error)
+    }
+
+    console.log("UH OH SPAGHETTIOS")
 
     // If no viable moves, choose any move
     if (decision.length == 0) {
@@ -101,6 +166,7 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
         return viableMoves[viableMoves.length > 0 ? Math.floor(Math.random() * viableMoves.length-1): 0]
     }
 
+    // If try-catch fails, choose baseline move
     return decision
 }
 
@@ -170,28 +236,21 @@ var calculateDamage = (battle, moves) => {
     // Get available pokemon sorted by level
     let attacker = formatName(battle.self.pokemon[0].species)
     let defender = formatName(battle.foe.pokemon[0].species)
-    console.log("ATTACKER: ", attacker)
-    console.log("DEFENDER: ", defender)
  
     let moveDamage = []
     for (let move of moves) {
         let moveName = formatName(move.move)
-        console.log(moveName)
+        // console.log(moveName)
         // Handle edge case causing crashes
         if (moveName == 'return102') {
             moveName = 'return'
         }
         var damage = 0
         let level = Number(battle.self.pokemon[0].level)
-        console.log("getting attack stat")
         let attack = getAttackStat(attacker, moveName)
-        console.log("getting basepower")
         let basePower = Number(MOVES[moveName].basePower)
-        console.log("getting defense stat")
         let defense = getDefenseStat(defender, moveName)
-        console.log("getting type multiplier")
         let sameType = sameTypeMultiplier(attacker, moveName)
-        console.log("getting attack type multiplier")
         let attackType = attackTypeMultiplier(defender, moveName)
         let randomNum = getRandomInt(217, 255+1)
         if (move.hasOwnProperty("status")) {

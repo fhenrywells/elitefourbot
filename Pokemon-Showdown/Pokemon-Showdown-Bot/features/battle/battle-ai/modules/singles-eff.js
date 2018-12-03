@@ -11,7 +11,7 @@ var Data = require('./../battle-data.js');
 var BaselineBot = require('./baseline-bot.js')
 var MinimaxBot = require('./minimax-bot.js')
 
-var BattleBot = BaselineBot
+var BattleBot = MinimaxBot
 var Pokemon = Calc.Pokemon;
 var Conditions = Calc.Conditions;
 

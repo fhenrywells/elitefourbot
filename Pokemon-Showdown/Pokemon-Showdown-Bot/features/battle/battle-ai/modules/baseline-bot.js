@@ -16,7 +16,7 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
     })
 
     // Get random of strongest 2 moves
-    let move = moves[Math.floor(Math.random() * moves.length/2)]
+    let move = moves[moves.length > 1? Math.round(Math.random()): 0]
     let decision = decisions.filter(decision => move.move == decision[0].move)[0]
 
     // If no viable moves, choose any move

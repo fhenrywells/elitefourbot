@@ -116,7 +116,7 @@ def get_action():
   agent = pokemon_minimax.MinimaxAgent(curr_poke, team_poke, enemy_poke)
 
   action = agent.getAction(pokemon=poke)
-  #print("Action is ", action)
+  print("Action is ", action)
   return(action)
 
 

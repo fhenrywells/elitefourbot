@@ -99,8 +99,8 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
                 ourMoves: ourMoves,
                 theirMoves: theirMoves,
                 ourStats: ourBaseStats,
-                ourLevel: ourPokemon.level,
-                theirLevel: foePokemon.level
+                ourDetails: ourDetails,
+                theirLevel: foePokemon.level,
                 ourTypes: ourTypes,
                 theirTypes: foePokemon.template.types,
                 ourBaseStats: ourPokemon.template.baseStats,
@@ -121,7 +121,7 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
                 formatName(decision[0].move) == action[1]
             )[0]
             console.log("Minimax Move: ", newDecision[0].move)
-            
+
             return newDecision
         } else if (action[0] == "switch") {
             // switch returned

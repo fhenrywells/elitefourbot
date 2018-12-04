@@ -563,7 +563,8 @@ def getScore(ourPokemon, enemyPokemon):
         #if pokemon.gen == 1 and stat == 3:
         #    continue
         #stat_multiplier *= stat
-        teamScore += getHpScore(pokemon.currhp)*status_effect*(stat_multiplier ** 0.5)
+        hpScore = getHpScore(pokemon.currhp) # "chance" of still being alive
+        teamScore += hpScore * status_effect ** hpScore * stat_multiplier ** hpScore # Scale status_effect and stat_multiplier by hpScore, since we care less about our status/multiplier when we're lit
     teamScore = teamScore / NUM_TEAM_MEMBERS
     #if enemyPokemon.status != "None":
     #  status_effect = 0.5
@@ -584,7 +585,8 @@ def getScore(ourPokemon, enemyPokemon):
     stat_multiplier *= pokemon.stage_to_multiplier(enemyPokemon.spa_stage)
     #stat_multiplier *= pokemon.stage_to_multiplier(enemyPokemon.spd_stage)
     stat_multiplier *= pokemon.stage_to_multiplier(enemyPokemon.spe_stage)
-    enemyScore = getHpScore(enemyPokemon.currhp)*status_effect*(stat_multiplier ** 0.5)
+    hpScore = getHpScore(enemyPokemon.currhp)
+    enemyScore = hpScore * status_effect ** hpScore * stat_multiplier ** hpScore # Scale status_effect and stat_multiplier by hpScore, since we care less about their status/multiplier when they're lit
     score = teamScore - enemyScore * 1.5 # Favor doing damage to opponent rather than helping self
     return score
 

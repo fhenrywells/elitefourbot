@@ -20,7 +20,7 @@ class Pokemon:
     _sp_att = None  # sp_att is used as special for gen1 pokemon
     _sp_def = None
     _speed = None
-    maxhp = None
+    _maxhp = None
     level = None
     currhp = 1.0
     gen = None
@@ -34,6 +34,10 @@ class Pokemon:
     recharge = False
 
     status = {"brn": 0, "frz": 0, "par": 0, "psn": 0, "slp": 0, "tox": 0}
+
+    # From random team generator. EVs are exact, IVs are expected values
+    evs = {"hp": 255, "atk": 255, "def": 255, "spa": 255, "spd": 255, "spe": 255}
+    ivs = {"hp": 16, "atk": 16, "def": 16, "spa": 16, "spd": 16, "spe": 16}
 
     atk_stage = 0
     def_stage = 0
@@ -50,7 +54,7 @@ class Pokemon:
         self._sp_att = sp_att
         self._sp_def = sp_def
         self._speed = speed
-        self.maxhp = maxhp
+        self._maxhp = maxhp
         self.level = level
         self.currhp = currhp
         self.gen = gen
@@ -98,27 +102,36 @@ class Pokemon:
 
     @property
     def attack(self):
-        return int(self._attack * self.stage_to_multiplier(self.atk_stage) * (1 - 0.5 * self.status['brn']))
+        stat = int(((self._attack + self.ivs['atk']) * 2 + math.sqrt(self.evs['atk'] / 4)) * self.level / 100 + 5)
+        return int(stat * self.stage_to_multiplier(self.atk_stage) * (1 - 0.5 * self.status['brn']))
 
     @property
     def defense(self):
-        return int(self._defense * self.stage_to_multiplier(self.def_stage))
+        stat = int(((self._defense + self.ivs['def']) * 2 + math.sqrt(self.evs['def'] / 4)) * self.level / 100 + 5)
+        return int(stat * self.stage_to_multiplier(self.def_stage))
 
     @property
     def sp_att(self):
-        return int(self._sp_att * self.stage_to_multiplier(self.spa_stage))
+        stat = int(((self._sp_att + self.ivs['spa']) * 2 + math.sqrt(self.evs['spa'] / 4)) * self.level / 100 + 5)
+        return int(stat * self.stage_to_multiplier(self.spa_stage))
 
     @property
     def sp_def(self):
-        return int(self._sp_def * self.stage_to_multiplier(self.spd_stage))
+        stat = int(((self._sp_def + self.ivs['spd']) * 2 + math.sqrt(self.evs['spd'] / 4)) * self.level / 100 + 5)
+        return int(stat * self.stage_to_multiplier(self.spd_stage))
 
     @property
     def speed(self):
-        return int(self._speed * self.stage_to_multiplier(self.spe_stage) * (1 - 0.25 * self.status['par']))
+        stat = int(((self._speed + self.ivs['spe']) * 2 + math.sqrt(self.evs['spe'] / 4)) * self.level / 100 + 5)
+        return int(stat * self.stage_to_multiplier(self.spe_stage) * (1 - 0.25 * self.status['par']))
+
+    @property
+    def maxhp(self):
+        return int(((self._maxhp + self.ivs['hp']) * 2 + math.sqrt(self.evs['hp']) / 4) * self.level / 100 + self.level + 10)
 
     def __str__(self):
         currhpint = round(self.currhp * self.maxhp)
-        return "Pokemon {}: {{Status: {}/{} ({}), Level: {}, Types: {}, Base Stats: ({}, {}, {}, {}, {}), Boosted Stats: ({}, {}, {}, {}, {}), Moves: {}}}".format(
+        return "Pokemon {}: {{Status: {}/{} ({}), Level: {}, Types: {}, Base Stats: ({}, {}, {}, {}, {}), Effective Stats: ({}, {}, {}, {}, {}), Moves: {}}}".format(
             self.poke_id,
             currhpint,
             self.maxhp,

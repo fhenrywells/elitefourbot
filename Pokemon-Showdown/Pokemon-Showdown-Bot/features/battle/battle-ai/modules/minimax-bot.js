@@ -114,7 +114,7 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
             // move returned
             console.log("EliteFourBot condition: \n", ourCondition)
             console.log("Opponent condition: ", foePokemon['condition'])
-            console.log("Baseline Move: ", decision[0].move)
+            //console.log("Baseline Move: ", decision[0].move)
 
             let newDecision = decisions.filter(decision => 
                 decision[0].type == 'move' &&

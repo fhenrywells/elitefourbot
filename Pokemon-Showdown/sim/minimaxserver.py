@@ -15,7 +15,7 @@ app = Flask(__name__)
 def get_action():
     data = request.data
     dataDict = json.loads(data)
-    pprint(dataDict)
+    #pprint(dataDict)
 
     # Enemy Pokemon Info
     theirHp = float(dataDict['theirHp']) # theirHpStatus[0] is hp, [1] is status effect
@@ -78,7 +78,7 @@ def get_action():
             )
     theirCurrStats = list(dataDict["theirBaseStats"].values())
     theirStatMultiplier = dataDict['theirBoosts']
-    print("Team: ",pokemonTeam)
+    #print("Team: ",pokemonTeam)
     enemy = (
         dataDict['theirPokemon'],
         theirCurrStats,
@@ -90,19 +90,20 @@ def get_action():
         dataDict["theirStatus"],
         theirStatMultiplier
     )
-    print("Enemy: ",enemy)
+    #print("Enemy: ",enemy)
     team_poke = {}  # dictionary containing our team's pokemon objects
     # print("generation is ", type(generation))
     for p in pokemonTeam.keys():
         ally = pokemonTeam[p]
+        print(ally[1])
         team_poke[p] = sim.Pokemon(
             ally[0],
-            ally[1][0],  # att
-            ally[1][1],  # def
+            ally[1][1],  # att
+            ally[1][2],  # def
             ally[1][3],  # sp att
             ally[1][4],  # sp def
             ally[1][5],  # speed
-            ally[1][2],  # max hp
+            ally[1][0],  # max hp
             ally[3],  # level
             ally[4],  # curr hp
             generation,
@@ -114,12 +115,12 @@ def get_action():
         # print("Ally: ", ally)
     enemy_poke = sim.Pokemon(  # enemy pokemon object
         enemy[0],
-        enemy[1][0],  # att
-        enemy[1][1],  # def
+        enemy[1][1],  # att
+        enemy[1][2],  # def
         enemy[1][3],  # sp att
         enemy[1][4],  # sp def
         enemy[1][5],  # speed
-        enemy[1][2],  # max hp
+        enemy[1][0],  # max hp
         enemy[3],  # level
         enemy[4],  # curr hp
         generation,

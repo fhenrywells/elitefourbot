@@ -16,7 +16,7 @@ var turn = 1
 
 var getBestMove = exports.getBestMove = (battle, decisions) => {
     let foePokemon = battle.request.side.pokemon.filter(pokemon => pokemon.active)[0]
-    let foeName = formatName(battle.foe.pokemon[0].species)
+    let foeName = getPokemonName(foePokemon)
 
     // Get valid moves sorted by maxpp
     let moves = battle.request.active[0].moves.map((move, i) => {
@@ -69,7 +69,7 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
         let ourPokemon = {}
         var ourPokemonIndices = {}
 
-        console.log("MADE IT THIS FAR")
+        // console.log("MADE IT THIS FAR")
         let pokemon = battle.request.side.pokemon
         for (let i = 0; i < pokemon.length; i++) {
             var pokedexNum = POKEDEX[getPokemonName(pokemon[i])].num
@@ -112,7 +112,7 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
         }
         // console.log("OUR BASE STATS", ourBaseStats)
         let currPokemon = battle.request.side.pokemon.filter(pokemon => pokemon.active)[0]
-        console.log(currPokemon)
+        // console.log(currPokemon)
         var ret = SYNC_REQUEST('POST', 'http://127.0.0.1:5000/getaction', {
             json: {
                 generation: GEN,
@@ -135,12 +135,14 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
         });
         let action = ret.body.toString('utf8').split(" ");
         if (action[0] == "move") {
-            console.log("BASELINE MOVE: ", decision)
+            console.log("EliteFourBot condition: \n", ourCondition)
+            console.log("Opponent condition: ", foePokemon['condition'])
+            console.log("Baseline Move: ", decision[0].move)
             let newDecision = decisions.filter(decision => 
                 decision[0].type == 'move' &&
                 formatName(decision[0].move) == action[1]
             )[0]
-            console.log("MINIMAX MOVE: ", newDecision)
+            console.log("Minimax Move: ", newDecision[0].move)
             return newDecision
         } else if (action[0] == "switch") {
             let nextPokemon = decisions.filter(decision => 
@@ -153,6 +155,24 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
             }
         } else {
             console.log("ERROR IN minimaxserver.py. ACTION NOT RETURNED")
+            console.log({
+                generation: GEN,
+                currPokemon: POKEDEX[getPokemonName(currPokemon)].num,
+                ourPokemon: ourPokemon,
+                theirPokemon: POKEDEX[foeName].num,
+                ourHp: ourCondition,
+                theirHp: foePokemon['condition'],
+                ourMoves: ourMoves,
+                theirMoves: theirMoves,
+                ourStats: ourStats,
+                theirStats : foePokemon['stats'],
+                ourDetails: ourDetails,
+                theirDetails: foePokemon['details'],
+                ourTypes: ourTypes,
+                theirTypes: POKEDEX[foeName].types,
+                ourBaseStats: ourBaseStats,
+                theirBaseStats: theirBaseStats
+            })
         }
     } catch (error) {
         console.log(error)
@@ -261,7 +281,7 @@ var calculateDamage = (battle, moves) => {
         moveDamage.push([damage, move])
     }
 
-    console.log("calculateDamage SUCCESS")
+    // console.log("calculateDamage SUCCESS")
     return moveDamage 
 }
 

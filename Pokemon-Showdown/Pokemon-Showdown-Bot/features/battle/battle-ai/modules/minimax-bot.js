@@ -15,10 +15,9 @@ const SPECIAL_CHARS = /[%\s\.'-]/g
 var getBestMove = exports.getBestMove = (battle, decisions) => {
     let pokemonList = battle.request.side.pokemon
     let ourPokemon = battle.self.active[0]
-    let currPokemon = pokemon.filter(pokemon => pokemon.active)[0]
+    let ourName = formatName(ourPokemon.name)
     let foePokemon = battle.foe.active[0]
     let foeName = formatName(foePokemon.name)
-    // console.log(foePokemon)
 
     // Get valid moves sorted by maxpp
     let moves = battle.request.active[0].moves.map((move, i) => {
@@ -91,11 +90,12 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
         var ret = SYNC_REQUEST('POST', 'http://127.0.0.1:5000/getaction', {
             json: {
                 generation: GEN,
-                currPokemon: POKEDEX[getPokemonName(currPokemon)].num,
+                currPokemon: POKEDEX[ourName].num,
                 ourPokemon: ourPokedexNumbers,
                 theirPokemon: POKEDEX[foeName].num,
                 ourHp: ourCondition,
                 theirHp: foePokemon.hp/100,
+                theirStatus: foePokemon.status,
                 ourMoves: ourMoves,
                 theirMoves: theirMoves,
                 ourStats: ourBaseStats,
@@ -134,25 +134,29 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
                 return nextPokemon[0]
             }
         } else {
+            for (var property in foePokemon){
+                console.log(property + ": " + foePokemon[property]);
+            }
             console.log("ERROR IN minimaxserver.py. ACTION NOT RETURNED")
             console.log({
                 generation: GEN,
-                currPokemon: POKEDEX[getPokemonName(currPokemon)].num,
+                currPokemon: POKEDEX[ourName].num,
                 ourPokemon: ourPokedexNumbers,
                 theirPokemon: POKEDEX[foeName].num,
                 ourHp: ourCondition,
                 theirHp: foePokemon.hp/100,
+                theirStatus: foePokemon.status,
                 ourMoves: ourMoves,
                 theirMoves: theirMoves,
                 ourStats: ourBaseStats,
                 ourLevel: ourPokemon.level,
-                theirLevel: foePokemon.level
+                theirLevel: foePokemon.level,
                 ourTypes: ourTypes,
                 theirTypes: foePokemon.template.types,
                 ourBaseStats: ourPokemon.template.baseStats,
                 theirBaseStats: foePokemon.template.baseStats,
                 ourBoosts: ourPokemon.boosts,
-                theirBoosts: ourPokemon.boosts
+                theirBoosts: foePokemon.boosts
             })
         }
     } catch (error) {

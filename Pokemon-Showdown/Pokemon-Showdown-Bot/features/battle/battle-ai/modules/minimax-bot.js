@@ -10,13 +10,15 @@ const POKEDEX = require(MODS_DIR + GEN + "/pokedex").BattlePokedex
 const TYPES = require(DATA_DIR + 'typechart').BattleTypeChart
 const SPECIAL_CHARS = /[%\s\.'-]/g
 
-var ourBaseStats = new Object()
-var theirBaseStats = new Object()
-var turn = 1
+// var turn = 1
 
 var getBestMove = exports.getBestMove = (battle, decisions) => {
-    let foePokemon = battle.request.side.pokemon.filter(pokemon => pokemon.active)[0]
-    let foeName = getPokemonName(foePokemon)
+    let pokemonList = battle.request.side.pokemon
+    let ourPokemon = battle.self.active[0]
+    let currPokemon = pokemon.filter(pokemon => pokemon.active)[0]
+    let foePokemon = battle.foe.active[0]
+    let foeName = formatName(foePokemon.name)
+    // console.log(foePokemon)
 
     // Get valid moves sorted by maxpp
     let moves = battle.request.active[0].moves.map((move, i) => {
@@ -28,64 +30,55 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
         return a.maxpp - b.maxpp
     })
 
-    // Get random of strongest 2 moves
-    let move = moves[moves.length > 1? Math.round(Math.random()): 0]
-    let decision = decisions.filter(decision => move.move == decision[0].move)[0]
+    //handles recharge moves 
+    if (moves.length == 1) {
+        return decisions.filter(decision => moves[0].move == decision[0].move)
+    }
 
     try {
-        var damageArray = {}
-
         // Damage calculated for each move
-        let damageCalculator = calculateDamage(battle, moves)
-        // console.log(damageCalculator)
-        for (let i = 0; i < damageCalculator.length; i++) {
-            damageArray[damageCalculator[i][1]['id']] = damageCalculator[i][0]
-        }
-
-        // if (FORMATS_DATA.hasOwnProperty(foeName)) {
-        //     if (FORMATS_DATA[foeName].hasOwnProperty('randomBattleMoves')) {
-        //         theirMoves = theirMoves.concat(FORMATS_DATA[foeName]["randomBattleMoves"])
-        //         // console.log("THEIR MOVES 1:", theirMoves)
-        //     } else {
-        //         console.log("FORMATS_DATA[foeName]", FORMATS_DATA[foeName])
-        //     }
-        // } else { 
-        //     console.log("ISSUE WITH FORMATS_DATA")
+        // let damageCalculator = calculateDamage(battle, moves)
+        // let damageArray = {}
+        // for (let i = 0; i < damageCalculator.length; i++) {
+        //     damageArray[damageCalculator[i][1]['id']] = damageCalculator[i][0]
         // }
+
+        // Get all possible opponent moves
         let theirMoves = FORMATS_DATA[foeName]['randomBattleMoves']
         if (FORMATS_DATA[foeName].hasOwnProperty('essentialMove')) {
             theirMoves = theirMoves.concat(FORMATS_DATA[foeName]['essentialMove'])
         }
         if (FORMATS_DATA[foeName].hasOwnProperty('exclusiveMoves')) {
-            // console.log("THEIR MOVES 2:", theirMoves)
             theirMoves = theirMoves.concat(FORMATS_DATA[foeName]['exclusiveMoves'])
         }
 
+        // Get our Pokemon's information
         let ourCondition = {}
         let ourStats = {}
         let ourMoves = {}
         let ourDetails = {}
         let ourTypes = {}
-        let ourPokemon = {}
-        var ourPokemonIndices = {}
+        let ourPokedexNumbers = {}
+        let ourPokemonIndices = {}
+        let ourBaseStats = {}
 
-        // console.log("MADE IT THIS FAR")
-        let pokemon = battle.request.side.pokemon
-        for (let i = 0; i < pokemon.length; i++) {
-            var pokedexNum = POKEDEX[getPokemonName(pokemon[i])].num
-            ourCondition[pokedexNum] = pokemon[i].condition
-            ourStats[pokedexNum] = pokemon[i].stats
-            ourMoves[pokedexNum] = pokemon[i].moves
-            ourDetails[pokedexNum] = pokemon[i].details
-            ourTypes[pokedexNum] = POKEDEX[getPokemonName(pokemon[i])].types
-            ourPokemon[pokedexNum] = pokedexNum
+        for (let i = 0; i < pokemonList.length; i++) {
+            let pokemonName = getPokemonName(pokemonList[i])
+            let pokedexNum = POKEDEX[pokemonName].num
+
+            ourCondition[pokedexNum] = pokemonList[i].condition
+            ourStats[pokedexNum] = pokemonList[i].stats
+            ourMoves[pokedexNum] = pokemonList[i].moves
+            ourDetails[pokedexNum] = pokemonList[i].details
+            ourTypes[pokedexNum] = POKEDEX[pokemonName].types
+            ourPokedexNumbers[pokedexNum] = pokedexNum
             ourPokemonIndices[pokedexNum] = i + 1
+            ourBaseStats[pokedexNum] = POKEDEX[pokemonName].baseStats
 
-            if (pokedexNum == POKEDEX[getPokemonName(pokemon[i])].num) {
+            if (pokedexNum == POKEDEX[pokemonName].num) {
                 let moveList = []
                 //console.log("moves are ", moves)
                 for (let j = 0; j < moves.length; j++) {
-                    //console.log("move state is ", moves[j].disabled)
                     if (moves[j].disabled == false) {
                         moveList.push(moves[j].id)
                     } 
@@ -94,57 +87,44 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
             }
         }
 
-        if (!theirBaseStats.hasOwnProperty(POKEDEX[foeName].num)) {
-            theirBaseStats[POKEDEX[foeName].num] = foePokemon['stats']
-        }
-
-        if (turn == 1) {
-            //console.log("base stats set!")
-            ourBaseStats = JSON.parse(JSON.stringify(ourStats));
-        } //implement proper basestat module 
-
-        if (moves.length == 1) { //handles recharge moves 
-            return decisions.filter(decision => moves[0].move == decision[0].move)
-        }
-
-        if (!POKEDEX.hasOwnProperty(foeName)) {
-            console.log("ISSUES ON THE HORIZON")
-        }
-        // console.log("OUR BASE STATS", ourBaseStats)
-        let currPokemon = battle.request.side.pokemon.filter(pokemon => pokemon.active)[0]
-        // console.log(currPokemon)
+        // Get move from minimaxserver.py
         var ret = SYNC_REQUEST('POST', 'http://127.0.0.1:5000/getaction', {
             json: {
                 generation: GEN,
                 currPokemon: POKEDEX[getPokemonName(currPokemon)].num,
-                ourPokemon: ourPokemon,
+                ourPokemon: ourPokedexNumbers,
                 theirPokemon: POKEDEX[foeName].num,
                 ourHp: ourCondition,
-                theirHp: foePokemon['condition'],
+                theirHp: foePokemon.hp/100,
                 ourMoves: ourMoves,
                 theirMoves: theirMoves,
-                ourStats: ourStats,
-                theirStats : foePokemon['stats'],
-                ourDetails: ourDetails,
-                theirDetails: foePokemon['details'],
+                ourStats: ourBaseStats,
+                ourLevel: ourPokemon.level,
+                theirLevel: foePokemon.level
                 ourTypes: ourTypes,
-                theirTypes: POKEDEX[foeName].types,
-                ourBaseStats: ourBaseStats,
-                theirBaseStats: theirBaseStats
+                theirTypes: foePokemon.template.types,
+                ourBaseStats: ourPokemon.template.baseStats,
+                theirBaseStats: foePokemon.template.baseStats,
+                ourBoosts: ourPokemon.boosts,
+                theirBoosts: ourPokemon.boosts
             }
         });
         let action = ret.body.toString('utf8').split(" ");
         if (action[0] == "move") {
+            // move returned
             console.log("EliteFourBot condition: \n", ourCondition)
             console.log("Opponent condition: ", foePokemon['condition'])
             console.log("Baseline Move: ", decision[0].move)
+
             let newDecision = decisions.filter(decision => 
                 decision[0].type == 'move' &&
                 formatName(decision[0].move) == action[1]
             )[0]
             console.log("Minimax Move: ", newDecision[0].move)
+            
             return newDecision
         } else if (action[0] == "switch") {
+            // switch returned
             let nextPokemon = decisions.filter(decision => 
                 decision[0].type == 'switch' &&
                 formatName(decision.poke.split(" ")[1]) == action[1]
@@ -158,20 +138,21 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
             console.log({
                 generation: GEN,
                 currPokemon: POKEDEX[getPokemonName(currPokemon)].num,
-                ourPokemon: ourPokemon,
+                ourPokemon: ourPokedexNumbers,
                 theirPokemon: POKEDEX[foeName].num,
                 ourHp: ourCondition,
-                theirHp: foePokemon['condition'],
+                theirHp: foePokemon.hp/100,
                 ourMoves: ourMoves,
                 theirMoves: theirMoves,
-                ourStats: ourStats,
-                theirStats : foePokemon['stats'],
-                ourDetails: ourDetails,
-                theirDetails: foePokemon['details'],
+                ourStats: ourBaseStats,
+                ourLevel: ourPokemon.level,
+                theirLevel: foePokemon.level
                 ourTypes: ourTypes,
-                theirTypes: POKEDEX[foeName].types,
-                ourBaseStats: ourBaseStats,
-                theirBaseStats: theirBaseStats
+                theirTypes: foePokemon.template.types,
+                ourBaseStats: ourPokemon.template.baseStats,
+                theirBaseStats: foePokemon.template.baseStats,
+                ourBoosts: ourPokemon.boosts,
+                theirBoosts: ourPokemon.boosts
             })
         }
     } catch (error) {
@@ -179,13 +160,18 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
     }
 
     console.log("BASELINE MOVE RETURNED")
+
+    // Get random of strongest 2 moves
+    let move = moves[moves.length > 1? Math.round(Math.random()): 0]
+    let decision = decisions.filter(decision => move.move == decision[0].move)[0]
+
     // If no viable moves, choose any move
     if (decision.length == 0) {
         let viableMoves = decisions.filter(decision => decision[0].type == 'move')
         return viableMoves[viableMoves.length > 0 ? Math.floor(Math.random() * viableMoves.length-1): 0]
     }
 
-    turn++
+    // turn++
     // If try-catch fails, choose baseline move
     return decision
 }

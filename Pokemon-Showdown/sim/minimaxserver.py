@@ -162,7 +162,7 @@ def get_action():
     action = agent.getAction(curr_poke=curr_poke, team_poke=team_poke, enemy_poke=enemy_poke)
     # print("our moves are", team_poke[curr_poke].moveids)
     # print("Action is ", action)
-    print("Action is", action)
+    print("ACTION IS: ", action)
     return (action)
 
 

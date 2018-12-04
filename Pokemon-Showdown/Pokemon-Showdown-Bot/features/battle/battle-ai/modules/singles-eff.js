@@ -691,8 +691,6 @@ var getBestSwitch = exports.getBestSwitch = function (battle, decisions) {
 
 exports.decide = function (battle, decisions) {
 	if (battle.gametype !== "singles") throw new Error("This module only works for singles gametype");
-	console.log(battle.request)
-	console.log(battle.request.side.pokemon)
 	if (battle.request.forceSwitch) {
 		return BattleBot.getBestSwitch(battle, decisions)
 		// return getBestSwitch(battle, decisions);

@@ -31,7 +31,8 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
 
     //handles recharge moves 
     if (moves.length == 1) {
-        return decisions.filter(decision => moves[0].move == decision[0].move)
+        console.log('DECISION', decisions.filter(decision => moves[0].move == decision[0].move)[0])
+        return decisions.filter(decision => moves[0].move == decision[0].move)[0]
     }
 
     // Get random of strongest 2 moves
@@ -118,6 +119,7 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
             // move returned
             console.log("EliteFourBot condition: \n", ourCondition)
             console.log("Opponent condition: ", foePokemon.hp)
+            console.log("Bot condition: ", ourPokemon.hp)
             console.log("Baseline Move: ", decision[0].move)
 
             let newDecision = decisions.filter(decision => 

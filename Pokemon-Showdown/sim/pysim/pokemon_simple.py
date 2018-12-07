@@ -62,11 +62,11 @@ class Pokemon:
             self.status[status] = 1.0
         else:
             self.status = {"brn": 0, "frz": 0, "par": 0, "psn": 0, "slp": 0, "tox": 0}
-        self.atk_stage = list(stat_multipliers.values())[0] - 1
-        self.def_stage = list(stat_multipliers.values())[1] - 1
-        self.spa_stage = list(stat_multipliers.values())[2] - 1
-        self.spd_stage = list(stat_multipliers.values())[3] - 1
-        self.spe_stage = list(stat_multipliers.values())[4] - 1
+        self.atk_stage = stat_multipliers.get('atk', 0)
+        self.def_stage = stat_multipliers.get('def', 0)
+        self.spa_stage = stat_multipliers.get('spa', 0)
+        self.spd_stage = stat_multipliers.get('spd', 0)
+        self.spe_stage = stat_multipliers.get('spe', 0)
         #self._tox_stage = _tox_stage
 
     def stage_to_multiplier(self, stage):
@@ -147,7 +147,7 @@ class Pokemon:
 
 def calcEffectiveness(move, defendingPokemon):
     effectivenesses = [move_effectiveness[(
-        move.type, def_type)] for def_type in defendingPokemon.types]
+        move.type, def_type.lower())] for def_type in defendingPokemon.types]
     effectiveness = 1
     for e in effectivenesses:
         effectiveness = effectiveness * e

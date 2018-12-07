@@ -890,7 +890,8 @@ class CommandContext {
 			}
 			if (targetUser) {
 				if (lockType && !targetUser.can('lock')) {
-					return this.errorReply(`You are ${lockType} and can only private message members of the global moderation team (users marked by @ or above in the Help room). ${lockExpiration}`);
+					this.errorReply(`You are ${lockType} and can only private message members of the global moderation team. ${lockExpiration}`);
+					return this.sendReply(`|html|<a href="view-help-request--appeal" class="button">Get help with this</a>`);
 				}
 				if (targetUser.locked && !user.can('lock')) {
 					return this.errorReply(`The user "${targetUser.name}" is locked and cannot be PMed.`);
@@ -986,6 +987,11 @@ class CommandContext {
 			}
 			user.lastMessage = message;
 			user.lastMessageTime = Date.now();
+		}
+
+		if (room && room.highTraffic && toId(message).replace(/[^a-z]+/, '').length < 2 && !user.can('mute', null, room)) {
+			this.errorReply('Due to this room being a high traffic room, your message must contain at least two letters.');
+			return false;
 		}
 
 		if (Chat.filters.length) {
@@ -1658,10 +1664,9 @@ Chat.getImageDimensions = function (url) {
 Chat.fitImage = async function (url, maxHeight = 300, maxWidth = 300) {
 	let {height, width} = await Chat.getImageDimensions(url);
 
-	let ratio = 1;
-
 	if (width <= maxWidth && height <= maxHeight) return [width, height];
 
+	let ratio;
 	if (height * (maxWidth / maxHeight) > width) {
 		ratio = maxHeight / height;
 	} else {
@@ -1671,10 +1676,25 @@ Chat.fitImage = async function (url, maxHeight = 300, maxWidth = 300) {
 	return [Math.round(width * ratio), Math.round(height * ratio)];
 };
 
-// Used (and populated) by ChatMonitor.
-/** @type {{[k: string]: string[]}} */
-Chat.filterKeys = {};
-/** @type {{[k: string]: [(string | RegExp), string, string?, number][]}} */
+/**
+ * Used by ChatMonitor.
+ * @typedef {[(string | RegExp), string, string?, number]} FilterWord
+ * @typedef {(this: CommandContext, line: FilterWord, room: ChatRoom, user: User, message: string, lcMessage: string, isStaff: boolean) => (string | false | undefined)} MonitorHandler
+ * @typedef {{location: string, punishment: string, label: string, condition?: string, monitor?: MonitorHandler}} Monitor
+ */
+
+/** @type {{[k: string]: FilterWord[]}} */
 Chat.filterWords = {};
+/** @type {{[k: string]: Monitor}} */
+Chat.monitors = {};
 /** @type {Map<string, string>} */
 Chat.namefilterwhitelist = new Map();
+
+/**
+ * @param {string} id
+ * @param {Monitor} entry
+ */
+Chat.registerMonitor = function (id, entry) {
+	if (!Chat.filterWords[id]) Chat.filterWords[id] = [];
+	Chat.monitors[id] = entry;
+};

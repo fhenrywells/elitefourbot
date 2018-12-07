@@ -194,7 +194,6 @@ class RandomPlayerAI extends BattleStreams.BattlePlayer {
                 const target = targetable ? ` ${1 + Math.floor(Math.random() * 2)}` : ``;
                 return `move ${move}${target}`;
             });
-            //console.log("Choices are ", choices)
             this.choose(choices.join(`, `));
         } else {
             // team preview?

@@ -26,6 +26,9 @@ const HOURMUTE_LENGTH = 60 * 60 * 1000;
 
 const MAX_CHATROOM_ID_LENGTH = 225;
 
+/** Require reasons */
+const REQUIRE_REASONS = true;
+
 /** @type {ChatCommands} */
 const commands = {
 
@@ -138,7 +141,7 @@ const commands = {
 		if (target.startsWith('\n')) target = target.slice(1);
 		if (target.length >= 8192) return this.errorReply("Your code must be under 8192 characters long!");
 		const separator = '\n';
-		if (target.includes(separator)) {
+		if (target.includes(separator) || target.length > 150) {
 			const params = target.split(separator);
 			let output = [];
 			for (const param of params) {
@@ -650,11 +653,9 @@ const commands = {
 
 	subroomgroupchat: 'makegroupchat',
 	makegroupchat: function (target, room, user, connection, cmd) {
+		if (!this.canTalk()) return;
 		if (!user.autoconfirmed) {
 			return this.errorReply("You must be autoconfirmed to make a groupchat.");
-		}
-		if (!user.trusted) {
-			return this.errorReply("You must be global voice or roomdriver+ in some public room to make a groupchat.");
 		}
 		if (cmd === 'subroomgroupchat') {
 			if (!user.can('mute', null, room)) return this.errorReply("You can only create subroom groupchats for rooms you're staff in.");
@@ -723,7 +724,7 @@ const commands = {
 			parentid: parent,
 			auth: {},
 			introMessage: `<h2 style="margin-top:0">${titleHTML}</h2><p>To invite people to this groupchat, use <code>/invite USERNAME</code> in the groupchat.<br /></p><p>This room will expire after 40 minutes of inactivity or when the server is restarted.</p><p style="margin-bottom:0"><button name="send" value="/roomhelp">Room management</button>`,
-			staffMessage: `<p>As creator of this groupchat, <u>you are entirely responsible for what occurs in this chatroom</u>. Global rules apply at all times.</p><p>If you have created this room for someone else, <u>you are still responsible</u> whether or not you choose to actively supervise the room.</p><p style="font-style:italic">For this reason, we strongly recommend that you only create groupchats for users you know and trust.</p><p>If this room is used to break global rules or disrupt other areas of the server, this will be considered irresponsible use of auth privileges on the part of the creator, and <b>you will be globally demoted and barred from public auth.</b></p>`,
+			staffMessage: `<p>As creator of this groupchat, <u>you are entirely responsible for what occurs in this chatroom</u>. Global rules apply at all times.</p><p>If this room is used to break global rules or disrupt other areas of the server, <strong>you as the creator will be held accountable and punished</strong>.</p><p>Be cautious with who you invite.</p>`,
 		});
 		if (targetRoom) {
 			// The creator is a Room Owner in subroom groupchats and a Host otherwise..
@@ -737,7 +738,7 @@ const commands = {
 		return this.errorReply(`An unknown error occurred while trying to create the room '${title}'.`);
 	},
 	makegroupchathelp: [
-		`/makegroupchat [roomname] - Creates an invite-only group chat named [roomname]. Requires global voice or roomdriver+ in a public room to make a groupchat.`,
+		`/makegroupchat [roomname] - Creates an invite-only group chat named [roomname].`,
 		`/subroomgroupchat [roomname] - Creates a subroom groupchat of the current room. Can only be used in a public room you have staff in.`,
 	],
 
@@ -832,8 +833,10 @@ const commands = {
 	secretroom: 'privateroom',
 	publicroom: 'privateroom',
 	privateroom: function (target, room, user, connection, cmd) {
-		if (room.battle || room.isPersonal) {
+		if (room.isPersonal) {
 			if (!this.can('editroom', null, room)) return;
+		} else if (room.battle) {
+			if (!this.can('editprivacy', null, room)) return;
 		} else {
 			// registered chatrooms show up on the room list and so require
 			// higher permissions to modify privacy settings
@@ -1703,7 +1706,7 @@ const commands = {
 			if (!target) {
 				return this.privateModAction(`(${targetUser.name} would be muted by ${user.name} ${problem}.)`);
 			}
-			return this.addModAction(`${targetUser.name} would be muted by ${user.name} ${problem}.${(target ? ` (${target})` : ``)}`);
+			return this.addModAction(`${targetUser.name} would be muted by ${user.name} ${problem}. (${target})`);
 		}
 
 		if (targetUser in room.users) targetUser.popup(`|modal|${user.name} has muted you in ${room.id} for ${Chat.toDurationString(muteDuration)}. ${target}`);
@@ -1977,7 +1980,7 @@ const commands = {
 		if (target.length > MAX_REASON_LENGTH) {
 			return this.errorReply(`The reason is too long. It cannot exceed ${MAX_REASON_LENGTH} characters.`);
 		}
-		if (!target) {
+		if (!target && REQUIRE_REASONS) {
 			return this.errorReply("Global bans require a reason.");
 		}
 		if (!this.can('ban', targetUser)) return false;
@@ -2368,9 +2371,6 @@ const commands = {
 		target = this.canHTML(target);
 		if (!target) return;
 
-		Rooms.rooms.forEach((curRoom, id) => {
-			if (id !== 'global') curRoom.addRaw(`<div class="broadcast-blue"><b>${target}</b></div>`).update();
-		});
 		Users.users.forEach(u => {
 			if (u.connected) u.send(`|pm|~|${u.group}${u.name}|/raw <div class="broadcast-blue"><b>${target}</b></div>`);
 		});
@@ -2580,7 +2580,7 @@ const commands = {
 			return this.errorReply(`This user is already blacklisted from this room.`);
 		}
 
-		if (!target) {
+		if (!target && REQUIRE_REASONS) {
 			return this.errorReply(`Blacklists require a reason.`);
 		}
 		if (target.length > MAX_REASON_LENGTH) {
@@ -2631,7 +2631,8 @@ const commands = {
 		`/expiringblacklists OR /expiringbls - show a list of blacklisted users from the room whose blacklists are expiring in 3 months or less. Requires: % @ # & ~`,
 	],
 
-	battleban: function (target, room, user, connection) {
+	forcebattleban: 'battleban',
+	battleban: function (target, room, user, connection, cmd) {
 		if (!target) return this.parse(`/help battleban`);
 
 		const reason = this.splitTarget(target);
@@ -2642,6 +2643,9 @@ const commands = {
 		}
 		if (!reason) {
 			return this.errorReply(`Battle bans require a reason.`);
+		}
+		if (!room.battle && (!reason.includes('.pokemonshowdown.com/') && cmd !== 'forcebattleban')) {
+			 return this.errorReply(`Battle bans require a battle replay if used outside of a battle; if the battle has expired, use /forcebattleban.`);
 		}
 		if (!this.can('lock', targetUser)) return;
 		if (Punishments.isBattleBanned(targetUser)) return this.errorReply(`User '${targetUser.name}' is already banned from battling.`);
@@ -2696,7 +2700,9 @@ const commands = {
 		}
 
 		let [targetStr, reason] = target.split('|').map(val => val.trim());
-		if (!(targetStr && reason)) return this.errorReply("Usage: /blacklistname name1, name2, ... | reason");
+		if (!targetStr || (!reason && REQUIRE_REASONS)) {
+			return this.errorReply("Usage: /blacklistname name1, name2, ... | reason");
+		}
 
 		let targets = targetStr.split(',').map(s => toId(s));
 

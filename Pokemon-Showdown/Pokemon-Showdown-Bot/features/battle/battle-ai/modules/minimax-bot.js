@@ -34,6 +34,10 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
         return decisions.filter(decision => moves[0].move == decision[0].move)
     }
 
+    // Get random of strongest 2 moves
+    let move = moves[moves.length > 1? Math.round(Math.random()): 0]
+    let decision = decisions.filter(decision => move.move == decision[0].move)[0]
+
     try {
         // Damage calculated for each move
         // let damageCalculator = calculateDamage(battle, moves)
@@ -113,7 +117,7 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
         if (action[0] == "move") {
             // move returned
             console.log("EliteFourBot condition: \n", ourCondition)
-            console.log("Opponent condition: ", foePokemon['condition'])
+            console.log("Opponent condition: ", foePokemon.hp)
             console.log("Baseline Move: ", decision[0].move)
 
             let newDecision = decisions.filter(decision => 
@@ -164,10 +168,6 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
     }
 
     console.log("BASELINE MOVE RETURNED")
-
-    // Get random of strongest 2 moves
-    let move = moves[moves.length > 1? Math.round(Math.random()): 0]
-    let decision = decisions.filter(decision => move.move == decision[0].move)[0]
 
     // If no viable moves, choose any move
     if (decision.length == 0) {

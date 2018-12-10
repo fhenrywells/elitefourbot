@@ -97,8 +97,9 @@ snorlax = sim.Pokemon(
 #battle 1 scyther vs snorlax
 agent = pokemon_minimax.MinimaxAgent() #can specify search depth here 
 
-our_poke = scyther
-action = agent.getAction(curr_poke=our_poke.poke_id, team_poke = {our_poke.poke_id:our_poke}, enemy_poke = snorlax)
+our_poke = machamp
+enemy = snorlax
+action = agent.getAction(curr_poke=our_poke.poke_id, team_poke = {our_poke.poke_id:our_poke}, enemy_poke = enemy)
 #print("our moves are", team_poke[curr_poke].moveids)
 print("Action is ", action)
  #return(action)

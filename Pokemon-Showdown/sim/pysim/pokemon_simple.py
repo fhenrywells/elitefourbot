@@ -24,9 +24,9 @@ class Pokemon:
     moveids = []
     types = []
     stat_multipliers = None 
-
-    status = {"brn":0, "frz":0, "par":0, "psn":0, "slp":0, "tox":0}
     recharging = False 
+    status = {"brn":0, "frz":0, "par":0, "psn":0, "slp":0, "tox":0}
+
     atk_stage = [0, 0]
     def_stage = [0, 0]
     spa_stage = [0, 0]
@@ -160,6 +160,7 @@ def performActions(p1_pokemon, p2_pokemon, p1action, p2action):
     ret = []
     #print("p1_pokemon is {}, p2_pokemon is {}".format(p1_pokemon, p2_pokemon))
     # switch first
+
     if p1action[0] == "switch" and p2action[0] == "switch":
         return [(1.0, (copy.copy(p1action[1]), copy.copy(p2action[1])))]
     if p1action[0] == "switch" and p2action[0] == "move":
@@ -249,20 +250,7 @@ class Move:
         # Copy pokemon for the new state
         ourPokemon_new = copy.copy(ourPokemon)
         theirPokemon_new = copy.copy(theirPokemon)
-        '''print("orig Stats are ",
-                "att: {}",
-                "def: {}",
-                "spa: {}",
-                "spd: {}",
-                "spe: {}".format(
-                    theirPokemon.attack,
-                    theirPokemon.defense,
-                    theirPokemon.sp_att,
-                    theirPokemon.sp_def,
-                    theirPokemon.speed))
-        '''
         states = []
-        #print("our pokemon hit is ", ourPokemon_hit)
         # Add missed state first, if accuracy is <100
         if self.accuracy is True:
             acc = 1.0
@@ -333,11 +321,6 @@ class Move:
         #print("bide")
         return [(1.0, (copy.copy(ourPokemon), copy.copy(theirPokemon)))]
 
-    def hyperbeam(self, ourPokemon, theirPokemon):
-        ourPokemon.recharging = True
-        self.defaultmove(ourPokemon, theirPokemon)
-
-
     def counter(self, ourPokemon, theirPokemon):
         #print("counter")
         return [(1.0, (copy.copy(ourPokemon), copy.copy(theirPokemon)))]
@@ -350,6 +333,9 @@ class Move:
         #print("substitute")
         return [(1.0, (copy.copy(ourPokemon), copy.copy(theirPokemon)))]
 
+    def hyperbeam(self, ourPokemon, theirPokemon):
+        ourPokemon.recharging = True
+        return self.defaultmove(ourPokemon, theirPokemon)
 
 with open(dir_path + '/viablemovesdata.json') as f:
     move_data = json.loads(f.read())
@@ -364,9 +350,15 @@ with open(dir_path + '/effectiveness.csv', 'rt') as csvfile:
 
 def getLegalTeamActions(curr_poke, team_poke):
     actions = []
+
     if team_poke[curr_poke].recharging:
-        team_poke[curr_poke].recharging = False 
-        return actions
+        team_poke[curr_poke].recharging = False
+        return [("switch", team_poke[curr_poke])]
+
+    #print("curr poke unicorn is ", curr_poke)
+    #print("team is ", team_poke)
+    #print("curr poke is ", curr_poke)
+    #print("move array is ", team_poke[curr_poke].moveids)
     for move in team_poke[curr_poke].moveids:
         #print("move is ", move)
         actions.append(("move", move))
@@ -388,13 +380,19 @@ def getScore(ourPokemon, enemyPokemon):
 
     for poke_id, pokemon in ourPokemon.items():  
         #sum over all possible status effects, 
-        status_effect = (1 - 0.5*sum(pokemon.status.values())) 
+        print("Status is ", pokemon.status)
+        status_effect = 0.5*(1 - sum(pokemon.status.values())) 
+        #print("status effect = ", score)
         stat_multiplier = 1 
         stat_multiplier *= (2+ pokemon.atk_stage[0])/(2 - pokemon.atk_stage[1])
         stat_multiplier *= (2+ pokemon.def_stage[0])/(2 - pokemon.def_stage[1])
         stat_multiplier *= (2+ pokemon.spa_stage[0])/(2 - pokemon.spa_stage[1])
         #stat_multiplier *= (2+ pokemon.spd_stage[0])/(2 - pokemon.spd_stage[1]) gen1
         stat_multiplier *= (2+ pokemon.spe_stage[0])/(2 - pokemon.spe_stage[1])
+        print("stages are ", pokemon.atk_stage, pokemon.def_stage, pokemon.spa_stage, pokemon.spe_stage)
+
+
+        print("stat multiplier is ", stat_multiplier)
       #for stat,mult in pokemon.stat_multipliers.items():
         #if pokemon.gen == 1 and stat == 3:
         #    continue

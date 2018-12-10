@@ -96,10 +96,10 @@ class Pokemon:
 
 
 def calcDamage(attackingPokemon, defendingPokemon, move):
-    if attackingPokemon.gen == "1":
+    if attackingPokemon.gen == 1:
         critchance = attackingPokemon.speed / 512 * 8 ** (move.critratio - 1)
         #print("level is ", attackingPokemon.level)
-        level = int(attackingPokemon.level[1:])
+        level = attackingPokemon.level
         level = level * (1 * (
             1 - critchance) + 2 * critchance)  # Expected value for level, taking into account crit chance
         #print("defendingPokemon is ", defendingPokemon)

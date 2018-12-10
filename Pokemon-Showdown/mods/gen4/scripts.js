@@ -52,7 +52,7 @@ let BattleScripts = {
 		baseDamage = this.randomizer(baseDamage);
 
 		// STAB
-		if (move.hasSTAB || type !== '???' && pokemon.hasType(type)) {
+		if (move.forceSTAB || type !== '???' && pokemon.hasType(type)) {
 			// The "???" type never gets STAB
 			// Not even if you Roost in Gen 4 and somehow manage to use
 			// Struggle in the same turn.
@@ -91,11 +91,13 @@ let BattleScripts = {
 	},
 	tryMoveHit(target, pokemon, move) {
 		this.setActiveMove(move, pokemon, target);
-		let hitResult = true;
 
-		hitResult = this.singleEvent('PrepareHit', move, {}, target, pokemon, move);
+		let hitResult = this.singleEvent('PrepareHit', move, {}, target, pokemon, move);
 		if (!hitResult) {
-			if (hitResult === false) this.add('-fail', target);
+			if (hitResult === false) {
+				this.add('-fail', pokemon);
+				this.attrLastMove('[still]');
+			}
 			return false;
 		}
 		this.runEvent('PrepareHit', pokemon, target, move);
@@ -111,7 +113,10 @@ let BattleScripts = {
 				hitResult = this.runEvent('TryHitSide', target, pokemon, move);
 			}
 			if (!hitResult) {
-				if (hitResult === false) this.add('-fail', target);
+				if (hitResult === false) {
+					this.add('-fail', pokemon);
+					this.attrLastMove('[still]');
+				}
 				return false;
 			}
 			return this.moveHit(target, pokemon, move);
@@ -183,7 +188,10 @@ let BattleScripts = {
 		}
 		hitResult = this.runEvent('TryHit', target, pokemon, move);
 		if (!hitResult) {
-			if (hitResult === false) this.add('-fail', target);
+			if (hitResult === false) {
+				this.add('-fail', pokemon);
+				this.attrLastMove('[still]');
+			}
 			return false;
 		}
 

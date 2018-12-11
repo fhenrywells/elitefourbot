@@ -546,7 +546,7 @@ class MinimaxPlayerAI extends BattleStreams.BattlePlayer {
                 if (POKEDEX[getPokemonName(baselineBotPokemon)].num in theirBaseStats) {
                     //console.log("seen this poke before")
                 } else {
-                    theirBaseStats[POKEDEX[getPokemonName(baselineBotPokemon)].num] = baselineBotPokemon.stats
+                    theirBaseStats = baselineBotPokemon.stats
                 }
 
                 if (turn == 1){

@@ -26,7 +26,6 @@ class Pokemon:
     gen = None
     moveids = []
     types = []
-
     stat_multipliers = None
     last_dmg_taken = 0
     last_move_taken = None
@@ -35,7 +34,6 @@ class Pokemon:
     recharge = False
 
     status = {"brn": 0, "frz": 0, "par": 0, "psn": 0, "slp": 0, "tox": 0}
-
 
     # From random team generator. EVs are exact, IVs are expected values
     evs = {"hp": 255, "atk": 255, "def": 255, "spa": 255, "spd": 255, "spe": 255}
@@ -217,7 +215,6 @@ def performActions(p1_pokemon, p2_pokemon, p1action, p2action):
     ret = []
     #print("p1_pokemon is {}, p2_pokemon is {}".format(p1_pokemon, p2_pokemon))
     # switch first
-
     if p1action[0] == "switch" and p2action[0] == "switch":
         return [(1.0, (copy.copy(p1action[1]), copy.copy(p2action[1])))]
     if p1action[0] == "switch" and p2action[0] == "move":
@@ -511,7 +508,6 @@ class Move:
         return [(1.0, (copy.copy(ourPokemon), copy.copy(theirPokemon)))]
 
     def hyperbeam(self, ourPokemon, theirPokemon):
-
         ourPokemon.recharge = True
         return self.defaultmove(ourPokemon, theirPokemon)
 
@@ -529,11 +525,6 @@ with open(dir_path + '/effectiveness.csv', 'rt') as csvfile:
 
 def getLegalTeamActions(curr_poke, team_poke):
     actions = []
-
-    if team_poke[curr_poke].recharging:
-        team_poke[curr_poke].recharging = False
-        return [("switch", team_poke[curr_poke])]
-
     #print("curr poke unicorn is ", curr_poke)
     #print("team is ", team_poke)
     #print("curr poke is ", curr_poke)
@@ -573,7 +564,6 @@ def getScore(ourPokemon, enemyPokemon):
 
     for poke_id, pokemon in ourPokemon.items():
         #sum over all possible status effects, 
-
         status_effect = (1 - 0.5*sum(pokemon.status.values()))
         #status_effect = 1
         stat_multiplier = 1

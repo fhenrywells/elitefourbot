@@ -211,6 +211,7 @@ agent = pokemon_minimax.MinimaxAgent(depth=3) #can specify search depth here
 action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=testpoke2)
 print("action is ", action) # at depth 3, favour swordsdance
 
+
 #battle 2 vileplume vs snorlax
 
 #battle 3 machamp vs snorlax

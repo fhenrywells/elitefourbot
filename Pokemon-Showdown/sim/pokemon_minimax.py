@@ -10,6 +10,7 @@ import pysim.pokemon_simple as sim
 
 
 class Agent:
+
     """
     An agent must define a getAction method, but may also define the
     following methods which will be called if they exist:
@@ -31,7 +32,6 @@ class Agent:
 class MultiAgentSearchAgent(Agent):
     """
     """
-
     def __init__(self, depth=2):
         self.index = 0
         self.depth = depth

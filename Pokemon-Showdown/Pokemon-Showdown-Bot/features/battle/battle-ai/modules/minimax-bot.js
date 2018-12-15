@@ -111,7 +111,7 @@ var getBestMove = exports.getBestMove = (battle, decisions) => {
                 ourBaseStats: ourPokemon.template.baseStats,
                 theirBaseStats: foePokemon.template.baseStats,
                 ourBoosts: ourPokemon.boosts,
-                theirBoosts: ourPokemon.boosts
+                theirBoosts: foePokemon.boosts
             }
         });
         let action = ret.body.toString('utf8').split(" ");

@@ -125,6 +125,29 @@
         "type": "Ice",
         "zMovePower": 185
     },
+    "blizzardnofreeze": {
+        "accuracy": 100,
+        "basePower": 110,
+        "category": "Special",
+        "contestType": "Beautiful",
+        "desc": "Has a 10% chance to freeze the target. If the weather is Hail, this move does not check accuracy.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "blizzard",
+        "inherit": true,
+        "isViable": true,
+        "name": "Blizzard",
+        "num": 59,
+        "pp": 5,
+        "secondary": null,
+        "priority": 0,
+        "shortDesc": "10% chance to freeze foe(s). Can't miss in hail.",
+        "target": "normal",
+        "type": "Ice",
+        "zMovePower": 185
+    },
     "bodyslam": {
         "accuracy": 100,
         "basePower": 85,
@@ -470,6 +493,28 @@
             "chance": 10,
             "status": "brn"
         },
+        "shortDesc": "10% chance to burn the target.",
+        "target": "normal",
+        "type": "Fire",
+        "zMovePower": 175
+    },
+    "flamethrowernoburn": {
+        "accuracy": 100,
+        "basePower": 100,
+        "category": "Special",
+        "contestType": "Beautiful",
+        "desc": "Has a 10% chance to burn the target.",
+        "flags": {
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "flamethrower",
+        "isViable": true,
+        "name": "Flamethrower",
+        "num": 53,
+        "pp": 15,
+        "secondary": null,
+        "priority": 0,
         "shortDesc": "10% chance to burn the target.",
         "target": "normal",
         "type": "Fire",
@@ -1275,6 +1320,30 @@
         "accuracy": 100,
         "basePower": 70,
         "category": "Physical",
+        "contestType": "Cool",
+        "critRatio": 2,
+        "desc": "Has a higher chance for a critical hit.",
+        "flags": {
+            "contact": 1,
+            "mirror": 1,
+            "protect": 1
+        },
+        "id": "slash",
+        "inherit": true,
+        "name": "Slash",
+        "num": 163,
+        "pp": 20,
+        "priority": 0,
+        "secondary": null,
+        "shortDesc": "High critical hit ratio.",
+        "target": "normal",
+        "type": "Normal",
+        "zMovePower": 140
+    },
+    "specialslash": {
+        "accuracy": 100,
+        "basePower": 70,
+        "category": "Special",
         "contestType": "Cool",
         "critRatio": 2,
         "desc": "Has a higher chance for a critical hit.",

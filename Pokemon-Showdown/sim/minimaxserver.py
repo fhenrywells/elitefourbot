@@ -15,10 +15,11 @@ app = Flask(__name__)
 def get_action():
     data = request.data
     dataDict = json.loads(data)
-    #pprint(dataDict)
+    # pprint(dataDict)
 
     # Enemy Pokemon Info
-    theirHp = float(dataDict['theirHp']) # theirHpStatus[0] is hp, [1] is status effect
+    # theirHpStatus[0] is hp, [1] is status effect
+    theirHp = float(dataDict['theirHp'])
     theirStatus = dataDict['theirStatus'] if dataDict['theirStatus'] != "False" else None
     # print("Their details are", dataDict["theirDetails"])
     # if "Mime" in dataDict["theirDetails"]:
@@ -138,8 +139,10 @@ def get_action():
     print(team_poke[curr_poke])
     print(enemy_poke)
 
-    agent = pokemon_minimax.MinimaxAgent(depth=2)  # can specify search depth here
-    action = agent.getAction(curr_poke=curr_poke, team_poke=team_poke, enemy_poke=enemy_poke)
+    agent = pokemon_minimax.MinimaxAgent(
+        depth=3)  # can specify search depth here
+    action = agent.getAction(
+        curr_poke=curr_poke, team_poke=team_poke, enemy_poke=enemy_poke)
     # print("our moves are", team_poke[curr_poke].moveids)
     # print("Action is ", action)
     print("ACTION IS: ", action)

@@ -139,16 +139,38 @@ action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=te
 print(testpoke1, testpoke2)
 print("action is ", action) # Now, we quickattack again, since they have quickattack as an option, and we don't want them to quickattack if we use earthquake
 
-testpoke1 = sim.Pokemon(1, 192, 139, 141, 141, 210, 250, 88, 1.0, 1, ['swordsdance', 'slash'],['normal'], "None", stat_multiplier)
-testpoke2 = sim.Pokemon(1, 199, 175, 170, 170, 192, 241, 74, 1.0, 1, ['tackle'], ['normal'], "None", stat_multiplier)
+testpoke1 = sim.Pokemon(1, 100, 100, 100, 100, 100, 100, 100, 1.0, 1, ['swordsdance', 'slash'],['normal'], "None", stat_multiplier)
+testpoke2 = sim.Pokemon(1, 100, 100, 100, 100, 100, 100, 100, 1.0, 1, ['tackle'], ['normal'], "None", stat_multiplier)
 
 print(testpoke1, testpoke2)
-agent = pokemon_minimax.MinimaxAgent(depth=1) #can specify search depth here
-action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=testpoke2)
-print("action is ", action) # At depth 1, favour slash
 agent = pokemon_minimax.MinimaxAgent(depth=2) #can specify search depth here
 action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=testpoke2)
-print("action is ", action) # at depth 2, favour swordsdance
+print("action is ", action) # At depth 2, favour slash
+agent = pokemon_minimax.MinimaxAgent(depth=3) #can specify search depth here
+action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=testpoke2)
+print("action is ", action) # at depth 3, favour swordsdance
+
+testpoke1 = sim.Pokemon(1, 100, 100, 100, 100, 100, 100, 100, 1.0, 1, ['swordsdance', 'blizzard'],['normal'], "None", stat_multiplier)
+testpoke2 = sim.Pokemon(1, 100, 100, 100, 100, 100, 100, 100, 1.0, 1, ['tackle'], ['normal'], "None", stat_multiplier)
+
+print(testpoke1, testpoke2)
+agent = pokemon_minimax.MinimaxAgent(depth=2) #can specify search depth here
+action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=testpoke2)
+print("action is ", action) # At depth 2, favour slash
+agent = pokemon_minimax.MinimaxAgent(depth=3) #can specify search depth here
+action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=testpoke2)
+print("action is ", action) # at depth 3, favour swordsdance
+
+testpoke1 = sim.Pokemon(1, 100, 100, 100, 100, 100, 100, 100, 0.1, 1, ['swordsdance', 'slash'],['normal'], "None", stat_multiplier)
+testpoke2 = sim.Pokemon(1, 100, 100, 100, 100, 100, 100, 100, 0.1, 1, ['tackle'], ['normal'], "None", stat_multiplier)
+
+print(testpoke1, testpoke2)
+agent = pokemon_minimax.MinimaxAgent(depth=2) #can specify search depth here
+action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=testpoke2)
+print("action is ", action) # At depth 2, favour slash
+agent = pokemon_minimax.MinimaxAgent(depth=3) #can specify search depth here
+action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=testpoke2)
+print("action is ", action) # at depth 3, favour swordsdance
 
 testpoke1 = sim.Pokemon(1, 210, 166, 174, 174, 192, 276, 88, 1.0, 1, ['reflect', 'fireblast', 'flamethrower', 'bodyslam'],['fire'], "None", stat_multiplier)
 testpoke2 = sim.Pokemon(1, 266, 244, 147, 147, 184, 234, 74, 1.0, 1, ['crabhammer', 'swordsdance', 'hyperbeam', 'bodyslam'], ['water'], "None", stat_multiplier)
@@ -156,6 +178,38 @@ testpoke2 = sim.Pokemon(1, 266, 244, 147, 147, 184, 234, 74, 1.0, 1, ['crabhamme
 print(testpoke1, testpoke2)
 agent = pokemon_minimax.MinimaxAgent(depth=1) #can specify search depth here
 action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=testpoke2)
+
+testpoke1 = sim.Pokemon(1, 100, 100, 100, 100, 100, 100, 100, 1.0, 1, ['blizzard', 'blizzardnofreeze'],['water'], "None", stat_multiplier)
+testpoke2 = sim.Pokemon(1, 100, 100, 100, 100, 100, 100, 100, 1.0, 1, ['thunder'], ['normal'], "None", stat_multiplier)
+
+print(testpoke1, testpoke2)
+agent = pokemon_minimax.MinimaxAgent(depth=3) #can specify search depth here
+action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=testpoke2)
+print("action is ", action) # at depth 3, favour swordsdance
+
+testpoke1 = sim.Pokemon(1, 100, 100, 100, 100, 100, 100, 100, 0.1, 1, ['blizzard', 'blizzardnofreeze'],['water'], "None", stat_multiplier)
+testpoke2 = sim.Pokemon(1, 100, 100, 100, 100, 100, 100, 100, 0.1, 1, ['thunder'], ['normal'], "None", stat_multiplier)
+
+print(testpoke1, testpoke2)
+agent = pokemon_minimax.MinimaxAgent(depth=3) #can specify search depth here
+action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=testpoke2)
+print("action is ", action) # at depth 3, favour swordsdance
+
+testpoke1 = sim.Pokemon(1, 100, 100, 100, 100, 100, 100, 100, 1, 1, ['flamethrower', 'flamethrowernoburn'],['normal'], "None", stat_multiplier)
+testpoke2 = sim.Pokemon(1, 100, 100, 100, 100, 100, 100, 100, 1, 1, ['specialslash'], ['normal'], "None", stat_multiplier)
+
+print(testpoke1, testpoke2)
+agent = pokemon_minimax.MinimaxAgent(depth=3) #can specify search depth here
+action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=testpoke2)
+print("action is ", action) # at depth 3, favour swordsdance
+
+testpoke1 = sim.Pokemon(1, 100, 100, 100, 100, 100, 100, 100, 1, 1, ['flamethrower', 'flamethrowernoburn'],['normal'], "None", stat_multiplier)
+testpoke2 = sim.Pokemon(1, 100, 100, 100, 100, 100, 100, 100, 1, 1, ['slash'], ['normal'], "None", stat_multiplier)
+
+print(testpoke1, testpoke2)
+agent = pokemon_minimax.MinimaxAgent(depth=3) #can specify search depth here
+action = agent.getAction(curr_poke='1', team_poke={'1':testpoke1}, enemy_poke=testpoke2)
+print("action is ", action) # at depth 3, favour swordsdance
 
 #battle 2 vileplume vs snorlax
 

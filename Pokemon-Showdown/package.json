@@ -6,7 +6,9 @@
   "dependencies": {
     "probe-image-size": "^4.0.0",
     "sockjs": "0.3.18",
-    "sync-request": "^6.0.0"
+    "sugar": "^2.0.6",
+    "sync-request": "^6.0.0",
+    "websocket": "^1.0.28"
   },
   "optionalDependencies": {
     "cloud-env": "^0.2.2",

@@ -10,6 +10,7 @@ import pysim.pokemon_simple as sim
 
 
 class Agent:
+
     """
     An agent must define a getAction method, but may also define the
     following methods which will be called if they exist:
@@ -31,7 +32,6 @@ class Agent:
 class MultiAgentSearchAgent(Agent):
     """
     """
-
     def __init__(self, depth=2):
         self.index = 0
         self.depth = depth
@@ -44,11 +44,62 @@ def action_to_return(action):
     elif our_action[0] == "switch":
         return "switch " + our_action[1].poke_id
 
+def action_to_return2(action):
+    our_action = action
+    if our_action[0] == "move":
+        return "move " + our_action[1]
+    elif our_action[0] == "switch":
+        return "switch " + our_action[1].poke_id
+
 class MinimaxAgent(MultiAgentSearchAgent):
     def getAction(self, curr_poke, team_poke, enemy_poke, ):
         #global states
         #states = defaultdict(list)
         #print(sim.getLegalTeamActions(curr_poke, team_poke))
+
+        def recurse2(curr_poke, team_poke, enemy_poke, depth, player=0, alpha=float('-inf'), beta=float('+inf'), our_move=None):
+            if sim.isWin(enemy_poke) or sim.isLose(team_poke) or depth == 0:
+                #print(runningmovelist, sim.getScore(team_poke, enemy_poke))
+                return [], sim.getScore(team_poke, enemy_poke)
+            if player == 0: # us
+                legalMoves = sim.getLegalTeamActions(curr_poke, team_poke)
+            else:
+                legalMoves = sim.getLegalEnemyActions(enemy_poke)
+
+            if player == 0:
+                max_score = float('-inf')
+                max_our_move = None
+                for our_move in legalMoves:
+                    score = recurse2(curr_poke, team_poke, enemy_poke, depth, player=1, our_move=our_move)[1]
+                    if score > max_score:
+                        max_score = score
+                        max_our_move = copy.copy(our_move)
+                    alpha = max(alpha, score)
+                    if alpha >= beta:
+                        break
+                return max_our_move, max_score
+            else: # enemy player
+                min_score = float('+inf')
+                min_their_move = None
+                for their_move in legalMoves:
+                    # actually perform the move on their turn
+                    results = sim.performActions(
+                        team_poke[curr_poke],
+                        enemy_poke,
+                        our_move,
+                        their_move
+                    )
+                    new_team_poke = copy.deepcopy(team_poke)
+                    new_team_poke[our_move[1].poke_id if our_move[0] == "switch" else curr_poke] = results[0][1][0]
+                    score = recurse2(results[0][1][0].poke_id, new_team_poke, results[0][1][1], depth - 1, player=0)[1]
+                    if score < min_score:
+                        min_score = score
+                        min_their_move = their_move
+                    beta = min(beta, score)
+                    if alpha >= beta:
+                        break
+                return min_their_move, min_score
+
 
         def recurse(curr_poke, team_poke, enemy_poke, depth, player, runningmovelist=[]):
             #global states
@@ -93,7 +144,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         depth = self.depth
         player = self.index
         # print("player is ", player)
-        action, value = recurse(curr_poke, team_poke, enemy_poke, depth, player)
+        action, value = recurse2(curr_poke, team_poke, enemy_poke, depth)
         index = 1
         # print("action produced: ", action)
         #print("move " + action[0][1])
@@ -102,7 +153,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         #    print("depth: {}, num states {}".format(key, len(value)))
         # print(json.dumps(json.loads(jsonpickle.encode(states)), indent=2))
         # print("states are ", states)
-        return action_to_return(action)
+        return action_to_return2(action)
 
         if type(action[0][1]) is str:
             if player == 0:
